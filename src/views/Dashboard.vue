@@ -9,30 +9,30 @@
         <router-link class="remove-underline" to="/all">
           <v-list-item @click="handleViewChange">
             <v-list-item-action>
-              <v-icon>mdi-alpha-a-circle-outline</v-icon>
+              <v-icon>mdi-alpha-m-circle-outline</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>All</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </router-link>
-        <router-link class="remove-underline" to="/category">
+        <router-link class="remove-underline" to="/archive">
           <v-list-item @click="handleViewChange">
             <v-list-item-action>
-              <v-icon>mdi-alpha-c-circle-outline</v-icon>
+              <v-icon>mdi-alpha-y-circle-outline</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Category</v-list-item-title>
+              <v-list-item-title>Archive</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </router-link>
-        <router-link class="remove-underline" to="/keywords">
+        <router-link class="remove-underline" to="/resume">
           <v-list-item @click="handleViewChange">
             <v-list-item-action>
-              <v-icon>mdi-alpha-k-circle-outline</v-icon>
+              <v-icon>mdi-alpha-d-circle-outline</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Keywords</v-list-item-title>
+              <v-list-item-title>Resume</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </router-link>
@@ -62,7 +62,7 @@
     </v-content>
 
     <v-footer app>
-      <span>&copy; 2019</span>
+      <span><a v-if="false" href="http://www.beian.miit.gov.cn">湘ICP备19019513号-1</a></span>
     </v-footer>
   </v-app>
 </template>
