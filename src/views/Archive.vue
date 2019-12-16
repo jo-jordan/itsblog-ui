@@ -24,7 +24,7 @@ export default {
     params: {
       next: 1,
       keyword: '',
-      isArchived: 0
+      isArchived: 1
     }
   }),
   created() {
@@ -43,10 +43,7 @@ export default {
         if (res.code === 1) {
           this.items = res.data
         }
-        
-        console.log(res)
       })
-      console.log('res')
     }
   }
 }

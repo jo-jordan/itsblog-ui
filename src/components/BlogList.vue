@@ -19,7 +19,7 @@
         @click="handleClick(item)"
       >
         <v-list-item-avatar>
-          <v-img :src="item.avatar"></v-img>
+          <v-img :src="item.icon"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -28,9 +28,9 @@
         </v-list-item-content>
 
         <v-list-item-action>
-          <v-list-item-action-text>readCount: {{item.readCount}}</v-list-item-action-text>
-          <v-list-item-action-text>{{item.likeCount}}</v-list-item-action-text>
-          <v-list-item-action-text>{{item.readDuration}}</v-list-item-action-text>
+          <v-list-item-action-text>Read Count: {{item.readCount}}</v-list-item-action-text>
+          <v-list-item-action-text>Like: {{item.likeCount}}</v-list-item-action-text>
+          <v-list-item-action-text>Duration: {{item.readDuration}}</v-list-item-action-text>
 
         </v-list-item-action>
       </v-list-item>

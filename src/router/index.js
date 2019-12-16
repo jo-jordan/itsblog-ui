@@ -16,14 +16,14 @@ const routes = [
         component: () => import('../views/All.vue')
       },
       {
-        path: 'category',
-        name: 'category',
-        component: () => import('../views/Category.vue')
+        path: 'archive',
+        name: 'archive',
+        component: () => import('../views/Archive.vue')
       },
       {
-        path: 'keywords',
-        name: 'keywords',
-        component: () => import('../views/Keywords.vue')
+        path: 'resume',
+        name: 'resume',
+        component: () => import('../views/Resume.vue')
       }
     ]
   }

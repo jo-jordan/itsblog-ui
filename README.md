@@ -1,4 +1,4 @@
-# itblog-ui
+# itsblog-ui
 
 ## Project setup
 ```
