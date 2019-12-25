@@ -4,6 +4,7 @@
       v-model="drawer"
       app
       clipped
+      temporary
     >
       <v-list dense>
         <router-link class="remove-underline" to="/all">
@@ -51,16 +52,8 @@
       <v-text-field dense solo rounded hide-details append-icon="mdi-magnify" />
     </v-app-bar>
     <v-content>
-      <v-container fill-height>
-        <v-layout
-          justify-center
-          align-center
-        >
-          <router-view :key="routeKey"/>
-        </v-layout>
-      </v-container>
+      <router-view :key="routeKey"/>
     </v-content>
-
     <v-footer app>
       <span><a v-if="false" href="http://www.beian.miit.gov.cn">湘ICP备19019513号-1</a></span>
     </v-footer>
@@ -71,20 +64,21 @@
 export default {
   name: 'Dashboard',
   data: () => ({
-    drawer: null
+    drawer: null,
+    length: 3,
+    window: 0,
+    curRoute: ''
   }),
   created() {
-    this.$vuetify.theme.dark = true
+    this.$vuetify.theme.dark = false
   },
   computed: {
     routeKey() {
-      console.log('this.$route.path', this.$route.path)
       return this.$route.path
     }
   },
   methods: {
     handleViewChange(e) {
-      console.log('e', e)
     }
   }
 }

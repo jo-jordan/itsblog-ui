@@ -1,12 +1,15 @@
 <template>
-  <div class="main-container">
-    <transition >
-      <BlogList v-if="!showBlogPage" :items="items" @onShowBlogPage="handleBlogPageShow"/>
+  <v-container class="main-container">
+    <transition name="scale-fade">
+      <v-btn v-if="showBlogPage" @click="handleClick" class="fab-back-position" fab dark large left top>
+        <v-icon dark>mdi-arrow-left</v-icon>
+      </v-btn>
     </transition>
-    <transition >
-      <BlogPage v-if="showBlogPage" :blogId="blogId" @onShowBlogPage="handleBlogPageGone"/>
+    <transition name="slide-fade" mode="out-in">
+      <BlogList v-if="!showBlogPage" :items="items" @onShowBlogPage="handleBlogPageShow" />
+      <BlogPage v-if="showBlogPage" :blogId="blogId" @onShowBlogPage="handleBlogPageGone" />
     </transition>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -31,6 +34,10 @@ export default {
     this.getList()
   },
   methods: {
+    handleClick() {
+      this.showBlogPage = false
+      this.getList()
+    },
     handleBlogPageGone() {
       this.showBlogPage = false
     },
@@ -38,7 +45,7 @@ export default {
       this.showBlogPage = val.show
       this.blogId = val.data.blogSourceId
     },
-    getList(params) {
+    getList() {
       getList(this.params).then(res => {
         if (res.code === 1) {
           this.items = res.data
@@ -49,7 +56,36 @@ export default {
 }
 </script>
 
+<style scoped>
+.slide-fade-enter-active {
+  transition: all .18s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-leave-active {
+  transition: all .18s cubic-bezier(1.0, 0.8, 0.5, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.scale-fade-enter-active {
+  transition: all .28s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.scale-fade-leave-active {
+  transition: all .28s cubic-bezier(1.0, 0.8, 0.5, 1.0);
+}
+.scale-fade-enter, .scale-fade-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+</style>
+
 <style lang="scss" scoped>
+.fab-back-position{
+  position: fixed;
+  left: 280px;
+}
 .main-container {
   width: 100%;
   height: 100%;
