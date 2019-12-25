@@ -12,7 +12,7 @@
     "core-js": "^3.1.2",
     "vue": "^2.6.10",
     "vue-router": "^3.0.6",
-    "vuetify": "^2.1.0",
+    "vuetify": "^2.1.14",
     "js-cookie": "2.2.1",
     "vuex": "3.1.1",
     "path-to-regexp": "2.4.0"

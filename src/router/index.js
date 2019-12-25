@@ -8,8 +8,14 @@ const routes = [
   {
     path: '/',
     name: 'dashboard',
+    redirect: 'dashboard',
     component: Dashboard,
     children: [
+      {
+        path: 'dashboard',
+        component: () => import('../components/Dash.vue'),
+        name: 'Dashboard',
+      },
       {
         path: 'all',
         name: 'all',
@@ -30,7 +36,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   routes
 })

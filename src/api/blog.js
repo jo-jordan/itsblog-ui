@@ -1,5 +1,13 @@
 import request from '../utils/request'
 
+export function getDashboard(query) {
+  return request({
+    url: '/app/blog/dashboard',
+    method: 'get',
+    params: query
+  })
+}
+
 export function getList(query) {
   return request({
     url: '/app/blog/list',
