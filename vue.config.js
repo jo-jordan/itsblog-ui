@@ -13,7 +13,7 @@ const name = 'It\'s blog' // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
-
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   'transpileDependencies': [
@@ -43,6 +43,7 @@ module.exports = {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
+    plugins: [],
     resolve: {
       alias: {
         '@': resolve('src')
@@ -88,6 +89,23 @@ module.exports = {
       )
 
     config
+      .when(process.env.NODE_ENV === 'production',
+        config => {
+          config
+            .plugin('gzip-plugin')
+            .use('compression-webpack-plugin', [{
+              filename: '[path].gz[query]',
+              algorithm: 'gzip',
+              test: /\.js$|\.json$|\.css$|\.ttf$|\.eot$|\.woff$|\.woff2$/,
+              threshold: 0, // 只有大小大于该值的资源会被处理
+              minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+              deleteOriginalAssets: true // 删除原文件
+            }])
+            .end()
+        }
+      )
+
+    config
       .when(process.env.NODE_ENV !== 'development',
         config => {
           config
@@ -107,11 +125,6 @@ module.exports = {
                   test: /[\\/]node_modules[\\/]/,
                   priority: 10,
                   chunks: 'initial' // only package third parties that are initially dependent
-                },
-                elementUI: {
-                  name: 'chunk-elementUI', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-                  test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
                 },
                 commons: {
                   name: 'chunk-commons',
