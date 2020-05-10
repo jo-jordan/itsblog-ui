@@ -1,15 +1,5 @@
 <template>
-  <v-container class="main-container">
-    <transition name="scale-fade">
-      <v-btn v-if="showBlogPage" @click="handleClick" class="fab-back-position" fab dark large left top>
-        <v-icon dark>mdi-arrow-left</v-icon>
-      </v-btn>
-    </transition>
-    <transition name="slide-fade" mode="out-in">
-      <BlogList v-if="!showBlogPage" :items="items" @onShowBlogPage="handleBlogPageShow" />
-      <BlogPage v-if="showBlogPage" :blogId="blogId" @onShowBlogPage="handleBlogPageGone" />
-    </transition>
-  </v-container>
+
 </template>
 
 <script>
