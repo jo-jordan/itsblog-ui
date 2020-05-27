@@ -1,5 +1,5 @@
 <template>
-  <div class="loader-backgound">
+  <div v-show="visible" class="loader-backgound">
     <div class="loader-logo"></div>
     <div class="loader-name"></div>
 
@@ -16,6 +16,7 @@ export default {
   name: 'Loader',
   data () {
     return {
+      visible: false,
       progressWidth: 'width: 0',
       progress: 0,
       maxWidth: 220,
@@ -45,12 +46,9 @@ export default {
               self.loadingText = '正在挖鼻屎...'
             }
           }
-
           
           const width = 'width:' + (self.maxWidth * self.progress / 100) + 'px'
           self.progressWidth = width
-
-          console.log('timer')
         }, 100)
       }
       
@@ -65,7 +63,7 @@ export default {
   position: fixed;
   height: 360px;
   width: 480px;
-  background: url("../assets/normal-bg.svg") top left;
+  background: url("../../assets/normal-bg.svg") top left;
   box-shadow: 0px 6px 16px black;
   top: 50%;
   left: 50%;
@@ -73,7 +71,7 @@ export default {
 }
 
 .loader-logo {
-  background: no-repeat url("../assets/macos-x-logo.png") center;
+  background: no-repeat url("../../assets/macos-x-logo.png") center;
   background-size: contain;
   top: 38px;
   display: block;
@@ -86,7 +84,7 @@ export default {
 }
 
 .loader-name {
-  background: no-repeat url("../assets/loader-macosx.png") center;
+  background: no-repeat url("../../assets/loader-macosx.png") center;
   background-size: contain;
   position: fixed;
   display: block;
@@ -101,7 +99,7 @@ export default {
   position: fixed;
   height: 15px;
   width: 220px;
-  background: no-repeat url("../assets/loader-progress-bg.png") center;
+  background: no-repeat url("../../assets/loader-progress-bg.png") center;
   box-shadow: 0px 4px 8px grey;
   top: 75%;
   left: 50%;
@@ -112,7 +110,7 @@ export default {
   position: fixed;
   height: 15px;
   width: 0px;
-  background: url("../assets/loader-progress.png") top left;
+  background: url("../../assets/loader-progress.png") top left;
   top: 0%;
   left: 0;
 }

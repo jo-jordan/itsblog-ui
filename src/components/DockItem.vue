@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import Window from '../components/Window/Window'
+
 export default {
   name: 'DockItem',
   props: {
@@ -24,12 +26,14 @@ export default {
   },
   methods: {
     dockItemClicked() {
+
       var self = this;
       self.animated = true;
-      setTimeout(()=>{
-        self.animated = false
-      }, 8000)
-      console.log('dockItemClicked')
+      let window = Window({}, ()=>{
+        setTimeout(()=>{
+          self.animated = false
+        }, 800)
+      })
     }
   }
 }
