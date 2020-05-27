@@ -4,8 +4,6 @@
     <router-link to="/"></router-link>
     <router-view/>
 
-    <loader />
-
     <dock class="dock-style" />
   </div>
 </template>
@@ -13,10 +11,9 @@
 <script>
 import StatusBar from './components/StatusBar'
 import Dock from './components/Dock'
-import Loader from './components/Loader'
 
 export default {
-  components: { StatusBar, Dock, Loader },
+  components: { StatusBar, Dock },
   name: 'App',
   data() {
     return {
@@ -45,7 +42,7 @@ export default {
   },
 
   beforeDestroy() { 
-    window.removeEventListener('resize', this.onResize); 
+    window.removeEventListener('resize', this.onResize);
   }
 }
 </script>
