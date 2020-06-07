@@ -31,7 +31,6 @@ export default {
         const obj = { id: id, data: res.data }
         
         this.blogSourceMap.set(id, decodeURIComponent(escape(window.atob(res.data.blogHtml))))
-        console.log(this.blogSourceMap)
       })
     }
   }

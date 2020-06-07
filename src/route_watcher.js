@@ -3,7 +3,6 @@ import Loader from './components/Loader/Loader'
 
 var loader
 router.beforeEach((to, from, next) => {
-  console.log('from:', from, ', to:', to)
   
   if (from.path === '/') {
     loader = Loader()
@@ -14,5 +13,4 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach(() => {
   loader.close()
-  console.log('done')
 })

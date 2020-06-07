@@ -1,42 +1,52 @@
-import Cookies from 'js-cookie'
-
 const state = {
-  sidebar: {
-    opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
-    withoutAnimation: false
+  device: 'desktop',
+  width: 0,
+  height: 0,
+  loadedItems: {
+    finder: false,
+    email: false,
+    archieve: false
   },
-  device: 'desktop'
-}
-
-const mutations = {
-  TOGGLE_SIDEBAR: state => {
-    state.sidebar.opened = !state.sidebar.opened
-    state.sidebar.withoutAnimation = false
-    if (state.sidebar.opened) {
-      Cookies.set('sidebarStatus', 1)
-    } else {
-      Cookies.set('sidebarStatus', 0)
-    }
-  },
-  CLOSE_SIDEBAR: (state, withoutAnimation) => {
-    Cookies.set('sidebarStatus', 0)
-    state.sidebar.opened = false
-    state.sidebar.withoutAnimation = withoutAnimation
-  },
-  TOGGLE_DEVICE: (state, device) => {
-    state.device = device
+  loadItemInstances: {
+    finder: null,
+    email: null,
+    archieve: null
   }
 }
 
+const mutations = {
+  LOAD_ITEM: (state, { itemName, instance }) => {
+    state.loadedItems[itemName] = true
+    state.loadItemInstances[itemName] = instance
+    
+  },
+  UNLOAD_ITEM: (state, itemName) => {
+    state.loadedItems[itemName] = false
+    var instance = state.loadItemInstances[itemName]
+    let target = instance.$el
+    target.parentNode.removeChild(target)
+    state.loadItemInstances[itemName] = null
+  },
+  SET_WIDTH: (state, width) => {
+    state.width = width
+  },
+  SET_HEIGHT: (state, height) => {
+    state.height = height
+  },
+}
+
 const actions = {
-  toggleSideBar({ commit }) {
-    commit('TOGGLE_SIDEBAR')
+  loadItem({ commit }, { itemName, instance }) {
+    commit('LOAD_ITEM', { itemName, instance })
   },
-  closeSideBar({ commit }, { withoutAnimation }) {
-    commit('CLOSE_SIDEBAR', withoutAnimation)
+  unloadItem({ commit }, {itemName}) {
+    commit('UNLOAD_ITEM', itemName)
   },
-  toggleDevice({ commit }, device) {
-    commit('TOGGLE_DEVICE', device)
+  setWidth({ commit }, {width}) {
+    commit('SET_WIDTH', width)
+  },
+  setHeight({ commit }, {height}) {
+    commit('SET_HEIGHT', height)
   }
 }
 
