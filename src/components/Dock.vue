@@ -1,7 +1,7 @@
 <template>
-  <div class="dock-backgound">
+  <div class="dock-backgound" ref="mItem">
     <div class="container">
-      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" />
+      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" :name="item.name" :index="index" :parentLeft="left" />
     </div>
     
   </div>
@@ -20,19 +20,27 @@ export default {
     return {
       items: [
         {
-          name: '全部',
+          name: 'finder',
           src: finderIcon
         },
         {
-          name: '全部',
+          name: 'email',
           src: mailIcon
         },
         {
-          name: '全部',
+          name: 'archieve',
           src: searchIcon
         },
-      ]
+      ],
+      left: 0
     }
+  },
+  mounted() {
+    var width = window.getComputedStyle(this.$refs.mItem).width
+    width = Number(width.substring(0, width.indexOf('px')))
+
+    var leftOffset = window.getComputedStyle(this.$refs.mItem).left
+    this.left = Number(leftOffset.substring(0, leftOffset.indexOf('px'))) - width / 2
   }
 }
 </script>

@@ -1,22 +1,32 @@
 <template>
-  <div class="dock-item" @click="dockItemClicked">
+  <div class="dock-item" @click="dockItemClicked" ref="mItem">
     <img :src="src" :alt="name" :class="{'bounce animated': animated}" width="60px">
   </div>
 </template>
 
 <script>
 import Window from '../components/Window/Window'
+import Event from '../main'
+import store from '../store'
 
 export default {
   name: 'DockItem',
   props: {
     src: {
-     type: String,
-     default: '../assets/macos-x-logo.png'
+      type: String,
+      default: '../assets/macos-x-logo.png'
     },
     name: {
       type: String,
       default: '全部'
+    },
+    index: {
+      type: Number,
+      default: 0
+    },
+    parentLeft: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -26,14 +36,30 @@ export default {
   },
   methods: {
     dockItemClicked() {
+      var self = this
 
-      var self = this;
-      self.animated = true;
-      let window = Window({}, ()=>{
-        setTimeout(()=>{
-          self.animated = false
-        }, 800)
-      })
+      var width = window.getComputedStyle(this.$refs.mItem).width
+      width = Number(width.substring(0, width.indexOf('px')))
+
+      var leftOffset = window.getComputedStyle(this.$refs.mItem).left
+      leftOffset = Number(leftOffset.substring(0, leftOffset.indexOf('px')))
+
+      const p1 = this.parentLeft + this.index * (width + 8)
+      const p2 = p1 + width
+      
+      if (!store.getters.loadedItems[this.name]) {
+        self.animated = true
+        let window = Window({itemName: this.name}, ()=>{
+          setTimeout(()=>{
+            self.animated = false
+            window.visible = true
+            Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
+            store.dispatch('app/loadItem', {itemName:this.name, instance: window})
+          }, 800)
+        })
+      } else {
+        Event.$emit('window-unfold', {itemName:this.name, p1: p1, p2: p2})
+      }
     }
   }
 }
