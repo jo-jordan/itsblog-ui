@@ -1,12 +1,12 @@
 import Vue from 'vue';
-import Main from './Window.vue';
+import Main from './MyAppsWindow.vue';
 
-let WindowConstructor = Vue.extend(Main)
+let MyAppsWindowConstructor = Vue.extend(Main)
 let instance
 
 
-const Window = function(options, onshow) {
-  instance = new WindowConstructor({
+const MyAppsWindow = function(options, onshow) {
+  instance = new MyAppsWindowConstructor({
     data: options
   })
   instance.vm = instance.$mount()
@@ -20,4 +20,4 @@ const Window = function(options, onshow) {
   return instance.vm
 }
 
-export default Window;
+export default MyAppsWindow;
