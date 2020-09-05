@@ -17,6 +17,14 @@
             <div class="window-top-action-bar-inner-text">+</div>
           </div>
         </div>
+
+        <div class="window-top-title">
+          <img style="height: 100%;vertical-align: middle;" :src="finderIcon" alt="Blog Viewer" width="14px">
+          Blog Viewer
+        </div>
+      </div>
+      <div class="window-content">
+        <slot name="content"></slot>
       </div>
     </div>
     <canvas></canvas>
@@ -26,10 +34,13 @@
 <script>
 import store from '../../store'
 import Event from '../../main'
+import finderIcon from '../../assets/macos-x-finder.png'
+
 export default {
   name: 'Window',
   data () {
     return {
+      finderIcon: finderIcon,
       afterDragStyle: {},
       visible: false,
       canvasVisible: false,
@@ -93,6 +104,7 @@ export default {
   methods: {
     unload() {
       store.dispatch('app/unloadItem', {itemName: this.itemName})
+      Event.$emit('window-unload', {itemName:this.itemName})
     },
     fold() {
       var width = window.getComputedStyle(this.$refs.mContainer).width
@@ -308,7 +320,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-canvas{position:absolute;z-index:-1;}
+canvas{position: fixed;z-index:-1;}
 .window-top-action-bar-inner-text {
   line-height: 12px;
   font-size: 8px;
@@ -350,6 +362,14 @@ canvas{position:absolute;z-index:-1;}
 }
 .window-top-action-bar-max-inner {
   background: no-repeat url("../../assets/action-max.png") center;
+}
+
+.window-top-title {
+  width: 50%;
+  font-weight: bold;
+  margin: 0 auto;
+  text-align: center;
+  font-size: small;
 }
 
 .window-top-action-bar {
