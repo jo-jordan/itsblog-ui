@@ -1,7 +1,7 @@
 <template>
   <div class="dock-backgound" ref="mItem">
     <div class="container">
-      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" :name="item.name" :index="index" :parentLeft="left" />
+      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" v-bind:name="item.name" :index="index" :parentLeft="left" />
     </div>
     
   </div>
@@ -12,6 +12,7 @@ import DockItem from './DockItem'
 import mailIcon from '../assets/macos-x-mail.png'
 import finderIcon from '../assets/macos-x-finder.png'
 import searchIcon from '../assets/macos-x-search.png'
+import addresssBook from '../assets/macos-x-address-book.png'
 import defaultIcon from '../assets/macos-x-logo.png'
 export default {
   name: 'Dock',
@@ -30,6 +31,10 @@ export default {
         {
           name: 'archieve',
           src: searchIcon
+        },
+        {
+          name: 'address',
+          src: addresssBook
         },
       ],
       left: 0

@@ -1,11 +1,14 @@
 <template>
   <div class="dock-item" @click="dockItemClicked" ref="mItem">
-    <img :src="src" :alt="name" :class="{'bounce animated': animated}" width="60px">
+    <img :src="src" :alt="name" :class="{'bounce animated': animated}" style="display: block;height: 60px;width:60px;" width="60px">
+    <img :src="indicator" v-if="isIndicatorShow" style="display: table;height: 5.5px;width: auto;margin: auto;padding: 4px" width="2px">
   </div>
 </template>
 
 <script>
 import Window from '../components/Window/Window'
+import ResumeWindow from '../components/ResumeWindow/ResumeWindow'
+import indicatorIcon from '../assets/macos-x-indicator.png'
 import Event from '../main'
 import store from '../store'
 
@@ -31,8 +34,20 @@ export default {
   },
   data() {
     return {
-      animated: false
+      animated: false,
+      indicator: indicatorIcon,
+      isIndicatorShow: false
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      Event.$on('window-unload', (data) => {
+        if (data.itemName === this.name) {
+          this.isIndicatorShow = false
+        }
+      })
+    })
+    
   },
   methods: {
     dockItemClicked() {
@@ -48,6 +63,7 @@ export default {
       const p2 = p1 + width
       
       if (!store.getters.loadedItems[this.name]) {
+        self.isIndicatorShow = true
         self.animated = true
         let window = Window({itemName: this.name}, ()=>{
           setTimeout(()=>{
@@ -58,6 +74,7 @@ export default {
           }, 800)
         })
       } else {
+        self.isIndicatorShow = true
         Event.$emit('window-unfold', {itemName:this.name, p1: p1, p2: p2})
       }
     }
