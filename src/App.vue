@@ -18,19 +18,22 @@ export default {
   name: 'App',
   data() {
     return {
-      windowHeight: 0,
+      appHeight: 0,
+      appWidth: 0,
       style: ''
     }
   },
   watch: {
-    windowHeight(newHeight, oldHeight) {
-      let width = newHeight * 4 / 3
-      this.style = `width:${width}px; height:${newHeight}px`
-      store.dispatch('app/setWidth', {
-        width
-      })
+    appHeight(newVal, oldVal) {
+      this.style = `width:${this.appWidth}px; height:${newVal}px`
       store.dispatch('app/setHeight', {
-        newHeight
+        newVal
+      })
+    },
+    appWidth(newVal, oldVal) {
+      this.style = `width:${newVal}px; height:${this.appHeight}px`
+      store.dispatch('app/setWidth', {
+        newVal
       })
     }
   },
@@ -42,7 +45,8 @@ export default {
   },
   methods: {
     onResize() {
-      this.windowHeight = window.innerHeight
+      this.appWidth = window.innerWidth
+      this.appHeight = window.innerHeight
     }
   },
 
@@ -67,7 +71,7 @@ body {
 .app {
   z-index: 1;
   margin: auto;
-  background: no-repeat center url('./assets/wallpaper-default.png');
-  background-size: contain;
+  background: no-repeat url('./assets/wallpaper-default.png');
+  background-size: cover;
 }
 </style>
