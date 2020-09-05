@@ -276,8 +276,8 @@ export default {
       height = Number(height.substring(0, height.indexOf('px')))
 
       // minLeft = window.width - app.width
-      var appWidth = store.getters.appWidth
-      this.minLeft = (window.innerWidth - appWidth) / 2
+      // var appWidth = store.getters.appWidth
+      this.minLeft = 0
 
       // maxLeft = window.width - container.width
       this.maxLeft = window.innerWidth - width - this.minLeft

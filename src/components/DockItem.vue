@@ -8,6 +8,8 @@
 <script>
 import BlogWindow from '../components/BlogWindow/BlogWindow'
 import ResumeWindow from '../components/ResumeWindow/ResumeWindow'
+import MyAppsWindow from '../components/MyAppsWindow/MyAppsWindow'
+import RSSWindow from '../components/RSSWindow/RSSWindow'
 import indicatorIcon from '../assets/macos-x-indicator.png'
 import Event from '../main'
 import store from '../store'
@@ -90,9 +92,25 @@ export default {
             break
           }
           case 'archieve': {
+            let window = RSSWindow({itemName: this.name}, ()=>{
+              setTimeout(()=>{
+                self.animated = false
+                window.visible = true
+                Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
+                store.dispatch('app/loadItem', {itemName:this.name, instance: window})
+              }, 800)
+            })
             break
           }
           case 'address': {
+            let window = MyAppsWindow({itemName: this.name}, ()=>{
+              setTimeout(()=>{
+                self.animated = false
+                window.visible = true
+                Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
+                store.dispatch('app/loadItem', {itemName:this.name, instance: window})
+              }, 800)
+            })
             break
           }
         }
