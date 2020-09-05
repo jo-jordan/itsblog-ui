@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Window from '../components/Window/Window'
+import BlogWindow from '../components/BlogWindow/BlogWindow'
 import ResumeWindow from '../components/ResumeWindow/ResumeWindow'
 import indicatorIcon from '../assets/macos-x-indicator.png'
 import Event from '../main'
@@ -65,14 +65,38 @@ export default {
       if (!store.getters.loadedItems[this.name]) {
         self.isIndicatorShow = true
         self.animated = true
-        let window = Window({itemName: this.name}, ()=>{
-          setTimeout(()=>{
-            self.animated = false
-            window.visible = true
-            Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
-            store.dispatch('app/loadItem', {itemName:this.name, instance: window})
-          }, 800)
-        })
+
+        switch (this.name) {
+          case 'finder': {
+            let window = BlogWindow({itemName: this.name}, ()=>{
+              setTimeout(()=>{
+                self.animated = false
+                window.visible = true
+                Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
+                store.dispatch('app/loadItem', {itemName:this.name, instance: window})
+              }, 800)
+            })
+            break
+          }
+          case 'email': {
+            let window = ResumeWindow({itemName: this.name}, ()=>{
+              setTimeout(()=>{
+                self.animated = false
+                window.visible = true
+                Event.$emit('window-load', {itemName:this.name, p1: p1, p2: p2})
+                store.dispatch('app/loadItem', {itemName:this.name, instance: window})
+              }, 800)
+            })
+            break
+          }
+          case 'archieve': {
+            break
+          }
+          case 'address': {
+            break
+          }
+        }
+        
       } else {
         self.isIndicatorShow = true
         Event.$emit('window-unfold', {itemName:this.name, p1: p1, p2: p2})

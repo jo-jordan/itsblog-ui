@@ -19,8 +19,8 @@
         </div>
 
         <div class="window-top-title">
-          <img style="height: 100%;vertical-align: middle;" :src="finderIcon" alt="Blog Viewer" width="14px">
-          Blog Viewer
+          <img style="height: 100%;vertical-align: middle;" :src="titleIcon" alt="Blog Viewer" width="14px">
+          Mao Yidan's Resume
         </div>
       </div>
       <div class="window-content">
@@ -34,13 +34,13 @@
 <script>
 import store from '../../store'
 import Event from '../../main'
-import finderIcon from '../../assets/macos-x-finder.png'
+import titleIcon from '../../assets/macos-x-mail.png'
 
 export default {
   name: 'Window',
   data () {
     return {
-      finderIcon: finderIcon,
+      titleIcon: titleIcon,
       afterDragStyle: {},
       visible: false,
       canvasVisible: false,
