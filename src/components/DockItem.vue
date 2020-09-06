@@ -1,8 +1,12 @@
 <template>
-  <div class="dock-item" @click="dockItemClicked" ref="mItem">
-    <img :src="src" :alt="name" :class="{'bounce animated': animated}" style="display: block;height: 60px;width:60px;" width="60px">
-    <img :src="indicator" v-if="isIndicatorShow" style="display: table;height: 5.5px;width: auto;margin: auto;padding: 4px" width="2px">
-  </div>
+<div @mouseover="monseHover = true" @mouseleave="monseHover = false" class="dock-item" @click="dockItemClicked" ref="mItem">
+  <transition name="title-fade">
+    <span v-if="monseHover" class="dock-item-title">{{ appName }}</span>
+  </transition>
+  <img :src="src" :alt="name" :class="{'bounce animated': animated}" style="display: block;height: 60px;width:60px;" width="60px">
+  <img :src="indicator" v-if="isIndicatorShow" style="display: table;height: 5.5px;width: auto;margin: auto;padding: 4px" width="2px">
+</div>
+
 </template>
 
 <script>
@@ -21,6 +25,10 @@ export default {
       type: String,
       default: '../assets/macos-x-logo.png'
     },
+    appName: {
+      type: String,
+      default: '全部'
+    },
     name: {
       type: String,
       default: '全部'
@@ -36,6 +44,7 @@ export default {
   },
   data() {
     return {
+      monseHover: false,
       animated: false,
       indicator: indicatorIcon,
       isIndicatorShow: false
@@ -127,10 +136,18 @@ export default {
 <style>
 @charset "UTF-8";
 
+.title-fade-enter-active, .title-fade-leave-active {
+  transition: opacity .38s;
+}
+
+.title-fade-enter, .title-fade-leave-to {
+  opacity: 0;
+}
+
 .dock-item {
   margin: 0 4px;
   width: 60px;
-  height: 74px;
+  height: 114px;
   display: block;
   float: left;
   opacity: 1.0;
@@ -173,5 +190,20 @@ export default {
   top: 100px;
   left: 100px;
   border-radius: 50%;
+}
+.dock-item-title{
+  background: #ffffffaa;
+  border: 1px black solid;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+  white-space:nowrap;
+  position: fixed;
+  min-width: 30px;
+  text-align: center;
+  margin: 0 auto;
+  transform: translate(-20%, -40px);
+  font-weight: bold;
+  padding: 2px 4px;
 }
 </style>

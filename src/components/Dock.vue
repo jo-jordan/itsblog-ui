@@ -1,7 +1,7 @@
 <template>
   <div class="dock-backgound" ref="mItem">
     <div class="container">
-      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" v-bind:name="item.name" :index="index" :parentLeft="left" />
+      <dock-item :src="item.src" v-for="(item, index) in items" :key="index" v-bind:name="item.name" :app-name="item.appName" :index="index" :parentLeft="left" />
     </div>
     
   </div>
@@ -22,19 +22,23 @@ export default {
       items: [
         {
           name: 'finder',
-          src: finderIcon
+          src: finderIcon,
+          appName: 'Blog Viewer'
         },
         {
           name: 'email',
-          src: mailIcon
+          src: mailIcon,
+          appName: 'Resume'
         },
         {
           name: 'archieve',
-          src: searchIcon
+          src: searchIcon,
+          appName: 'RSS'
         },
         {
           name: 'address',
-          src: addresssBook
+          src: addresssBook,
+          appName: 'My Apps List'
         },
       ],
       left: 0
