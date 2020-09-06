@@ -5,12 +5,14 @@ const state = {
   loadedItems: {
     finder: false,
     email: false,
-    archieve: false
+    archieve: false,
+    address: false
   },
   loadItemInstances: {
     finder: null,
     email: null,
-    archieve: null
+    archieve: null,
+    address: null
   }
 }
 
