@@ -4,7 +4,6 @@ export function bringWindowToTop () {
   let instances = store.getters.loadItemInstances
   for (const [key, value] of Object.entries(instances)) {
 
-    console.log(value)
     if (value) {
       let old = value.afterDragStyle
       Object.assign(old, {zIndex: 0})
