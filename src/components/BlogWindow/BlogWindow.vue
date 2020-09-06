@@ -1,5 +1,5 @@
 <template>
-  <div :style="style">
+  <div @mousedown="bringWindowToTop">
     <div v-show="visible" class="window-backgound" :style="afterDragStyle" ref="mContainer">
       <div class="window-top-action-bar" @mousedown="startDrag">
         <div class="window-top-action-bar-item-outter-common">

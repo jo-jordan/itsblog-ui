@@ -6,11 +6,17 @@ export function bringWindowToTop () {
 
     console.log(value)
     if (value) {
-      Object.assign(value.afterDragStyle, {zIndex: 0})
+      let old = value.afterDragStyle
+      Object.assign(old, {zIndex: 0})
+      value.afterDragStyle = null
+      value.afterDragStyle = old
     }
   }
 
-  Object.assign(this.afterDragStyle, {zIndex: 0})
+  let old = this.afterDragStyle
+  Object.assign(old, {zIndex: 1})
+  this.afterDragStyle = null
+  this.afterDragStyle = old
 }
 
 export function unload() {
