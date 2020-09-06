@@ -20,7 +20,7 @@
 
         <div class="window-top-title">
           <img style="height: 100%;vertical-align: middle;" :src="titleIcon" alt="Blog Viewer" width="14px">
-          Mao Yidan's Resume
+          RSS
         </div>
       </div>
       <div class="window-content">
@@ -34,7 +34,7 @@
 <script>
 import store from '../../store'
 import Event from '../../main'
-import titleIcon from '../../assets/macos-x-mail.png'
+import titleIcon from '../../assets/macos-x-search.png'
 
 export default {
   name: 'RSSWindow',
