@@ -1,4 +1,5 @@
 import store from '../store'
+import Event from '../main'
 
 export function bringWindowToTop () {
   let instances = store.getters.loadItemInstances

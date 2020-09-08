@@ -1,0 +1,150 @@
+[
+  {
+    "Name": "design-patterns-in-java",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/design-patterns-in-java/adapter-pattern.md",
+        "Name": "adapter-pattern.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/design-patterns-in-java/strategy-pattern.md",
+        "Name": "strategy-pattern.md"
+      }
+    ]
+  },
+  {
+    "Name": "java",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/java/spring-cloud-config.md",
+        "Name": "spring-cloud-config.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/java/spring-cloud-netflix.md",
+        "Name": "spring-cloud-netflix.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/java/springboot.md",
+        "Name": "springboot.md"
+      }
+    ]
+  },
+  {
+    "Name": "about-me",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/about-me/resume.md",
+        "Name": "resume.md"
+      }
+    ]
+  },
+  {
+    "Name": "android",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/android/AndroidDev-Adapter.md",
+        "Name": "AndroidDev-Adapter.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/android/AndroidDev-Layout.md",
+        "Name": "AndroidDev-Layout.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/android/AndroidDev-RecyclerView.md",
+        "Name": "AndroidDev-RecyclerView.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/android/activity.md",
+        "Name": "activity.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/android/custom_view.md",
+        "Name": "custom_view.md"
+      }
+    ]
+  },
+  {
+    "Name": "c\u0026c++",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/c\u0026c++/c.md",
+        "Name": "c.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/c\u0026c++/cplusplus.md",
+        "Name": "cplusplus.md"
+      }
+    ]
+  },
+  {
+    "Name": "dart",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/dart/dart2.1.md",
+        "Name": "dart2.1.md"
+      }
+    ]
+  },
+  {
+    "Name": "iOS",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/iOS/base.md",
+        "Name": "base.md"
+      }
+    ]
+  },
+  {
+    "Name": "js",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/js/prop.md",
+        "Name": "prop.md"
+      }
+    ]
+  },
+  {
+    "Name": "dsa",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/dsa/algorithm.md",
+        "Name": "algorithm.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/dsa/data-structure.md",
+        "Name": "data-structure.md"
+      }
+    ]
+  },
+  {
+    "Name": "flutter",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/flutter/flutter1.0.md",
+        "Name": "flutter1.0.md"
+      }
+    ]
+  },
+  {
+    "Name": "gRPC",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/gRPC/grpc.md",
+        "Name": "grpc.md"
+      }
+    ]
+  },
+  {
+    "Name": "git",
+    "Blogs": [
+      {
+        "Url": "https://edgeless.me/notes/git/git-normal.md",
+        "Name": "git-normal.md"
+      },
+      {
+        "Url": "https://edgeless.me/notes/git/git-on-server.md",
+        "Name": "git-on-server.md"
+      }
+    ]
+  }
+]

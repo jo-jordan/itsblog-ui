@@ -24,7 +24,34 @@
         </div>
       </div>
       <div class="window-content">
-        <slot name="content"></slot>
+        <div class="content-common content-categories">
+          <ul style="list-style-type:none;width:100%">
+            <li v-for="(cate, index) in blogData" :key="index" class="category-cell" :style="curCate==cate.Name ? 'background:#00000044;' : ''" @click="onCategoryClick(cate)">
+              
+              <span class="category-cell-title">
+                <img class="category-cell-icon" src="../../assets/logo.png" :alt="cate.Name">
+                {{ cate.Name }}
+              </span>
+              
+            </li>
+          </ul>
+        </div>
+        <div class="content-common content-blogs">
+          <ul style="list-style-type:none;width:100%">
+            <li v-for="(blog, index) in blogList" :key="index" class="blogs-cell" :style="curBlog==blog.Name ? 'background:#00000044;' : ''" @click="onBlogClick(blog)">
+              
+              <span class="blogs-cell-title">
+                <img class="blogs-cell-icon" src="../../assets/logo.png" :alt="blog.Name">
+                {{ blog.Name }}
+              </span>
+              
+            </li>
+          </ul>
+        </div>
+        <div class="content-common content-details">
+          <div v-if="isBlogLoading" class="loading"></div>
+          <article v-else class="markdown-body" v-html="markedText"></article>
+        </div>
       </div>
     </div>
     <canvas></canvas>
@@ -36,6 +63,9 @@ import store from '../../store'
 import Event from '../../main'
 import finderIcon from '../../assets/macos-x-finder.png'
 import { bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize } from '../../common/Window'
+import { readJSONFile, readMarkDownFile } from '../../utils/fileHelper'
+import marked from 'marked'
+import 'github-markdown-css'
 
 export default {
   name: 'BlogWindow',
@@ -66,6 +96,12 @@ export default {
       style: {
         zIndex: 10
       },
+      blogData: [],
+      blogList: [],
+      markedText: '',
+      curCate: '',
+      curBlog: '',
+      isBlogLoading: false
     }
   },
   mounted() {
@@ -103,10 +139,36 @@ export default {
       })
     })
 
-    window.addEventListener('mouseup', this.stopDrag);
-    window.addEventListener('mousemove', this.doDrag);
+    window.addEventListener('mouseup', this.stopDrag)
+    window.addEventListener('mousemove', this.doDrag)
+
+    this.loadJSONFile()
   },
   methods: {
+    onCategoryClick(cate) {
+      this.blogList = []
+      this.blogList = cate.Blogs
+      this.curCate = cate.Name
+    },
+
+    onBlogClick(blog) {
+      this.isBlogLoading = true
+      readMarkDownFile(blog.Url, data => {
+        if (data && data != {} && data.length > 0) {
+          this.markedText = marked(data)
+        } else {
+          this.markedText = marked('# 🥶')
+        }
+        this.isBlogLoading = false
+      })
+      this.curBlog = blog.Name
+    },
+    
+    loadJSONFile() {
+      readJSONFile('https://edgeless.me/go/config.json', obj => {
+        this.blogData = obj
+      })
+    },
     bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize
   }
 }
@@ -114,4 +176,112 @@ export default {
 
 <style lang="scss" scoped>
 @import url('../../style/Window.scss');
+
+.blog-fade-enter-active, .blog-fade-leave-active {
+  transition: opacity .38s;
+}
+
+.blog-fade-enter, .blog-fade-leave-to {
+  opacity: 0;
+}
+
+ul {
+  display: block;
+  list-style-type: none;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+  padding-inline-end: 0px;
+}
+
+.window-backgound {
+  height: 800px;
+  width: 1400px;
+}
+.content-common {
+  height: 100%;
+  float: left;
+
+  overflow: auto;
+}
+
+.content-categories {
+  width: 240px;
+  background: white;
+  margin: 0 14px 0 0;
+  box-shadow: 8px 0px 10px 2px rgba(1, 1, 1, 0.2);
+
+  .category-cell:hover {
+    background: #00000022;
+    cursor: pointer;
+  }
+
+  .category-cell {
+    width: 100%;
+
+    .category-cell-icon {
+      width: 28px;
+      height: 28px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .category-cell-title {
+      width: 100%;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+      padding: 16px 8px;
+      text-align: left;
+      font-size: 20px;
+    }
+  }
+}
+
+.content-blogs {
+  width: 240px;
+  background: white;
+  margin: 0 14px 0 0;
+  box-shadow: 8px 0px 10px 2px rgba(1, 1, 1, 0.2);
+
+  .blogs-cell:hover {
+    background: #00000022;
+    cursor: pointer;
+  }
+  .blogs-cell {
+    width: 100%;
+
+    .blogs-cell-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .blogs-cell-title {
+      width: 100%;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+      padding: 8px;
+      text-align: left;
+    }
+  }
+}
+
+.content-details {
+  width: calc(100% - 480px - 28px - 32px);
+  height: calc(100% - 32px);
+  background: white;
+  padding: 16px 16px;
+}
+
+.loading {
+  width: 100%;
+  height: 100%;
+  background-size: 10%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("../../assets/apple-loading.gif");
+}
 </style>

@@ -74,6 +74,13 @@ canvas{position: fixed;z-index:-1;}
   width: 480px;
   background: url("../assets/normal-bg.svg") top left;
   box-shadow: 0px 6px 16px black;
-
   border-radius: 8px 8px 0 0;
+}
+
+.window-content {
+  height: calc(100% - 21px);
+  width: 100%;
+  overflow-y: auto;
+  background: white;
+  display: block;
 }
