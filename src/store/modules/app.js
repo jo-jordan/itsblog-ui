@@ -6,13 +6,15 @@ const state = {
     finder: false,
     email: false,
     archieve: false,
-    address: false
+    address: false,
+    about: false
   },
   loadItemInstances: {
     finder: null,
     email: null,
     archieve: null,
-    address: null
+    address: null,
+    about: null
   }
 }
 

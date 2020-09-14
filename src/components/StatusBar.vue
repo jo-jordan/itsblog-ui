@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <div class="menu-bar">
-      <div class="menu-item">
+      <div class="menu-item" @click="onAppleLogoClicked">
         <img src="../assets/macos-x-logo.png" width="18px"/>
       </div>
       <div v-for="(item,index) in menuItems" :key="item" class="menu-item">
@@ -22,6 +22,10 @@
 
 <script>
 import '../utils/Date+'
+import store from '../store'
+import Event from '../main'
+import SystemInfoDialog from '../components/SystemInfoDialog/SystemInfoDialog'
+
 export default {
   name: 'StatusBar',
   components: {
@@ -42,6 +46,18 @@ export default {
     setInterval(this.getNow, 10000)
   },
   methods: {
+    onAppleLogoClicked() {
+      if (store.getters.loadedItems['about']) {
+        return
+      }
+      let window = SystemInfoDialog({itemName: 'about'}, ()=>{
+        setTimeout(()=>{
+          window.visible = true
+          Event.$emit('about-dialog-load', {itemName: 'about'})
+          store.dispatch('app/loadItem', {itemName: 'about', instance: window})
+        }, 100)
+      })
+    },
     getNow: function() {
       const today = new Date()
       var weekday = new Array(7);
