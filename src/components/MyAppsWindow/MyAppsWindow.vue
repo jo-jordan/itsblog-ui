@@ -115,4 +115,9 @@ export default {
 <style lang="scss" scoped>
 @import url('../../style/Window.scss');
 
+.window-top-action-bar:hover {
+  .window-top-action-bar-inner-text {
+    color: rgba(0,0,0, 0.6);
+  }
+}
 </style>

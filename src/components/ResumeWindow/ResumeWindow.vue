@@ -155,5 +155,10 @@ export default {
   border-bottom: 1px solid #c3c3c3;
 }
 
+.window-top-action-bar:hover {
+  .window-top-action-bar-inner-text {
+    color: rgba(0,0,0, 0.6);
+  }
+}
 
 </style>

@@ -124,4 +124,10 @@ export default {
   box-shadow: 0px 6px 16px black;
   border-radius: 8px 8px 0 0;
 }
+
+.window-top-action-bar:hover {
+  .window-top-action-bar-inner-text {
+    color: rgba(0,0,0, 0.6);
+  }
+}
 </style>

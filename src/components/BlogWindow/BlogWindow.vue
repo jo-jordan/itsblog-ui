@@ -284,4 +284,10 @@ ul {
   background-repeat: no-repeat;
   background-image: url("../../assets/apple-loading.gif");
 }
+
+.window-top-action-bar:hover {
+  .window-top-action-bar-inner-text {
+    color: rgba(0,0,0, 0.6);
+  }
+}
 </style>
