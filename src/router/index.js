@@ -9,29 +9,7 @@ const routes = [
     path: '/',
     name: 'dashboard',
     redirect: 'dashboard',
-    component: Dashboard,
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('../components/Dash.vue'),
-        name: 'Dashboard',
-      },
-      {
-        path: 'all',
-        name: 'all',
-        component: () => import('../views/All.vue')
-      },
-      {
-        path: 'archive',
-        name: 'archive',
-        component: () => import('../views/Archive.vue')
-      },
-      {
-        path: 'resume',
-        name: 'resume',
-        component: () => import('../views/Resume.vue')
-      }
-    ]
+    component: Dashboard
   }
 ]
 
