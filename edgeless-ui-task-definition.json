@@ -59,7 +59,7 @@
           "dockerLabels": null,
           "systemControls": null,
           "privileged": null,
-          "name": "sample-app"
+          "name": "edgeless-ui"
       }
   ],
   "memory": "512",
