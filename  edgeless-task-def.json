@@ -9,7 +9,7 @@
               "logDriver": "awslogs",
               "secretOptions": null,
               "options": {
-                  "awslogs-group": "/ecs/edgeless-ui-task-definition",
+                  "awslogs-group": "/ecs/edgeless-task-def",
                   "awslogs-region": "us-east-2",
                   "awslogs-stream-prefix": "ecs"
               }
