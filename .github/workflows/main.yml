@@ -31,8 +31,8 @@ jobs:
     - name: Build Application
       run: npm run build
 
-    - uses: jakejarvis/s3-sync-action@master
-      name: Upload App to S3 Bucket
+    - name: Upload App to S3 Bucket
+      uses: jakejarvis/s3-sync-action@master
       with:
         args: --follow-symlinks --delete
       env:
