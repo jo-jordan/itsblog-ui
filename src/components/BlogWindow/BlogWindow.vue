@@ -174,7 +174,6 @@ export default {
 
     fetchCategories() {
       getCategories().then(res => {
-        console.log(res)
         this.blogData = res
       })
     },
