@@ -1,25 +1,22 @@
 import request from '../utils/request'
 
-export function getDashboard(query) {
+export function getCategories() {
   return request({
-    url: '/app/blog/dashboard',
+    url: '/',
     method: 'get',
-    params: query
   })
 }
 
-export function getList(query) {
+export function getBlogs(category) {
   return request({
-    url: '/app/blog/list',
+    url: '/' + category,
     method: 'get',
-    params: query
   })
 }
 
-export function findById(query) {
+export function getBlog(category, id) {
   return request({
-    url: '/app/blog/find-by-id',
+    url: '/' + category + '/' + id,
     method: 'get',
-    params: query
   })
 }

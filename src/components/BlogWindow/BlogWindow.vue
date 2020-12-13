@@ -26,7 +26,7 @@
       <div class="window-content">
         <div class="content-common content-categories">
           <ul style="list-style-type:none;width:100%">
-            <li v-for="(cate, index) in blogData" :key="index" class="category-cell" :style="curCate==cate.Name ? 'background:#00000044;' : ''" @click="onCategoryClick(cate)">
+            <li v-for="(cate, index) in blogData" :key="index" class="category-cell" :style="curCate.Name==cate.Name ? 'background:#00000044;' : ''" @click="onCategoryClick(cate)">
               
               <span class="category-cell-title">
                 <img class="category-cell-icon" src="../../assets/logo.png" :alt="cate.Name">
@@ -38,7 +38,7 @@
         </div>
         <div class="content-common content-blogs">
           <ul style="list-style-type:none;width:100%">
-            <li v-for="(blog, index) in blogList" :key="index" class="blogs-cell" :style="curBlog==blog.Name ? 'background:#00000044;' : ''" @click="onBlogClick(blog)">
+            <li v-for="(blog, index) in blogList" :key="index" class="blogs-cell" :style="curBlog.Name==blog.Name ? 'background:#00000044;' : ''" @click="onBlogClick(blog)">
               
               <span class="blogs-cell-title">
                 <img class="blogs-cell-icon" src="../../assets/logo.png" :alt="blog.Name">
@@ -64,6 +64,7 @@ import Event from '../../main'
 import finderIcon from '../../assets/macos-x-finder.png'
 import { bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize } from '../../common/Window'
 import { readJSONFile, readMarkDownFile } from '../../utils/fileHelper'
+import { getCategories, getBlogs, getBlog } from '../../api/blog'
 import marked from 'marked'
 import 'github-markdown-css'
 
@@ -99,8 +100,8 @@ export default {
       blogData: [],
       blogList: [],
       markedText: '',
-      curCate: '',
-      curBlog: '',
+      curCate: {},
+      curBlog: {},
       isBlogLoading: false
     }
   },
@@ -143,31 +144,43 @@ export default {
     window.addEventListener('mousemove', this.doDrag)
 
     this.loadJSONFile()
+    this.fetchCategories()
   },
   methods: {
     onCategoryClick(cate) {
-      this.blogList = []
-      this.blogList = cate.Blogs
-      this.curCate = cate.Name
+      getBlogs(cate.ID).then(res => {
+        this.blogList = []
+        this.blogList = res
+      })
+      this.curCate = cate
     },
 
     onBlogClick(blog) {
       this.isBlogLoading = true
-      readMarkDownFile(blog.Url, data => {
-        if (data && data != {} && data.length > 0) {
-          this.markedText = marked(data)
-        } else {
-          this.markedText = marked('# 🥶')
-        }
-        this.isBlogLoading = false
+      getBlog(this.curCate.ID, blog.ID).then(res => {
+
+        readMarkDownFile(res.URL, data => {
+          if (data && data != {} && data.length > 0) {
+            this.markedText = marked(data)
+          } else {
+            this.markedText = marked('# 🥶')
+          }
+          this.isBlogLoading = false
+        })
       })
-      this.curBlog = blog.Name
+      
+      this.curBlog = blog
+    },
+
+    fetchCategories() {
+      getCategories().then(res => {
+        console.log(res)
+        this.blogData = res
+      })
     },
     
     loadJSONFile() {
-      readJSONFile('https://edgeless.me/go/config.json', obj => {
-        this.blogData = obj
-      })
+      
     },
     bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize
   }
