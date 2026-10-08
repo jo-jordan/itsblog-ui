@@ -11,7 +11,7 @@ Mac OS X 10.0–10.2 ("Aqua") style personal blog: Vue 2.7 + Vue CLI 4 (webpack 
 
 - `npm ci` / `npm run serve` (dev server on port 9528) / `npm run build` / `npm run lint`
 - Build output goes to `./itsblog-ui` (not `dist`); Node version is pinned in `.node-version` (22).
-- Keep `package-lock.json` committed and resolved from registry.npmjs.org.
+- Keep `package-lock.json` committed and resolved from registry.npmjs.org. Workers Builds installs with `npm ci`, so after any dependency change confirm `npm ci` succeeds in a clean checkout (a stale `node_modules` hides an out-of-sync lockfile).
 
 ## Deployment
 
