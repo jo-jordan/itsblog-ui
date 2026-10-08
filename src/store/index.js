@@ -1,15 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import getters from './getters'
-import app from './modules/app'
+import windows from './modules/windows'
+import system from './modules/system'
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
+export default new Vuex.Store({
   modules: {
-    app
-  },
-  getters
+    windows,
+    system
+  }
 })
-
-export default store

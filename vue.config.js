@@ -51,6 +51,15 @@ module.exports = {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
+    // Posts are bundled as raw Markdown strings
+    config.module
+      .rule('markdown')
+      .test(/\.md$/)
+      .use('raw-loader')
+      .loader('raw-loader')
+      .options({ esModule: false })
+      .end()
+
     // set preserveWhitespace
     config.module
       .rule('vue')

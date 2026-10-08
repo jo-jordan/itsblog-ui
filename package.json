@@ -1,6 +1,6 @@
 {
   "name": "itsblog-ui",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,10 +9,10 @@
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
-    "axios": "^0.34.0",
     "core-js": "^3.6.5",
     "dompurify": "^3.4.16",
     "github-markdown-css": "^4.0.0",
+    "highlight.js": "^11.12.0",
     "marked": "^4.3.0",
     "vue": "^2.6.12",
     "vue-router": "^3.4.3",
@@ -28,6 +28,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^4.0.2",
     "sass": "^1.26.10",
     "sass-loader": "^8.0.2",
     "script-ext-html-webpack-plugin": "2.1.3",

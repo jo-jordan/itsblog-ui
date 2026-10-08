@@ -1,84 +1,75 @@
 <template>
-  <div id="app" class="app" :style="style" ref="mApp">
-    <status-bar />
-    <router-link to="/"></router-link>
-    <router-view/>
-
-    <dock class="dock-style" />
+  <div id="app" class="desktop" :class="`appearance-${prefs.appearance}`" :style="{ background: wallpaper }" @pointerdown="onDesktopPointerDown">
+    <menu-bar />
+    <desktop-icons />
+    <app-window v-for="win in windows" :key="win.id" :win="win" />
+    <dock />
+    <power-overlay />
+    <boot-screen v-if="power === 'booting'" />
   </div>
 </template>
 
 <script>
-import StatusBar from './components/StatusBar'
+import { mapState } from 'vuex'
+import MenuBar from './components/MenuBar'
 import Dock from './components/Dock'
-import store from './store'
+import DesktopIcons from './components/DesktopIcons'
+import AppWindow from './components/aqua/AppWindow'
+import BootScreen from './components/BootScreen'
+import PowerOverlay from './components/PowerOverlay'
+import { wallpaperBackground } from './config/wallpapers'
+import { findPost } from './utils/posts'
+import site from './config/site'
 
 export default {
-  components: { StatusBar, Dock },
   name: 'App',
-  data() {
-    return {
-      appHeight: 0,
-      appWidth: 0,
-      style: ''
+  components: { MenuBar, Dock, DesktopIcons, AppWindow, BootScreen, PowerOverlay },
+  computed: {
+    ...mapState('windows', ['windows']),
+    ...mapState('system', ['prefs', 'power']),
+    wallpaper() {
+      return wallpaperBackground(this.prefs.wallpaper)
     }
   },
   watch: {
-    appHeight(newVal, oldVal) {
-      this.style = `width:${this.appWidth}px; height:${newVal}px`
-      store.dispatch('app/setHeight', {
-        height: newVal
-      })
+    // /posts/:slug opens that post in its own reader window, so links are shareable
+    $route: {
+      immediate: true,
+      handler(route) {
+        const post = route.name === 'post' ? findPost(route.params.slug) : null
+        if (post) {
+          this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug } })
+          document.title = `${post.title} — ${site.title}`
+        } else {
+          document.title = site.title
+          if (route.name === 'post') {
+            this.$router.replace('/')
+          }
+        }
+      }
     },
-    appWidth(newVal, oldVal) {
-      this.style = `width:${newVal}px; height:${this.appHeight}px`
-      store.dispatch('app/setWidth', {
-        width: newVal
-      })
+    // Closing the reader of the post in the URL returns to the bare desktop
+    windows(windows) {
+      const slug = this.$route.name === 'post' && this.$route.params.slug
+      if (slug && !windows.some(w => w.appId === 'reader' && w.props.slug === slug)) {
+        this.$router.replace('/')
+      }
     }
-  },
-  mounted () {
-    this.$nextTick(() => {
-      window.addEventListener('resize', this.onResize);
-    })
-    this.onResize()
   },
   methods: {
-    onResize() {
-      this.appWidth = window.innerWidth
-      this.appHeight = window.innerHeight
+    onDesktopPointerDown(event) {
+      if (event.target === this.$el) {
+        this.$store.dispatch('windows/blur')
+      }
     }
-  },
-
-  beforeDestroy() { 
-    window.removeEventListener('resize', this.onResize);
   }
 }
 </script>
 
-<style>
-
-body {
-  margin: auto;
-  background: black;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none;
-}
-/* Article text must stay selectable so readers can copy code */
-.markdown-body {
-  -webkit-user-select: text;
-     -moz-user-select: text;
-      -ms-user-select: text;
-          user-select: text;
-}
-.app {
-  z-index: 1;
-  margin: auto;
-  background: no-repeat url('./assets/wallpaper-default.png');
-  background-size: cover;
+<style lang="scss">
+.desktop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
 }
 </style>

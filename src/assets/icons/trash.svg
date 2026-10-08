@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="can" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8f969f"/>
+      <stop offset="0.35" stop-color="#eef1f4"/>
+      <stop offset="0.65" stop-color="#d3d8de"/>
+      <stop offset="1" stop-color="#858c95"/>
+    </linearGradient>
+    <pattern id="mesh" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 0l8 8M8 0L0 8" stroke="#5f6670" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+  <path d="M28 30h72l-8 86c0 3-3 5-6 5H42c-3 0-6-2-6-5z" fill="url(#can)" stroke="#5a616a" stroke-width="2"/>
+  <path d="M33 36h62l-7 78H40z" fill="url(#mesh)" opacity=".55"/>
+  <ellipse cx="64" cy="30" rx="38" ry="8" fill="#e9ecef" stroke="#5a616a" stroke-width="2"/>
+  <ellipse cx="64" cy="30" rx="32" ry="5" fill="#9aa1aa"/>
+</svg>

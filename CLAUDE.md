@@ -7,7 +7,7 @@
 
 ## Project
 
-Mac OS X style personal blog: Vue 2.7 + Vue CLI 4 (webpack 4), Vuex, vue-router (hash mode).
+Mac OS X 10.0–10.2 ("Aqua") style personal blog: Vue 2.7 + Vue CLI 4 (webpack 4), Vuex, vue-router (history mode). The Aqua look is the point of the site: new UI must keep to it (pinstripes, gel buttons, traffic lights, Lucida Grande, the original icons in `src/assets`).
 
 - `npm ci` / `npm run serve` (dev server on port 9528) / `npm run build` / `npm run lint`
 - Build output goes to `./itsblog-ui` (not `dist`); Node version is pinned in `.node-version` (22).
@@ -19,10 +19,12 @@ Mac OS X style personal blog: Vue 2.7 + Vue CLI 4 (webpack 4), Vuex, vue-router 
 - `worker/index.js` runs before the assets only to 301 `www.` to the apex; everything else is served from the build output.
 - Workers Builds: build command `npm run build`, deploy command `npx wrangler deploy`. Manual deploy: `npm run deploy`.
 - `public/_headers` sets long-lived caching for the fingerprinted `/static/*` files.
-- `.github/workflows/main.yml` is the old AWS S3/CloudFront pipeline and is obsolete.
 
 ## Code notes
 
-- Desktop "windows" (`src/components/*Window`) are mounted imperatively via `Vue.extend` and share behaviour from `src/common/Window.js`; register global listeners with `attachWindowEvents` and remove them in `beforeDestroy`.
-- Any Markdown rendered with `v-html` must go through `renderMarkdown` in `src/utils/markdown.js` (marked + DOMPurify).
-- Blog data comes from `VUE_APP_BASE_API` (`.env.*`); the site must still load when that API is unavailable.
+- Posts are Markdown files in `content/posts/*.md` with front matter (`title`, `date`, `category`, `tags`, `summary`), bundled at build time by `src/utils/posts.js`; the file name is the slug and `/posts/<slug>` opens it. `welcome.md` is the desktop's "请先阅读" help document.
+- Window manager: `src/store/modules/windows.js` holds every open window; `src/components/aqua/AppWindow.vue` draws the chrome (drag, resize, zoom, genie/scale minimise via `src/utils/genie.js`). Applications live in `src/apps/` and are registered in `src/apps/registry.js` (name, icon, size, `instanceKey`).
+- Preferences (wallpaper, Dock magnification, minimise effect, Blue/Graphite appearance) live in `src/store/modules/system.js` and persist to localStorage; wallpapers are in `src/config/wallpapers.js`.
+- Owner name, e-mail and links shown on the site are in `src/config/site.js`.
+- Any Markdown rendered with `v-html` must go through `renderMarkdown` in `src/utils/markdown.js` (marked + highlight.js + DOMPurify).
+- Shared Aqua styles (colours as CSS variables, buttons, fields, scrollbars, menus) are in `src/style/aqua.scss`.
