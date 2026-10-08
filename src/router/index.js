@@ -10,6 +10,7 @@ export default new VueRouter({
   routes: [
     { path: '/', name: 'desktop' },
     { path: '/posts/:slug', name: 'post' },
+    { path: '/places/:id', name: 'place' },
     { path: '*', redirect: '/' }
   ]
 })

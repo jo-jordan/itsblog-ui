@@ -34,6 +34,11 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    // `npx wrangler dev` serves the API and photos locally
+    proxy: {
+      '/api': { target: 'http://127.0.0.1:8787' },
+      '/media': { target: 'http://127.0.0.1:8787' }
     }
   },
   configureWebpack: {

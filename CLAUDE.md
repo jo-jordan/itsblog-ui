@@ -16,7 +16,9 @@ Mac OS X 10.0–10.2 ("Aqua") style personal blog: Vue 2.7 + Vue CLI 4 (webpack 
 ## Deployment
 
 - Static site on Cloudflare Workers, configured in `wrangler.jsonc`, served at `edgeless.me` (and `www.edgeless.me`) via Custom Domains.
-- `worker/index.js` runs before the assets only to 301 `www.` to the apex; everything else is served from the build output.
+- `worker/index.js` (Hono) runs before the assets: 301s `www.` to the apex, serves the Footprints API under `/api` (`worker/api.js`) and photos under `/media` from R2, and hands everything else to the build output.
+- Bindings: D1 `itsblog-db` as `DB` (schema in `migrations/`, apply new files with `npx wrangler d1 migrations apply itsblog-db --remote`), R2 bucket `itsblog-media` as `MEDIA`. The admin password is the Worker secret `ADMIN_PASSWORD`; sessions are cookies signed with a key derived from it.
+- Local API: put `ADMIN_PASSWORD=...` in `.dev.vars` (git-ignored), run `npx wrangler d1 migrations apply itsblog-db --local`, then `npx wrangler dev` (site + API on :8787, restart it after each `npm run build`); `npm run serve` proxies `/api` and `/media` to it.
 - Workers Builds: build command `npm run build`, deploy command `npx wrangler deploy`. Manual deploy: `npm run deploy`.
 - `public/_headers` sets long-lived caching for the fingerprinted `/static/*` files.
 
@@ -27,4 +29,5 @@ Mac OS X 10.0–10.2 ("Aqua") style personal blog: Vue 2.7 + Vue CLI 4 (webpack 
 - Preferences (wallpaper, Dock magnification, minimise effect, Blue/Graphite appearance) live in `src/store/modules/system.js` and persist to localStorage; wallpapers are in `src/config/wallpapers.js`.
 - Owner name, e-mail and links shown on the site are in `src/config/site.js`.
 - Any Markdown rendered with `v-html` must go through `renderMarkdown` in `src/utils/markdown.js` (marked + highlight.js + DOMPurify).
+- Footprints (`src/apps/Footprints.vue`, `src/apps/footprints/`): Leaflet map (tiles in `src/config/map.js`), cards and timeline of places from the API; when signed in (Apple menu > 登录…, `src/apps/Login.vue`, `src/store/modules/session.js`) the same window edits places in `AquaSheet`s. Photos are resized in the browser (`src/utils/images.js`) before upload. `/places/<id>` opens a place. All API calls go through `src/api/client.js`, which adds the `X-Requested-With` header the Worker requires for admin writes. Leaflet uses z-indexes up to 1000, so the window body is `isolation: isolate` and its overlays sit above 1000.
 - Shared Aqua styles (colours as CSS variables, buttons, fields, scrollbars, menus) are in `src/style/aqua.scss`.

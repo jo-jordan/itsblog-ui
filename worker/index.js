@@ -1,12 +1,50 @@
-// Runs in front of the static assets: canonicalise www.edgeless.me to the
-// apex domain, then hand every other request to the asset server.
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url)
-    if (url.hostname.startsWith('www.')) {
-      url.hostname = url.hostname.slice(4)
-      return Response.redirect(url.toString(), 301)
-    }
-    return env.ASSETS.fetch(request)
+import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
+import api from './api'
+
+// Runs in front of the static Vue build: canonicalises www.edgeless.me,
+// serves the footprints API and its photos, and hands everything else to
+// the asset server.
+const app = new Hono()
+
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url)
+  if (url.hostname.startsWith('www.')) {
+    url.hostname = url.hostname.slice(4)
+    return c.redirect(url.toString(), 301)
   }
-}
+  await next()
+})
+
+app.route('/api', api)
+app.all('/api/*', c => c.json({ error: 'Not found' }, 404))
+
+// Photos live in R2 under unguessable, never-reused keys
+app.get('/media/*', async c => {
+  const key = decodeURIComponent(new URL(c.req.url).pathname.slice('/media/'.length))
+  if (!key.startsWith('places/')) {
+    return c.notFound()
+  }
+  const object = await c.env.MEDIA.get(key, { onlyIf: c.req.raw.headers })
+  if (!object) {
+    return c.text('Not found', 404)
+  }
+  const headers = new Headers()
+  object.writeHttpMetadata(headers)
+  headers.set('ETag', object.httpEtag)
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+  // A conditional request that matched has no body: tell the browser to reuse its copy
+  return 'body' in object && object.body ? new Response(object.body, { headers }) : new Response(null, { status: 304, headers })
+})
+
+app.all('*', c => c.env.ASSETS.fetch(c.req.raw))
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return c.json({ error: err.message }, err.status)
+  }
+  console.error(err)
+  return c.json({ error: '服务器出错了' }, 500)
+})
+
+export default app

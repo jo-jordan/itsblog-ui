@@ -5,6 +5,8 @@ import addressBookIcon from '../assets/macos-x-address-book.png'
 import appleIcon from '../assets/macos-x-logo.png'
 import documentIcon from '../assets/icons/document.svg'
 import preferencesIcon from '../assets/icons/preferences.svg'
+import footprintsIcon from '../assets/icons/footprints.svg'
+import loginIcon from '../assets/logo.png'
 
 // Every window on the desktop belongs to one of these applications.
 export const apps = {
@@ -40,6 +42,20 @@ export const apps = {
     component: () => import(/* webpackChunkName: "address-book" */ './AddressBook.vue'),
     size: { width: 640, height: 400 }
   },
+  footprints: {
+    name: '足迹',
+    icon: footprintsIcon,
+    component: () => import(/* webpackChunkName: "footprints" */ './Footprints.vue'),
+    size: { width: 1020, height: 640 }
+  },
+  login: {
+    name: '登录',
+    icon: loginIcon,
+    component: () => import(/* webpackChunkName: "login" */ './Login.vue'),
+    size: { width: 380, height: 330 },
+    resizable: false,
+    dialog: true
+  },
   preferences: {
     name: '系统偏好设置',
     icon: preferencesIcon,
@@ -58,4 +74,4 @@ export const apps = {
 }
 
 // Order of the application icons in the Dock
-export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'preferences']
+export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'footprints', 'preferences']

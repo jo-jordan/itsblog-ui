@@ -32,12 +32,15 @@ export default {
     }
   },
   watch: {
-    // /posts/:slug opens that post in its own reader window, so links are shareable
+    // /posts/:slug opens that post in its own reader window and /places/:id
+    // opens Footprints on that place, so links are shareable
     $route: {
       immediate: true,
       handler(route) {
         const post = route.name === 'post' ? findPost(route.params.slug) : null
-        if (post) {
+        if (route.name === 'place') {
+          this.$store.dispatch('windows/open', { appId: 'footprints', props: { placeId: Number(route.params.id) } })
+        } else if (post) {
           this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug } })
           document.title = `${post.title} — ${site.title}`
         } else {
@@ -48,13 +51,18 @@ export default {
         }
       }
     },
-    // Closing the reader of the post in the URL returns to the bare desktop
+    // Closing the window that shows the URL's post or place returns to the bare desktop
     windows(windows) {
       const slug = this.$route.name === 'post' && this.$route.params.slug
-      if (slug && !windows.some(w => w.appId === 'reader' && w.props.slug === slug)) {
+      const lostPost = slug && !windows.some(w => w.appId === 'reader' && w.props.slug === slug)
+      const lostPlace = this.$route.name === 'place' && !windows.some(w => w.appId === 'footprints')
+      if (lostPost || lostPlace) {
         this.$router.replace('/')
       }
     }
+  },
+  created() {
+    this.$store.dispatch('session/check')
   },
   methods: {
     onDesktopPointerDown(event) {

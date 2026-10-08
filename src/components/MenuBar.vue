@@ -95,7 +95,11 @@ export default {
             SEPARATOR,
             { label: '睡眠', action: () => this.dispatch('system/sleep') },
             { label: '重新启动…', action: () => this.dispatch('system/restart') },
-            { label: '关机…', action: () => this.dispatch('system/shutDown') }
+            { label: '关机…', action: () => this.dispatch('system/shutDown') },
+            SEPARATOR,
+            this.$store.state.session.loggedIn
+              ? { label: `注销 ${site.owner.name}…`, action: () => this.dispatch('session/logout') }
+              : { label: '登录…', action: () => this.open('login') }
           ]
         },
         {
