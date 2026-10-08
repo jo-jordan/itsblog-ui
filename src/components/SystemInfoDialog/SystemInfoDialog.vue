@@ -22,10 +22,9 @@
 
 <script>
 import store from '../../store'
-import Event from '../../main'
 import titleIcon from '../../assets/logo.png'
 import { bringWindowToTop, stopDrag, startDrag, doDrag, resize } from '../../common/Window'
-import marked from 'marked'
+import { renderMarkdown } from '../../utils/markdown'
 import 'github-markdown-css'
 
 export default {
@@ -77,13 +76,9 @@ export default {
         left: centerLeft + 'px',
         top: centerTop + 'px'
       }
-
-      Event.$on('about-dialog-load', (data) => {
-        
-      })
     })
 
-    this.markedText = marked(
+    this.markedText = renderMarkdown(
         '### This site is still building...' +
         '\r\n' +
         'Any question if you want, please: ' +
@@ -98,6 +93,10 @@ export default {
 
     window.addEventListener('mouseup', this.stopDrag);
     window.addEventListener('mousemove', this.doDrag);
+  },
+  beforeDestroy() {
+    window.removeEventListener('mouseup', this.stopDrag);
+    window.removeEventListener('mousemove', this.doDrag);
   },
   methods: {
     unload() {

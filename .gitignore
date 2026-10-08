@@ -2,7 +2,6 @@
 node_modules
 /dist
 /itsblog-ui
-package-lock.json
 # local env files
 .env.local
 .env.*.local
@@ -21,4 +20,3 @@ yarn-error.log*
 *.sln
 *.sw?
 dock.html
-package-lock.json

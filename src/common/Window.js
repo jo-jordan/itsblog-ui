@@ -178,6 +178,35 @@ export function scale(s1, s2, p1, p2, type, callback) {
   }
 }
 
+export function onWindowUnfold(data) {
+  if (data.itemName === this.itemName && this.visible === false) {
+    this.p1 = data.p1
+    this.p2 = data.p2
+    this.unfold()
+  }
+}
+
+export function onWindowLoad(data) {
+  if (data.itemName === this.itemName) {
+    this.p1 = data.p1
+    this.p2 = data.p2
+  }
+}
+
+export function attachWindowEvents() {
+  Event.$on('window-unfold', this.onWindowUnfold)
+  Event.$on('window-load', this.onWindowLoad)
+  window.addEventListener('mouseup', this.stopDrag)
+  window.addEventListener('mousemove', this.doDrag)
+}
+
+export function detachWindowEvents() {
+  Event.$off('window-unfold', this.onWindowUnfold)
+  Event.$off('window-load', this.onWindowLoad)
+  window.removeEventListener('mouseup', this.stopDrag)
+  window.removeEventListener('mousemove', this.doDrag)
+}
+
 export function stopDrag() {
   this.dragging = false
 }
@@ -209,8 +238,8 @@ export function startDrag(event) {
   // minTop = statusbar.height
   this.minTop = 22
 
-  // maxTop = container.height + dock.height
-  this.maxTop = 74 + outerHeight
+  // maxTop keeps the title bar above the dock so the window can still be dragged back
+  this.maxTop = window.innerHeight - 74 - 21
 }
 
 export function doDrag(event) {
@@ -234,7 +263,7 @@ export function resize() {
     Object.assign(obj, {left: curLeft + 'px'})
   }
 
-  if (curTop >= this.minTop) {
+  if (curTop >= this.minTop && curTop <= this.maxTop) {
     Object.assign(obj, {top: curTop + 'px'})
   }
 

@@ -27,13 +27,13 @@ export default {
     appHeight(newVal, oldVal) {
       this.style = `width:${this.appWidth}px; height:${newVal}px`
       store.dispatch('app/setHeight', {
-        newVal
+        height: newVal
       })
     },
     appWidth(newVal, oldVal) {
       this.style = `width:${newVal}px; height:${this.appHeight}px`
       store.dispatch('app/setWidth', {
-        newVal
+        width: newVal
       })
     }
   },
@@ -67,6 +67,13 @@ body {
        -moz-user-select: none; /* Old versions of Firefox */
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none;
+}
+/* Article text must stay selectable so readers can copy code */
+.markdown-body {
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
 }
 .app {
   z-index: 1;

@@ -29,6 +29,7 @@ const mutations = {
     var instance = state.loadItemInstances[itemName]
     let target = instance.$el
     target.parentNode.removeChild(target)
+    instance.$destroy()
     state.loadItemInstances[itemName] = null
   },
   SET_WIDTH: (state, width) => {

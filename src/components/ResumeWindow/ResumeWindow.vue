@@ -30,15 +30,14 @@
       
       </div>
     </div>
-    <canvas></canvas>
+    <canvas ref="mCanvas"></canvas>
   </div>
 </template>
 
 <script>
 import store from '../../store'
-import Event from '../../main'
 import titleIcon from '../../assets/macos-x-mail.png'
-import { bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize } from '../../common/Window'
+import { bringWindowToTop, fold, unfold, unload, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize, onWindowUnfold, onWindowLoad, attachWindowEvents, detachWindowEvents } from '../../common/Window'
 
 export default {
   name: 'Window',
@@ -88,29 +87,18 @@ export default {
         top: centerTop + 'px'
       }
 
-      this.canvas = document.querySelector("canvas");
+      this.canvas = this.$refs.mCanvas
       this.ctx = this.canvas.getContext("2d");
-      Event.$on('window-unfold', (data) => {
-        if (data.itemName === this.itemName && this.visible === false) {
-          this.unfold()
-          this.p1 = data.p1
-          this.p2 = data.p2
-        }
-      })
-
-      Event.$on('window-load', (data) => {
-        if (data.itemName === this.itemName) {
-          this.p1 = data.p1
-          this.p2 = data.p2
-        }
-      })
     })
 
-    window.addEventListener('mouseup', this.stopDrag);
-    window.addEventListener('mousemove', this.doDrag);
+    this.attachWindowEvents()
+  },
+  beforeDestroy() {
+    this.detachWindowEvents()
   },
   methods: {
-    bringWindowToTop, unload, fold, unfold, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize
+    bringWindowToTop, unload, fold, unfold, draw, clearRect, scale, stopDrag, startDrag, doDrag, resize,
+    onWindowUnfold, onWindowLoad, attachWindowEvents, detachWindowEvents
   }
 }
 </script>
