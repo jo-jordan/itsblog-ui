@@ -3,13 +3,13 @@
     v-show="!win.minimized || animating"
     class="aqua-window"
     :class="{ 'is-inactive': !focused, 'is-dialog': app.dialog, 'is-compact': compact }"
-    :style="frameStyle"
+    :style="[frameStyle, { visibility: genieHidden ? 'hidden' : null }]"
     role="dialog"
     :aria-label="title"
     @pointerdown.capture="focus"
   >
     <header class="aqua-window__titlebar pinstripe" @pointerdown="startDrag" @dblclick="onTitleDoubleClick">
-      <div class="traffic-lights" @pointerdown.stop @dblclick.stop>
+      <div class="traffic-lights" @pointerdown.stop @dblclick.stop @pointerenter="prefetchSnapshot">
         <button type="button" class="traffic-light traffic-light--close" aria-label="关闭" @click="close">
           <span aria-hidden="true">×</span>
         </button>
@@ -36,7 +36,7 @@
 
 <script>
 import { apps } from '../../apps/registry'
-import { animateMinimize } from '../../utils/genie'
+import { animateMinimize, snapshot } from '../../utils/genie'
 import { viewport } from '../../utils/viewport'
 
 export default {
@@ -48,6 +48,10 @@ export default {
     return {
       title: apps[this.win.appId].name,
       animating: false,
+      // The real window hides while the genie canvas draws its picture
+      genieHidden: false,
+      picture: null,
+      prefetch: null,
       gesture: null
     }
   },
@@ -78,19 +82,34 @@ export default {
     }
   },
   watch: {
-    // Runs before the re-render, so the window is still visible (minimising)
-    // or the Dock tile still exists (restoring) when we measure.
-    'win.minimized'(minimized) {
-      const tile = this.dockTarget()
+    // Runs before the re-render: the window is still visible when minimising,
+    // and the Dock tile still exists when restoring, so it is measured now.
+    async 'win.minimized'(minimized) {
+      const effect = this.$store.state.system.prefs.minimizeEffect
+      const restoreTile = minimized ? null : this.dockTarget()
       this.animating = true
-      this.$nextTick(() => {
-        animateMinimize(this.$el, tile, {
-          effect: this.$store.state.system.prefs.minimizeEffect,
-          reverse: !minimized
-        }).then(() => {
-          this.animating = false
-        })
+      if (!minimized && effect === 'genie') {
+        this.genieHidden = true
+      }
+      await this.$nextTick()
+      let picture = null
+      if (effect === 'genie') {
+        picture = minimized ? await this.takeSnapshot() : this.picture || await snapshot(this.$el)
+      }
+      // The new Dock tile only exists after the re-render
+      const tile = minimized ? this.dockTarget() : restoreTile
+      await animateMinimize(this.$el, tile, {
+        effect,
+        reverse: !minimized,
+        picture,
+        hide: hidden => {
+          this.genieHidden = hidden
+        }
       })
+      this.genieHidden = false
+      this.animating = false
+      // Keep the picture while minimised so restoring can start instantly
+      this.picture = minimized ? picture : null
     }
   },
   beforeDestroy() {
@@ -118,6 +137,20 @@ export default {
       if (!this.app.dialog) {
         this.minimize()
       }
+    },
+    // Start photographing the window as soon as the pointer nears its buttons
+    prefetchSnapshot() {
+      if (!this.app.dialog && this.$store.state.system.prefs.minimizeEffect === 'genie' && !this.freshPrefetch()) {
+        this.prefetch = { at: Date.now(), promise: snapshot(this.$el) }
+      }
+    },
+    freshPrefetch() {
+      return this.prefetch && Date.now() - this.prefetch.at < 2000
+    },
+    takeSnapshot() {
+      const promise = this.freshPrefetch() ? this.prefetch.promise : snapshot(this.$el)
+      this.prefetch = null
+      return promise
     },
     dockTarget() {
       const el = document.querySelector(`[data-dock-window="${this.win.id}"]`) ||

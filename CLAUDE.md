@@ -23,7 +23,7 @@ Mac OS X 10.0–10.2 ("Aqua") style personal blog: Vue 2.7 + Vue CLI 4 (webpack 
 ## Code notes
 
 - Posts are Markdown files in `content/posts/*.md` with front matter (`title`, `date`, `category`, `tags`, `summary`), bundled at build time by `src/utils/posts.js`; the file name is the slug and `/posts/<slug>` opens it. `welcome.md` is the desktop's "请先阅读" help document.
-- Window manager: `src/store/modules/windows.js` holds every open window; `src/components/aqua/AppWindow.vue` draws the chrome (drag, resize, zoom, genie/scale minimise via `src/utils/genie.js`). Applications live in `src/apps/` and are registered in `src/apps/registry.js` (name, icon, size, `instanceKey`).
+- Window manager: `src/store/modules/windows.js` holds every open window; `src/components/aqua/AppWindow.vue` draws the chrome (drag, resize, zoom, genie/scale minimise via `src/utils/genie.js`; the genie warps an html-to-image snapshot of the window on a canvas and falls back to a white silhouette when no snapshot is ready). Applications live in `src/apps/` and are registered in `src/apps/registry.js` (name, icon, size, `instanceKey`).
 - Preferences (wallpaper, Dock magnification, minimise effect, Blue/Graphite appearance) live in `src/store/modules/system.js` and persist to localStorage; wallpapers are in `src/config/wallpapers.js`.
 - Owner name, e-mail and links shown on the site are in `src/config/site.js`.
 - Any Markdown rendered with `v-html` must go through `renderMarkdown` in `src/utils/markdown.js` (marked + highlight.js + DOMPurify).
