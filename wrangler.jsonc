@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "itsblog",
+  "compatibility_date": "2026-10-08",
+  // Static site only: no Worker script, just the Vue build output.
+  "assets": {
+    "directory": "./itsblog-ui",
+    "not_found_handling": "single-page-application"
+  }
+}
