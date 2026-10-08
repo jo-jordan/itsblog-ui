@@ -42,6 +42,6 @@ export const footprints = {
 
 export const session = {
   get: () => request('/session'),
-  login: password => request('/session', { method: 'POST', body: { password } }),
+  login: password => request('/session', { method: 'POST', body: { password }}),
   logout: () => request('/session', { method: 'DELETE' })
 }

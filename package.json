@@ -16,6 +16,7 @@
     "hono": "^4.13.13",
     "html-to-image": "^1.11.13",
     "leaflet": "^1.9.4",
+    "lunar-javascript": "^1.7.7",
     "marked": "^4.3.0",
     "vue": "^2.6.12",
     "vue-router": "^3.4.3",

@@ -81,9 +81,9 @@ export default {
     },
     panes() {
       return [
-        { id: 'desktop', name: '桌面', iconStyle: { background: wallpapers[0].background } },
-        { id: 'dock', name: 'Dock', iconStyle: { background: `url(${finderIcon}) center / contain no-repeat` } },
-        { id: 'general', name: '通用', iconStyle: { background: `url(${preferencesIcon}) center / contain no-repeat` } }
+        { id: 'desktop', name: '桌面', iconStyle: { background: wallpapers[0].background }},
+        { id: 'dock', name: 'Dock', iconStyle: { background: `url(${finderIcon}) center / contain no-repeat` }},
+        { id: 'general', name: '通用', iconStyle: { background: `url(${preferencesIcon}) center / contain no-repeat` }}
       ]
     }
   },

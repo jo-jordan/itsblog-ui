@@ -39,9 +39,9 @@ export default {
       handler(route) {
         const post = route.name === 'post' ? findPost(route.params.slug) : null
         if (route.name === 'place') {
-          this.$store.dispatch('windows/open', { appId: 'footprints', props: { placeId: Number(route.params.id) } })
+          this.$store.dispatch('windows/open', { appId: 'footprints', props: { placeId: Number(route.params.id) }})
         } else if (post) {
-          this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug } })
+          this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug }})
           document.title = `${post.title} — ${site.title}`
         } else {
           document.title = site.title

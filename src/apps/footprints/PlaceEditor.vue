@@ -150,7 +150,7 @@ export default {
       try {
         const found = await api.reverse(this.form.lat, this.form.lng)
         if (found) {
-          ;['country', 'region', 'city'].forEach(key => {
+          ['country', 'region', 'city'].forEach(key => {
             this.form[key] = this.form[key] || found[key]
           })
           this.form.name = this.form.name || found.name

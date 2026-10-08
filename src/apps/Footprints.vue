@@ -1,14 +1,13 @@
 <template>
   <div class="footprints" :class="{ 'is-inactive': !focused }">
     <div class="footprints__toolbar">
-      <div class="fp-segmented" role="tablist" aria-label="显示方式">
+      <div class="aqua-segmented" role="tablist" aria-label="显示方式">
         <button
           v-for="option in views"
           :key="option.id"
           type="button"
           role="tab"
-          class="aqua-button"
-          :class="{ 'is-active': view === option.id }"
+          :class="{ 'is-selected': view === option.id }"
           :aria-selected="view === option.id ? 'true' : 'false'"
           @click="view = option.id"
         >{{ option.label }}</button>
@@ -345,33 +344,6 @@ export default {
   height: 38px;
   padding: 0 10px;
   border-bottom: 1px solid #9c9c9c;
-}
-
-.fp-segmented {
-  display: flex;
-
-  .aqua-button {
-    min-width: 0;
-    padding: 0 12px;
-    border-radius: 0;
-
-    &:first-child {
-      border-radius: 11px 0 0 11px;
-    }
-
-    &:last-child {
-      border-radius: 0 11px 11px 0;
-    }
-
-    & + .aqua-button {
-      border-left: 0;
-    }
-
-    &.is-active {
-      border-color: var(--aqua-gel-border);
-      background: linear-gradient(to bottom, var(--aqua-gel-top) 0%, #9fcbf8 45%, var(--aqua-gel-mid) 50%, var(--aqua-gel-bottom) 100%);
-    }
-  }
 }
 
 .footprints__stats {

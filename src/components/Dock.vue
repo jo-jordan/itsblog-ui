@@ -102,7 +102,7 @@ export default {
     },
     activate(item) {
       if (item.trash) {
-        this.$store.dispatch('windows/open', { appId: 'finder', props: { location: 'trash' } })
+        this.$store.dispatch('windows/open', { appId: 'finder', props: { location: 'trash' }})
       } else if (item.windowId) {
         this.$store.dispatch('windows/restore', item.windowId)
       } else {

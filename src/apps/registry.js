@@ -7,6 +7,7 @@ import documentIcon from '../assets/icons/document.svg'
 import preferencesIcon from '../assets/icons/preferences.svg'
 import footprintsIcon from '../assets/icons/footprints.svg'
 import loginIcon from '../assets/logo.png'
+import toolboxIcon from '../assets/icons/toolbox.svg'
 
 // Every window on the desktop belongs to one of these applications.
 export const apps = {
@@ -56,6 +57,13 @@ export const apps = {
     resizable: false,
     dialog: true
   },
+  // Calendar and time utilities; lunar-javascript only loads with this chunk
+  toolbox: {
+    name: '实用工具',
+    icon: toolboxIcon,
+    component: () => import(/* webpackChunkName: "toolbox" */ './Toolbox.vue'),
+    size: { width: 860, height: 560 }
+  },
   preferences: {
     name: '系统偏好设置',
     icon: preferencesIcon,
@@ -74,4 +82,4 @@ export const apps = {
 }
 
 // Order of the application icons in the Dock
-export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'footprints', 'preferences']
+export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'toolbox', 'footprints', 'preferences']

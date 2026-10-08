@@ -18,6 +18,10 @@ summary: 一句话简介，Sherlock 和 Finder 里会用到。
 正文……
 ```
 
+## 实用工具
+
+A toolbox of calendar and time utilities in the Dock: 黄历, 万年历 (with official holidays and 调休), 农历公历互转, 二十四节气, 法定节假日, date differences and shifting (incl. working days), countdowns, age and 八字, ISO weeks, timestamps, world clock and time-zone conversion, durations, cron expressions, and a stopwatch / timer / 番茄钟. Lunar data comes from [lunar-javascript](https://github.com/6tail/lunar-javascript); bump it each year for the new holiday arrangement.
+
 ## Footprints (足迹)
 
 The 足迹 app records places you've been: a map, an album and a timeline, each place with visits, a Markdown story and photos. Data lives in Cloudflare D1, photos in R2.

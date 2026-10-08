@@ -19,10 +19,10 @@
     <section class="fp-detail__section">
       <h3>到访记录</h3>
       <ul class="fp-visits">
-        <li v-for="visit in place.visits" :key="visit.id">
-          <time :datetime="visit.start_date">{{ range(visit) }}</time>
-          <span v-if="visit.note" class="fp-visits__note">{{ visit.note }}</span>
-          <button v-if="admin" type="button" class="fp-remove" aria-label="删除这次到访" @click="removeVisit(visit)">×</button>
+        <li v-for="entry in place.visits" :key="entry.id">
+          <time :datetime="entry.start_date">{{ range(entry) }}</time>
+          <span v-if="entry.note" class="fp-visits__note">{{ entry.note }}</span>
+          <button v-if="admin" type="button" class="fp-remove" aria-label="删除这次到访" @click="removeVisit(entry)">×</button>
         </li>
         <li v-if="!place.visits.length" class="fp-muted">还没有记录日期</li>
       </ul>
@@ -133,7 +133,7 @@ export default {
       }
     },
     addVisit() {
-      return this.run(async () => {
+      return this.run(async() => {
         const place = await api.addVisit(this.place.id, this.visit)
         this.visit = { start_date: '', end_date: '', note: '' }
         return place
@@ -160,7 +160,7 @@ export default {
         return
       }
       this.progress = { done: 0, total: list.length }
-      return this.run(async () => {
+      return this.run(async() => {
         let place = this.place
         for (const file of list) {
           const [full, thumb] = await Promise.all([resizeImage(file, 2048, 0.85), resizeImage(file, 480, 0.8)])

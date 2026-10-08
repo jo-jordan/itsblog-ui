@@ -79,7 +79,7 @@ function topVisible(state) {
 }
 
 const actions = {
-  open({ state, commit }, { appId, props = {} }) {
+  open({ state, commit }, { appId, props = {}}) {
     const app = apps[appId]
     // Apps declare which props make a window unique, e.g. one Reader per post
     const key = app.instanceKey ? app.instanceKey(props) : appId

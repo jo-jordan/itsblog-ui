@@ -148,7 +148,7 @@ export default {
           key: 'help',
           label: '帮助',
           items: [
-            { label: 'itsblog 帮助', action: () => this.$router.push('/posts/welcome').catch(() => {}) },
+            { label: 'itsblog 帮助', action: this.openHelp },
             { label: '在 GitHub 上查看源代码', href: site.sourceUrl }
           ]
         }
@@ -206,6 +206,9 @@ export default {
     },
     setPref(key, value) {
       this.dispatch('system/setPref', { key, value })
+    },
+    openHelp() {
+      this.$router.push('/posts/welcome').catch(() => {})
     },
     isDialog(win) {
       return apps[win.appId].dialog
