@@ -6,5 +6,10 @@
   "assets": {
     "directory": "./itsblog-ui",
     "not_found_handling": "single-page-application"
-  }
+  },
+  // Cloudflare creates the DNS record and certificate on deploy.
+  // Any existing DNS record for edgeless.me must be deleted first.
+  "routes": [
+    { "pattern": "edgeless.me", "custom_domain": true }
+  ]
 }
