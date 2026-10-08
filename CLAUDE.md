@@ -15,7 +15,8 @@ Mac OS X style personal blog: Vue 2.7 + Vue CLI 4 (webpack 4), Vuex, vue-router 
 
 ## Deployment
 
-- Static site on Cloudflare Workers (static assets only, no Worker script), configured in `wrangler.jsonc`, served at `edgeless.me` via a Custom Domain.
+- Static site on Cloudflare Workers, configured in `wrangler.jsonc`, served at `edgeless.me` (and `www.edgeless.me`) via Custom Domains.
+- `worker/index.js` runs before the assets only to 301 `www.` to the apex; everything else is served from the build output.
 - Workers Builds: build command `npm run build`, deploy command `npx wrangler deploy`. Manual deploy: `npm run deploy`.
 - `public/_headers` sets long-lived caching for the fingerprinted `/static/*` files.
 - `.github/workflows/main.yml` is the old AWS S3/CloudFront pipeline and is obsolete.
