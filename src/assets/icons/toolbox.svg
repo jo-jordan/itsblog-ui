@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a7c"/>
+      <stop offset="0.45" stop-color="#e2382b"/>
+      <stop offset="1" stop-color="#b81a10"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f04a3c"/>
+      <stop offset="0.55" stop-color="#c82216"/>
+      <stop offset="1" stop-color="#8e0f08"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000" stop-opacity=".25"/>
+      <stop offset="0.12" stop-color="#000" stop-opacity="0"/>
+      <stop offset="0.88" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".3"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#c9cfd6"/>
+      <stop offset="0.55" stop-color="#8d96a1"/>
+      <stop offset="1" stop-color="#dfe3e8"/>
+    </linearGradient>
+    <linearGradient id="handle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef1f4"/>
+      <stop offset="1" stop-color="#7d8792"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2a5fa8"/>
+      <stop offset="0.35" stop-color="#9fcbf8"/>
+      <stop offset="0.6" stop-color="#5ea7f2"/>
+      <stop offset="1" stop-color="#1d4f9c"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="64" cy="113" rx="54" ry="8" fill="url(#shadow)"/>
+
+  <!-- Screwdriver sticking out behind the lid -->
+  <g transform="rotate(-28 84 40)">
+    <rect x="80" y="4" width="8" height="34" rx="2" fill="url(#chrome)" stroke="#6b737d" stroke-width="1.2"/>
+    <rect x="76" y="30" width="16" height="26" rx="5" fill="url(#grip)" stroke="#173f7c" stroke-width="1.5"/>
+    <path d="M80 34v18M84 34v18M88 34v18" stroke="#fff" stroke-opacity=".45" stroke-width="1.4"/>
+  </g>
+
+  <!-- Handle -->
+  <path d="M44 42V30c0-5 3-8 8-8h24c5 0 8 3 8 8v12" fill="none" stroke="#4c535c" stroke-width="11" stroke-linecap="round"/>
+  <path d="M44 42V30c0-5 3-8 8-8h24c5 0 8 3 8 8v12" fill="none" stroke="url(#handle)" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Lid -->
+  <path d="M18 60l6-18c1-3 3-4 6-4h68c3 0 5 1 6 4l6 18z" fill="url(#lid)" stroke="#7c0c06" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Body -->
+  <path d="M14 60h100v40c0 5-3 8-8 8H22c-5 0-8-3-8-8z" fill="url(#body)" stroke="#7c0c06" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M14 60h100v40c0 5-3 8-8 8H22c-5 0-8-3-8-8z" fill="url(#side)"/>
+
+  <!-- Seam between lid and body -->
+  <rect x="12" y="57" width="104" height="7" rx="2" fill="#a3170e" stroke="#6b0904" stroke-width="1.5"/>
+  <path d="M14 58.5h100" stroke="#ff9488" stroke-opacity=".7" stroke-width="1"/>
+
+  <!-- Chrome latches -->
+  <rect x="28" y="54" width="14" height="16" rx="2.5" fill="url(#chrome)" stroke="#5f6873" stroke-width="1.5"/>
+  <rect x="86" y="54" width="14" height="16" rx="2.5" fill="url(#chrome)" stroke="#5f6873" stroke-width="1.5"/>
+  <circle cx="35" cy="66" r="1.6" fill="#5f6873"/>
+  <circle cx="93" cy="66" r="1.6" fill="#5f6873"/>
+
+  <!-- Embossed ribs on the body -->
+  <path d="M24 80h80M24 92h80" stroke="#7c0c06" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+  <path d="M24 82h80M24 94h80" stroke="#ff8a7c" stroke-opacity=".35" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Aqua gloss -->
+  <path d="M25 56l4-12c1-2 2-3 4-3h62c2 0 3 1 4 3l4 12z" fill="url(#gloss)"/>
+  <path d="M18 66h92v6c-30 5-62 5-92 0z" fill="#fff" fill-opacity=".18"/>
+</svg>

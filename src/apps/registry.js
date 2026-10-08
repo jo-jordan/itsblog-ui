@@ -5,6 +5,7 @@ import addressBookIcon from '../assets/macos-x-address-book.png'
 import appleIcon from '../assets/macos-x-logo.png'
 import documentIcon from '../assets/icons/document.svg'
 import preferencesIcon from '../assets/icons/preferences.svg'
+import toolboxIcon from '../assets/icons/toolbox.svg'
 
 // Every window on the desktop belongs to one of these applications.
 export const apps = {
@@ -40,6 +41,13 @@ export const apps = {
     component: () => import(/* webpackChunkName: "address-book" */ './AddressBook.vue'),
     size: { width: 640, height: 400 }
   },
+  // Calendar and time utilities; lunar-javascript only loads with this chunk
+  toolbox: {
+    name: '实用工具',
+    icon: toolboxIcon,
+    component: () => import(/* webpackChunkName: "toolbox" */ './Toolbox.vue'),
+    size: { width: 860, height: 560 }
+  },
   preferences: {
     name: '系统偏好设置',
     icon: preferencesIcon,
@@ -58,4 +66,4 @@ export const apps = {
 }
 
 // Order of the application icons in the Dock
-export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'preferences']
+export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'toolbox', 'preferences']
