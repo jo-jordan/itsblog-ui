@@ -26,6 +26,8 @@ A toolbox of calendar and time utilities in the Dock: 黄历, 万年历 (with of
 
 The 足迹 app records places you've been: a map, an album and a timeline, each place with visits, a Markdown story and photos. Data lives in Cloudflare D1, photos in R2.
 
+The map uses OpenStreetMap's tiles, which need no key. For CARTO's Voyager style instead, request a free key at <https://carto.com/basemaps/apikey> and add it as the build variable `VUE_APP_CARTO_KEY` (Workers & Pages → `itsblog` → Settings → Build → Variables and secrets), then redeploy. Place search in the editor uses OpenStreetMap Nominatim (no key).
+
 To edit, set a password once: Cloudflare dashboard → Workers & Pages → `itsblog` → Settings → Variables and Secrets → add a **Secret** named `ADMIN_PASSWORD` (or `npx wrangler secret put ADMIN_PASSWORD`). Then on the site choose  → 登录… — the 足迹 window gains 新地点… / 编辑… / 删除… and photo upload.
 
 ## Development
