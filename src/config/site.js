@@ -10,11 +10,10 @@ export default {
     name: 'Mao Yidan',
     tagline: '程序员 · 写点笔记'
   },
-  email: 'tyyzmyd@gmail.com',
+  email: 'jojordanbless@gmail.com',
   links: [
     { label: '主页', value: 'edgeless.me', href: 'https://edgeless.me' },
-    { label: 'GitHub', value: 'jo-jordan', href: 'https://github.com/jo-jordan' },
-    { label: 'Twitter', value: '@maoyidan', href: 'https://twitter.com/maoyidan' }
+    { label: 'GitHub', value: 'jo-jordan', href: 'https://github.com/jo-jordan' }
   ],
   sourceUrl: 'https://github.com/jo-jordan/itsblog-ui'
 }
