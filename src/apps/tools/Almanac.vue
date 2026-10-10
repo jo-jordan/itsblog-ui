@@ -115,7 +115,7 @@
           <table class="tool-table">
             <thead>
               <tr>
-                <th v-for="(name, index) in $t('tools.almanac.hourColumns')" :key="index">{{ name }}</th>
+                <th v-for="(name, index) in $tm('tools.almanac.hourColumns')" :key="index">{{ name }}</th>
               </tr>
             </thead>
             <tbody>
@@ -144,11 +144,11 @@ import {
   beijingEpoch, directionName, festivalName, holidayBadge, holidayOf, holidayStatus, isLucky,
   lunarDayName, lunarOf, lunarMonthName, signName, termName, zodiacName
 } from './lib/calendar'
-import { formatMonthDay, formatYearMonth, t, tc, weekdayName } from './lib/i18n'
+import { formatMonthDay, formatYearMonth, t, tc, tm, weekdayName } from './lib/i18n'
 
 // A name the library gives in Chinese, in English where the locale has a table for it
 function translated(map, name) {
-  const names = t(`tools.almanac.${map}`)
+  const names = tm(`tools.almanac.${map}`)
   return (names && typeof names === 'object' && names[name]) || name
 }
 
@@ -323,7 +323,7 @@ export default {
       this.now = Date.now()
     }, 30000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
   methods: {

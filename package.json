@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "serve": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
     "dompurify": "^3.4.16",
     "github-markdown-css": "^4.0.0",
     "highlight.js": "^11.12.0",
@@ -18,40 +18,22 @@
     "leaflet": "^1.9.4",
     "lunar-javascript": "^1.7.7",
     "marked": "^4.3.0",
-    "vue": "^2.6.12",
-    "vue-i18n": "^8.28.2",
-    "vue-router": "^3.4.3",
-    "vuex": "3.1.1"
+    "pinia": "^4.0.3",
+    "vue": "^3.5.43",
+    "vue-i18n": "^11.4.13",
+    "vue-router": "^5.4.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.4",
-    "@vue/cli-plugin-eslint": "^4.5.4",
-    "@vue/cli-plugin-router": "^4.5.4",
-    "@vue/cli-service": "^4.5.4",
-    "autoprefixer": "^9.8.8",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "html-webpack-plugin": "^3.2.0",
-    "raw-loader": "^4.0.2",
-    "sass": "^1.26.10",
-    "sass-loader": "^8.0.2",
-    "script-ext-html-webpack-plugin": "2.1.3",
-    "vue-template-compiler": "^2.6.12",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^10.12.0",
+    "eslint-plugin-vue": "^10.11.1",
+    "globals": "^17.13.0",
+    "sass": "^1.105.1",
+    "vite": "^8.3.4",
     "wrangler": "^4.148.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/recommended",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
   },
   "postcss": {
     "plugins": {
@@ -59,7 +41,7 @@
     }
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+    "defaults"
+  ],
+  "type": "module"
 }

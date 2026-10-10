@@ -8,7 +8,7 @@ import { errorMessage, message, requestLocale } from './messages'
 // the asset server.
 const app = new Hono()
 
-app.use('*', async (c, next) => {
+app.use('*', async(c, next) => {
   const url = new URL(c.req.url)
   if (url.hostname.startsWith('www.')) {
     url.hostname = url.hostname.slice(4)

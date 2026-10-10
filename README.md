@@ -32,6 +32,8 @@ To edit, set a password once: Cloudflare dashboard → Workers & Pages → `itsb
 
 ## Development
 
+Vue 3 + Vite, with Pinia, vue-router and vue-i18n (简体中文 / English); needs Node 22.
+
 ```bash
 npm ci
 npm run serve   # dev server on http://localhost:9528

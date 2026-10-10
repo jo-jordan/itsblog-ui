@@ -1,4 +1,6 @@
 <script>
+import { h } from 'vue'
+
 // Small 16 × 16 list icons for the toolbox source list, drawn as plain SVG shapes
 const glyphs = {
   almanac: [
@@ -84,16 +86,14 @@ const glyphs = {
 
 export default {
   name: 'ToolGlyph',
-  functional: true,
   props: {
     name: { type: String, required: true }
   },
-  render(h, { props, data }) {
-    const shapes = glyphs[props.name] || []
+  render() {
+    const shapes = glyphs[this.name] || []
     return h('svg', {
-      class: ['tool-glyph', data.staticClass, data.class],
-      attrs: { viewBox: '0 0 16 16', width: 16, height: 16, 'aria-hidden': 'true', focusable: 'false' }
-    }, shapes.map(([tag, attrs]) => h(tag, { attrs: { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...attrs }})))
+      class: 'tool-glyph', viewBox: '0 0 16 16', width: 16, height: 16, 'aria-hidden': 'true', focusable: 'false'
+    }, shapes.map(([tag, attrs]) => h(tag, { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...attrs })))
   }
 }
 </script>

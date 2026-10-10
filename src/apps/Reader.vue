@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import PostArticle from '../components/PostArticle'
+import PostArticle from '../components/PostArticle.vue'
 import { findPost, neighbours } from '../utils/posts'
 
 export default {
@@ -22,6 +22,7 @@ export default {
   props: {
     win: { type: Object, required: true }
   },
+  emits: ['title'],
   computed: {
     post() {
       return findPost(this.win.props.slug)

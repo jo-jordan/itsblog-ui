@@ -1,6 +1,6 @@
 // IANA time zones through Intl: wall-clock parts, UTC offsets and DST.
 import { pad } from './dates'
-import { t } from './i18n'
+import { tm } from './i18n'
 
 export const LOCAL_ZONE = (() => {
   try {
@@ -50,7 +50,7 @@ export const CITIES = [
 
 // The city a zone is known by in the current language, or the last part of its id
 export function cityName(zone) {
-  const names = t('tools.zones.cities')
+  const names = tm('tools.zones.cities')
   return (CITIES.includes(zone) && names[zone]) || zone.split('/').pop().replace(/_/g, ' ')
 }
 

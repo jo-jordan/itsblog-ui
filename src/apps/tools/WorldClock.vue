@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import AnalogClock from './AnalogClock'
-import ZoneSelect from './ZoneSelect'
+import AnalogClock from './AnalogClock.vue'
+import ZoneSelect from './ZoneSelect.vue'
 import { dayNumber, pad, weekday } from './lib/dates'
 import { formatMonthDay, t, tc, weekdayName } from './lib/i18n'
 import { cityName, formatOffset, isDst, isValidZone, LOCAL_ZONE, observesDst, zonedToEpoch, zoneOffset, zoneParts } from './lib/zones'
@@ -158,7 +158,7 @@ export default {
   created() {
     this.tick()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.timer)
   },
   methods: {

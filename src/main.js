@@ -1,17 +1,19 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import store from './store'
-import i18n, { setLocale } from './i18n'
+import i18n, { setLocale, tc } from './i18n'
+import { useSystemStore } from './store/system'
 import './style/aqua.scss'
 
-Vue.config.productionTip = false
+const app = createApp(App)
 
-setLocale(store.state.system.prefs.language)
+app.use(createPinia())
+app.use(router)
+app.use(i18n)
+// Plurals in templates, with the same arguments as tc() in plain modules
+app.config.globalProperties.$tc = tc
 
-new Vue({
-  router,
-  store,
-  i18n,
-  render: h => h(App)
-}).$mount('#app')
+setLocale(useSystemStore().prefs.language)
+
+app.mount('#app')

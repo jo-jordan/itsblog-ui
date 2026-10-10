@@ -1,7 +1,7 @@
-import Vue from 'vue'
+import { reactive } from 'vue'
 
 // Reactive window size shared by the desktop components
-export const viewport = Vue.observable({
+export const viewport = reactive({
   width: window.innerWidth,
   height: window.innerHeight,
   get compact() {

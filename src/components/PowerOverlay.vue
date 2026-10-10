@@ -13,11 +13,12 @@
 </template>
 
 <script>
+import { useSystemStore } from '../store/system'
 export default {
   name: 'PowerOverlay',
   computed: {
     power() {
-      return this.$store.state.system.power
+      return useSystemStore().power
     }
   },
   watch: {
@@ -28,16 +29,16 @@ export default {
       }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.wake)
   },
   methods: {
     wake() {
       document.removeEventListener('keydown', this.wake)
       if (this.power === 'sleep') {
-        this.$store.dispatch('system/wake')
+        useSystemStore().wake()
       } else if (this.power === 'off') {
-        this.$store.dispatch('system/restart')
+        useSystemStore().restart()
       }
     }
   }
@@ -91,7 +92,7 @@ export default {
   transition: opacity 0.4s;
 }
 
-.power-fade-enter,
+.power-fade-enter-from,
 .power-fade-leave-to {
   opacity: 0;
 }

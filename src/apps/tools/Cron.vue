@@ -58,12 +58,12 @@
       <summary>{{ $t('tools.cron.help.title') }}</summary>
       <ul>
         <li>{{ $t('tools.cron.help.fields') }}</li>
-        <i18n path="tools.cron.help.syntax" tag="li">
-          <code v-for="(code, name) in syntax" :key="name" :slot="name">{{ code }}</code>
-        </i18n>
-        <i18n path="tools.cron.help.macros" tag="li">
-          <code v-for="(code, name) in macros" :key="name" :slot="name">{{ code }}</code>
-        </i18n>
+        <i18n-t keypath="tools.cron.help.syntax" tag="li" scope="global">
+          <template v-for="(code, name) in syntax" :key="name" #[name]><code>{{ code }}</code></template>
+        </i18n-t>
+        <i18n-t keypath="tools.cron.help.macros" tag="li" scope="global">
+          <template v-for="(code, name) in macros" :key="name" #[name]><code>{{ code }}</code></template>
+        </i18n-t>
         <li>{{ $t('tools.cron.help.dst') }}</li>
       </ul>
     </details>
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import ZoneSelect from './ZoneSelect'
+import ZoneSelect from './ZoneSelect.vue'
 import { weekday } from './lib/dates'
 import { relativeTime, weekdayName } from './lib/i18n'
 import { describeCron, fieldSummary, nextRuns, parseCron } from './lib/cron'
@@ -172,7 +172,7 @@ export default {
       this.now = Date.now()
     }, 30000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <select :value="value" class="aqua-popup zone-select" :aria-label="label || $t('tools.zones.label')" @change="$emit('input', $event.target.value)">
+  <select :value="modelValue" class="aqua-popup zone-select" :aria-label="label || $t('tools.zones.label')" @change="$emit('update:modelValue', $event.target.value)">
     <optgroup :label="$t('tools.zones.popular')">
       <option v-for="city in cities" :key="`c-${city.zone}`" :value="city.zone">{{ $t('tools.zones.cityOption', city) }}</option>
     </optgroup>
@@ -16,10 +16,11 @@ import { allZones, cities, LOCAL_ZONE } from './lib/zones'
 export default {
   name: 'ZoneSelect',
   props: {
-    value: { type: String, required: true },
+    modelValue: { type: String, required: true },
     // Accessible name; "Time zone" in the current language when empty
     label: { type: String, default: '' }
   },
+  emits: ['update:modelValue'],
   data() {
     return {
       zones: allZones(),

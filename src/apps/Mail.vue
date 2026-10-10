@@ -28,6 +28,7 @@ export default {
   props: {
     win: { type: Object, required: true }
   },
+  emits: ['title'],
   data() {
     return {
       owner: site.owner.name,

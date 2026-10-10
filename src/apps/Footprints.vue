@@ -24,8 +24,8 @@
 
     <div class="footprints__body">
       <aside class="footprints__sidebar aqua-scroll" :aria-label="$t('footprints.placeList')">
-        <template v-for="group in groups">
-          <h3 :key="`h-${group.country}`">{{ group.country }} <small>{{ group.places.length }}</small></h3>
+        <template v-for="group in groups" :key="group.country">
+          <h3>{{ group.country }} <small>{{ group.places.length }}</small></h3>
           <div
             v-for="place in group.places"
             :key="place.id"
@@ -139,10 +139,11 @@
 </template>
 
 <script>
-import FootprintsMap from './footprints/FootprintsMap'
-import PlaceDetail from './footprints/PlaceDetail'
-import PlaceEditor from './footprints/PlaceEditor'
-import AquaSheet from '../components/aqua/AquaSheet'
+import { useSessionStore } from '../store/session'
+import FootprintsMap from './footprints/FootprintsMap.vue'
+import PlaceDetail from './footprints/PlaceDetail.vue'
+import PlaceEditor from './footprints/PlaceEditor.vue'
+import AquaSheet from '../components/aqua/AquaSheet.vue'
 import { footprints as api } from '../api/client'
 import { placeLocation, visitRange } from './footprints/shared'
 import site from '../config/site'
@@ -156,6 +157,7 @@ export default {
     win: { type: Object, required: true },
     focused: { type: Boolean, default: false }
   },
+  emits: ['title'],
   data() {
     return {
       icon,
@@ -174,7 +176,7 @@ export default {
   },
   computed: {
     admin() {
-      return this.$store.state.session.loggedIn
+      return useSessionStore().loggedIn
     },
     compact() {
       return viewport.compact
@@ -255,7 +257,7 @@ export default {
   created() {
     this.load()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.title = site.title
   },
   methods: {
@@ -489,7 +491,7 @@ export default {
   transition: transform 0.22s ease-out;
 }
 
-.fp-drawer-enter,
+.fp-drawer-enter-from,
 .fp-drawer-leave-to {
   transform: translateX(100%);
 }

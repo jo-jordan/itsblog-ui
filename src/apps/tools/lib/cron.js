@@ -3,7 +3,7 @@
 // and the day-of-month / day-of-week rule — when both fields are restricted a
 // day matches either one; when either field starts with "*" both must match.
 import { addDays, pad, weekday } from './dates'
-import { currentLocale, t, tc, weekdayName } from './i18n'
+import { currentLocale, t, tc, tm, weekdayName } from './i18n'
 import { zonedToEpoch, zoneParts } from './zones'
 
 const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -175,10 +175,10 @@ function ordinal(n) {
 // A value as the name it stands for: a month, a weekday (7 = Sunday), the 1st, or just the number
 function valueName(field, value) {
   if (field.key === 'month') {
-    return message('months')[value - 1]
+    return tm('tools.cron.months')[value - 1]
   }
   if (field.key === 'dow') {
-    return message('weekdays')[value % 7]
+    return tm('tools.cron.weekdays')[value % 7]
   }
   return field.key === 'dom' ? ordinal(value) : String(value)
 }

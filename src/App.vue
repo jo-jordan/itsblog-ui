@@ -10,13 +10,16 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import MenuBar from './components/MenuBar'
-import Dock from './components/Dock'
-import DesktopIcons from './components/DesktopIcons'
-import AppWindow from './components/aqua/AppWindow'
-import BootScreen from './components/BootScreen'
-import PowerOverlay from './components/PowerOverlay'
+import { useSessionStore } from './store/session'
+import { useSystemStore } from './store/system'
+import { useWindowsStore } from './store/windows'
+import { mapState } from 'pinia'
+import MenuBar from './components/MenuBar.vue'
+import Dock from './components/Dock.vue'
+import DesktopIcons from './components/DesktopIcons.vue'
+import AppWindow from './components/aqua/AppWindow.vue'
+import BootScreen from './components/BootScreen.vue'
+import PowerOverlay from './components/PowerOverlay.vue'
 import { wallpaperBackground } from './config/wallpapers'
 import { findPost } from './utils/posts'
 import site from './config/site'
@@ -25,8 +28,8 @@ export default {
   name: 'App',
   components: { MenuBar, Dock, DesktopIcons, AppWindow, BootScreen, PowerOverlay },
   computed: {
-    ...mapState('windows', ['windows']),
-    ...mapState('system', ['prefs', 'power']),
+    ...mapState(useWindowsStore, ['windows']),
+    ...mapState(useSystemStore, ['prefs', 'power']),
     wallpaper() {
       return wallpaperBackground(this.prefs.wallpaper)
     },
@@ -50,9 +53,9 @@ export default {
       handler(route) {
         const post = route.name === 'post' ? findPost(route.params.slug) : null
         if (route.name === 'place') {
-          this.$store.dispatch('windows/open', { appId: 'footprints', props: { placeId: Number(route.params.id) }})
+          useWindowsStore().open({ appId: 'footprints', props: { placeId: Number(route.params.id) }})
         } else if (post) {
-          this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug }})
+          useWindowsStore().open({ appId: 'reader', props: { slug: post.slug }})
         } else if (route.name === 'post') {
           this.$router.replace('/')
         }
@@ -69,12 +72,12 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('session/check')
+    useSessionStore().check()
   },
   methods: {
     onDesktopPointerDown(event) {
       if (event.target === this.$el) {
-        this.$store.dispatch('windows/blur')
+        useWindowsStore().blur()
       }
     }
   }

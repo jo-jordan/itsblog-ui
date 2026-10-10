@@ -69,7 +69,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { useSystemStore } from '../store/system'
+import { mapState } from 'pinia'
 import { wallpapers, wallpaperBackground } from '../config/wallpapers'
 import finderIcon from '../assets/macos-x-finder.png'
 import preferencesIcon from '../assets/icons/preferences.svg'
@@ -89,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('system', ['prefs']),
+    ...mapState(useSystemStore, ['prefs']),
     preview() {
       return wallpaperBackground(this.prefs.wallpaper)
     },
@@ -109,7 +110,7 @@ export default {
   methods: {
     localize,
     set(key, value) {
-      this.$store.dispatch('system/setPref', { key, value })
+      useSystemStore().setPref({ key, value })
     }
   }
 }

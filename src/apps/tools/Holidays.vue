@@ -11,12 +11,12 @@
     </div>
 
     <template v-if="covered">
-      <i18n path="tools.holidays.summary" tag="p" class="holidays__summary">
+      <i18n-t keypath="tools.holidays.summary" tag="p" class="holidays__summary" scope="global">
         <template #year>{{ year }}</template>
         <template #rest><strong>{{ totals.rest }}</strong></template>
         <template #work><strong>{{ totals.work }}</strong></template>
         <template #workdays><strong>{{ totals.workdays }}</strong></template>
-      </i18n>
+      </i18n-t>
       <div class="tool-table__wrap">
         <table class="tool-table">
           <thead>

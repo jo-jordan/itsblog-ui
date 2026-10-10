@@ -7,7 +7,7 @@
 // CARTO's nicer Voyager style needs a free key (https://carto.com/basemaps/apikey).
 // To use it, set VUE_APP_CARTO_KEY as a build variable in Workers Builds (or in
 // .env.local for local builds); tile keys are public by design.
-const cartoKey = process.env.VUE_APP_CARTO_KEY
+const cartoKey = import.meta.env.VUE_APP_CARTO_KEY
 
 const osmAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
 

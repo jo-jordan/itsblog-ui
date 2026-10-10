@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import { useSystemStore } from '../../store/system'
+import { useWindowsStore } from '../../store/windows'
 import { apps } from '../../apps/registry'
 import { animateMinimize, snapshot } from '../../utils/genie'
 import { viewport } from '../../utils/viewport'
@@ -64,7 +66,7 @@ export default {
       return this.customTitle || this.app.name
     },
     focused() {
-      return this.$store.state.windows.focusedId === this.win.id
+      return useWindowsStore().focusedId === this.win.id
     },
     compact() {
       return viewport.compact && !this.app.dialog
@@ -89,7 +91,7 @@ export default {
     // Runs before the re-render: the window is still visible when minimising,
     // and the Dock tile still exists when restoring, so it is measured now.
     async 'win.minimized'(minimized) {
-      const effect = this.$store.state.system.prefs.minimizeEffect
+      const effect = useSystemStore().prefs.minimizeEffect
       const restoreTile = minimized ? null : this.dockTarget()
       this.animating = true
       if (!minimized && effect === 'genie') {
@@ -116,24 +118,24 @@ export default {
       this.picture = minimized ? picture : null
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.endGesture()
   },
   methods: {
     focus() {
       if (!this.focused) {
-        this.$store.dispatch('windows/focus', this.win.id)
+        useWindowsStore().focus(this.win.id)
       }
     },
     close() {
-      this.$store.dispatch('windows/close', this.win.id)
+      useWindowsStore().close(this.win.id)
     },
     minimize() {
-      this.$store.dispatch('windows/minimize', this.win.id)
+      useWindowsStore().minimize(this.win.id)
     },
     zoom() {
       if (!this.compact) {
-        this.$store.dispatch('windows/toggleZoom', this.win.id)
+        useWindowsStore().toggleZoom(this.win.id)
       }
     },
     onTitleDoubleClick() {
@@ -144,7 +146,7 @@ export default {
     },
     // Start photographing the window as soon as the pointer nears its buttons
     prefetchSnapshot() {
-      if (!this.app.dialog && this.$store.state.system.prefs.minimizeEffect === 'genie' && !this.freshPrefetch()) {
+      if (!this.app.dialog && useSystemStore().prefs.minimizeEffect === 'genie' && !this.freshPrefetch()) {
         this.prefetch = { at: Date.now(), promise: snapshot(this.$el) }
       }
     },
@@ -183,9 +185,9 @@ export default {
       const dx = event.clientX - startX
       const dy = event.clientY - startY
       if (type === 'move') {
-        this.$store.dispatch('windows/move', { id: this.win.id, x: origin.x + dx, y: origin.y + dy })
+        useWindowsStore().move({ id: this.win.id, x: origin.x + dx, y: origin.y + dy })
       } else {
-        this.$store.dispatch('windows/resize', { id: this.win.id, width: origin.width + dx, height: origin.height + dy })
+        useWindowsStore().resize({ id: this.win.id, width: origin.width + dx, height: origin.height + dy })
       }
     },
     endGesture() {

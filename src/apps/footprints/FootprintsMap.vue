@@ -28,6 +28,7 @@ export default {
     // Width covered on the right (the details drawer); centre places left of it
     offsetRight: { type: Number, default: 0 }
   },
+  emits: ['pick', 'select'],
   watch: {
     places() {
       this.drawPlaces()
@@ -60,7 +61,7 @@ export default {
     this.fitPlaces()
     this.drawPoint()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.observer.disconnect()
     this.map.remove()
   },

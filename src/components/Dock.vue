@@ -1,11 +1,10 @@
 <template>
   <nav class="dock" :class="{ 'is-compact': compact }" aria-label="Dock" @mousemove="onMouseMove" @mouseleave="pointerX = null">
     <div class="dock__shelf">
-      <template v-for="(item, index) in items">
-        <div v-if="item.separator" :key="item.key" class="dock__separator" role="separator" />
+      <template v-for="(item, index) in items" :key="item.key">
+        <div v-if="item.separator" class="dock__separator" role="separator" />
         <button
           v-else
-          :key="item.key"
           type="button"
           class="dock__item"
           :class="{ 'is-bouncing': launching.includes(item.appId) }"
@@ -26,7 +25,9 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { useSystemStore } from '../store/system'
+import { useWindowsStore } from '../store/windows'
+import { mapState } from 'pinia'
 import { apps, dockApps } from '../apps/registry'
 import { viewport } from '../utils/viewport'
 import indicator from '../assets/macos-x-indicator.png'
@@ -50,13 +51,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('windows', ['windows']),
-    ...mapGetters('windows', ['runningAppIds', 'minimized']),
+    ...mapState(useWindowsStore, ['windows']),
+    ...mapState(useWindowsStore, ['runningAppIds', 'minimized']),
     compact() {
       return viewport.compact
     },
     magnify() {
-      return this.$store.state.system.prefs.magnification && !this.compact
+      return useSystemStore().prefs.magnification && !this.compact
     },
     items() {
       const appItems = dockApps.map(appId => ({
@@ -102,9 +103,9 @@ export default {
     },
     activate(item) {
       if (item.trash) {
-        this.$store.dispatch('windows/open', { appId: 'finder', props: { location: 'trash' }})
+        useWindowsStore().open({ appId: 'finder', props: { location: 'trash' }})
       } else if (item.windowId) {
-        this.$store.dispatch('windows/restore', item.windowId)
+        useWindowsStore().restore(item.windowId)
       } else {
         this.activateApp(item.appId)
       }
@@ -113,15 +114,15 @@ export default {
       const own = this.windows.filter(w => w.appId === appId).sort((a, b) => b.z - a.z)
       const visible = own.find(w => !w.minimized)
       if (visible) {
-        this.$store.dispatch('windows/focus', visible.id)
+        useWindowsStore().focus(visible.id)
       } else if (own.length) {
-        this.$store.dispatch('windows/restore', own[0].id)
+        useWindowsStore().restore(own[0].id)
       } else if (!this.launching.includes(appId)) {
         // Bounce while the application "launches"
         this.launching.push(appId)
         setTimeout(() => {
           this.launching = this.launching.filter(id => id !== appId)
-          this.$store.dispatch('windows/open', { appId })
+          useWindowsStore().open({ appId })
         }, 900)
       }
     }

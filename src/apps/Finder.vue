@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import PostArticle from '../components/PostArticle'
+import PostArticle from '../components/PostArticle.vue'
 import { findPost, listCategories, listPosts, postsIn, searchPosts } from '../utils/posts'
 import folderIcon from '../assets/icons/folder.svg'
 import documentIcon from '../assets/icons/document.svg'
@@ -101,6 +101,7 @@ export default {
     win: { type: Object, required: true },
     focused: { type: Boolean, default: false }
   },
+  emits: ['title'],
   data() {
     return {
       query: '',

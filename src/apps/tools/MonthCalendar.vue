@@ -7,7 +7,7 @@
         <option v-for="y in years" :key="y" :value="y">{{ $t('tools.calendar.yearOption', { y }) }}</option>
       </select>
       <select v-model.number="month" class="aqua-popup" :aria-label="$t('tools.monthCalendar.month')">
-        <option v-for="m in 12" :key="m" :value="m">{{ $t('tools.monthCalendar.months')[m - 1] }}</option>
+        <option v-for="m in 12" :key="m" :value="m">{{ $tm('tools.monthCalendar.months')[m - 1] }}</option>
       </select>
       <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.monthCalendar.nextMonth')" @click="shift(1)">›</button>
       <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.calendar.nextYear')" @click="shift(12)">»</button>
@@ -77,6 +77,7 @@ export default {
   props: {
     params: { type: Object, default: null }
   },
+  emits: ['open'],
   data() {
     const now = today()
     return {

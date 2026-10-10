@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { useSystemStore } from '../store/system'
 import appleLogo from '../assets/macos-x-logo.png'
 import spinner from '../assets/apple-loading.gif'
 
@@ -53,7 +54,7 @@ export default {
       this.timers.push(tick)
     }, 1400)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.timers.forEach(clearTimeout)
   },
   methods: {
@@ -64,7 +65,7 @@ export default {
       this.finish()
     },
     finish() {
-      this.$store.dispatch('system/booted')
+      useSystemStore().booted()
     }
   }
 }

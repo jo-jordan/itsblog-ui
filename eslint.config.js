@@ -1,0 +1,103 @@
+import js from '@eslint/js'
+import stylistic from '@stylistic/eslint-plugin'
+import vue from 'eslint-plugin-vue'
+import globals from 'globals'
+
+export default [
+  { ignores: ['itsblog-ui/', 'public/', 'src/assets/', '.wrangler/'] },
+  js.configs.recommended,
+  ...vue.configs['flat/recommended'],
+  {
+    plugins: { '@stylistic': stylistic },
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.browser, ...globals.node }
+    },
+    rules: {
+      'vue/max-attributes-per-line': ['error', { singleline: 10, multiline: 1 }],
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
+      'vue/component-definition-name-casing': ['error', 'PascalCase'],
+      // Applications are named after the real ones: Finder, Mail, Dock…
+      'vue/multi-word-component-names': 'off',
+      'vue/no-v-html': 'off',
+
+      // Newer recommended rules the code base was not written against
+      'no-useless-assignment': 'off',
+      'preserve-caught-error': 'off',
+
+      'accessor-pairs': 'error',
+      'curly': ['error', 'multi-line'],
+      'eqeqeq': ['error', 'always', { null: 'ignore' }],
+      'no-array-constructor': 'error',
+      'no-caller': 'error',
+      'no-control-regex': 'off',
+      'no-eval': 'error',
+      'no-extend-native': 'error',
+      'no-extra-bind': 'error',
+      'no-implied-eval': 'error',
+      'no-iterator': 'error',
+      'no-label-var': 'error',
+      'no-labels': ['error', { allowLoop: false, allowSwitch: false }],
+      'no-lone-blocks': 'error',
+      'no-multi-str': 'error',
+      'no-new-wrappers': 'error',
+      'no-object-constructor': 'error',
+      'no-octal-escape': 'error',
+      'no-proto': 'error',
+      'no-return-assign': ['error', 'except-parens'],
+      'no-self-compare': 'error',
+      'no-sequences': 'error',
+      'no-throw-literal': 'error',
+      'no-undef-init': 'error',
+      'no-unmodified-loop-condition': 'error',
+      'no-unneeded-ternary': ['error', { defaultAssignment: false }],
+      'no-unused-vars': ['error', { vars: 'all', args: 'none', caughtErrors: 'none' }],
+      'no-useless-call': 'error',
+      'no-useless-computed-key': 'error',
+      'no-useless-constructor': 'error',
+      'no-useless-escape': 'off',
+      'one-var': ['error', { initialized: 'never' }],
+      'prefer-const': 'error',
+      'yoda': ['error', 'never'],
+
+      '@stylistic/array-bracket-spacing': ['error', 'never'],
+      '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
+      '@stylistic/block-spacing': ['error', 'always'],
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      '@stylistic/comma-dangle': ['error', 'never'],
+      '@stylistic/comma-spacing': ['error', { before: false, after: true }],
+      '@stylistic/comma-style': ['error', 'last'],
+      '@stylistic/dot-location': ['error', 'property'],
+      '@stylistic/eol-last': 'error',
+      '@stylistic/function-call-spacing': 'error',
+      '@stylistic/generator-star-spacing': ['error', { before: true, after: true }],
+      '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
+      '@stylistic/key-spacing': ['error', { beforeColon: false, afterColon: true }],
+      '@stylistic/keyword-spacing': ['error', { before: true, after: true }],
+      '@stylistic/new-parens': 'error',
+      '@stylistic/no-floating-decimal': 'error',
+      '@stylistic/no-mixed-spaces-and-tabs': 'error',
+      '@stylistic/no-multi-spaces': 'error',
+      '@stylistic/no-multiple-empty-lines': ['error', { max: 1 }],
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/no-whitespace-before-property': 'error',
+      '@stylistic/object-curly-spacing': ['error', 'always', { objectsInObjects: false }],
+      '@stylistic/operator-linebreak': ['error', 'after', { overrides: { '?': 'before', ':': 'before' }}],
+      '@stylistic/padded-blocks': ['error', 'never'],
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: 'always' }],
+      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/semi-spacing': ['error', { before: false, after: true }],
+      '@stylistic/space-before-blocks': ['error', 'always'],
+      '@stylistic/space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'never', catch: 'always' }],
+      '@stylistic/space-in-parens': ['error', 'never'],
+      '@stylistic/space-infix-ops': 'error',
+      '@stylistic/space-unary-ops': ['error', { words: true, nonwords: false }],
+      '@stylistic/spaced-comment': ['error', 'always', { markers: ['global', 'globals', 'eslint', 'eslint-disable', '*package', '!', ','] }],
+      '@stylistic/template-curly-spacing': ['error', 'never'],
+      '@stylistic/wrap-iife': ['error', 'any'],
+      '@stylistic/yield-star-spacing': ['error', 'both']
+    }
+  }
+]

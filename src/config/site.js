@@ -1,11 +1,11 @@
-import pkg from '../../package.json'
+import { version } from '../../package.json'
 
 // Everything visitors see about the site owner lives here. Text that differs
 // by language is written as { 'zh-CN': …, en: … } and shown through localize().
 export default {
   title: "It's blog",
   domain: 'edgeless.me',
-  version: pkg.version,
+  version,
   since: 2020,
   owner: {
     name: 'Mao Yidan',

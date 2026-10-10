@@ -80,7 +80,7 @@
         <button type="button" class="aqua-button" @click="resetPomodoro">{{ $t('tools.timers.reset') }}</button>
       </div>
       <p class="timers__tomatoes">
-        <i18n path="tools.timers.completed" :tag="false"><strong slot="count">{{ pomodoro.completed }}</strong></i18n>
+        <i18n-t keypath="tools.timers.completed" scope="global"><template #count><strong>{{ pomodoro.completed }}</strong></template></i18n-t>
         <span v-for="n in Math.min(pomodoro.completed, 12)" :key="n" class="timers__tomato" aria-hidden="true" />
       </p>
       <p class="tool-hint">{{ $t('tools.timers.pomodoroHint') }}</p>
@@ -198,7 +198,7 @@ export default {
       this.now = Date.now()
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.ticker)
     if (this.audio) {
       this.audio.close().catch(() => {})

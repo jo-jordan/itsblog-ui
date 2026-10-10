@@ -17,7 +17,8 @@ export default {
     open: { type: Boolean, default: false },
     label: { type: String, default: '' },
     width: { type: String, default: '520px' }
-  }
+  },
+  emits: ['close']
 }
 </script>
 
@@ -52,7 +53,7 @@ export default {
   }
 }
 
-.aqua-sheet-enter,
+.aqua-sheet-enter-from,
 .aqua-sheet-leave-to {
   background: transparent;
 

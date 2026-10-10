@@ -19,9 +19,9 @@
       <dl class="address-book__fields">
         <dt>{{ $t('addressBook.email') }}</dt>
         <dd><a :href="`mailto:${email}`" @click.prevent="compose">{{ email }}</a></dd>
-        <template v-for="link in links">
-          <dt :key="`${link.href}-label`">{{ localize(link.label) }}</dt>
-          <dd :key="link.href"><a :href="link.href" target="_blank" rel="noopener">{{ link.value }}</a></dd>
+        <template v-for="link in links" :key="link.href">
+          <dt>{{ localize(link.label) }}</dt>
+          <dd><a :href="link.href" target="_blank" rel="noopener">{{ link.value }}</a></dd>
         </template>
       </dl>
     </section>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { useWindowsStore } from '../store/windows'
 import site from '../config/site'
 import { localize } from '../i18n'
 import avatar from '../assets/logo.png'
@@ -49,7 +50,7 @@ export default {
   methods: {
     localize,
     compose() {
-      this.$store.dispatch('windows/open', { appId: 'mail' })
+      useWindowsStore().open({ appId: 'mail' })
     }
   }
 }

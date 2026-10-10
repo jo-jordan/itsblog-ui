@@ -1,12 +1,12 @@
 <template>
   <span class="tool-inline lunar-picker">
-    <select :value="value.y" class="aqua-popup" :aria-label="aria('pickerYear')" @change="update({ y: +$event.target.value })">
+    <select :value="modelValue.y" class="aqua-popup" :aria-label="aria('pickerYear')" @change="update({ y: +$event.target.value })">
       <option v-for="y in years" :key="y" :value="y">{{ $t('tools.calendar.yearOption', { y }) }}</option>
     </select>
     <select :value="month.value" class="aqua-popup" :aria-label="aria('pickerMonth')" @change="update({ m: +$event.target.value })">
       <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
     </select>
-    <select :value="Math.min(value.d, month.days)" class="aqua-popup" :aria-label="aria('pickerDay')" @change="update({ d: +$event.target.value })">
+    <select :value="Math.min(modelValue.d, month.days)" class="aqua-popup" :aria-label="aria('pickerDay')" @change="update({ d: +$event.target.value })">
       <option v-for="d in month.days" :key="d" :value="d">{{ dayName(d) }}</option>
     </select>
   </span>
@@ -19,9 +19,10 @@ import { lunarDayName, lunarMonthsOf, MAX_YEAR, MIN_YEAR } from './lib/calendar'
 export default {
   name: 'LunarDatePicker',
   props: {
-    value: { type: Object, required: true },
+    modelValue: { type: Object, required: true },
     label: { type: String, default: '' }
   },
+  emits: ['update:modelValue'],
   data() {
     return {
       years: Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MIN_YEAR + i)
@@ -29,10 +30,10 @@ export default {
   },
   computed: {
     months() {
-      return lunarMonthsOf(this.value.y)
+      return lunarMonthsOf(this.modelValue.y)
     },
     month() {
-      return this.months.find(item => item.value === this.value.m) || this.months.find(item => item.value === Math.abs(this.value.m))
+      return this.months.find(item => item.value === this.modelValue.m) || this.months.find(item => item.value === Math.abs(this.modelValue.m))
     }
   },
   methods: {
@@ -50,7 +51,7 @@ export default {
       const month = months.find(item => item.value === next.m) || months.find(item => item.value === Math.abs(next.m))
       next.m = month.value
       next.d = Math.min(next.d, month.days)
-      this.$emit('input', next)
+      this.$emit('update:modelValue', next)
     }
   }
 }

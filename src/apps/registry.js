@@ -1,3 +1,4 @@
+import { defineAsyncComponent } from 'vue'
 import finderIcon from '../assets/macos-x-finder.png'
 import mailIcon from '../assets/macos-x-mail.png'
 import sherlockIcon from '../assets/macos-x-search.png'
@@ -16,45 +17,45 @@ export const apps = {
   finder: {
     name: 'Finder',
     icon: finderIcon,
-    component: () => import(/* webpackChunkName: "finder" */ './Finder.vue'),
+    component: defineAsyncComponent(() => import('./Finder.vue')),
     size: { width: 900, height: 540 },
     instanceKey: props => (props.location === 'trash' ? 'finder:trash' : props.newWindow ? `finder:${props.newWindow}` : 'finder')
   },
   reader: {
     get name() { return t('apps.reader') },
     icon: documentIcon,
-    component: () => import(/* webpackChunkName: "reader" */ './Reader.vue'),
+    component: defineAsyncComponent(() => import('./Reader.vue')),
     size: { width: 760, height: 620 },
     instanceKey: props => `reader:${props.slug}`
   },
   mail: {
     name: 'Mail',
     icon: mailIcon,
-    component: () => import(/* webpackChunkName: "mail" */ './Mail.vue'),
+    component: defineAsyncComponent(() => import('./Mail.vue')),
     size: { width: 580, height: 460 }
   },
   sherlock: {
     name: 'Sherlock',
     icon: sherlockIcon,
-    component: () => import(/* webpackChunkName: "sherlock" */ './Sherlock.vue'),
+    component: defineAsyncComponent(() => import('./Sherlock.vue')),
     size: { width: 640, height: 480 }
   },
   addressBook: {
     get name() { return t('apps.addressBook') },
     icon: addressBookIcon,
-    component: () => import(/* webpackChunkName: "address-book" */ './AddressBook.vue'),
+    component: defineAsyncComponent(() => import('./AddressBook.vue')),
     size: { width: 640, height: 400 }
   },
   footprints: {
     get name() { return t('apps.footprints') },
     icon: footprintsIcon,
-    component: () => import(/* webpackChunkName: "footprints" */ './Footprints.vue'),
+    component: defineAsyncComponent(() => import('./Footprints.vue')),
     size: { width: 1020, height: 640 }
   },
   login: {
     get name() { return t('apps.login') },
     icon: loginIcon,
-    component: () => import(/* webpackChunkName: "login" */ './Login.vue'),
+    component: defineAsyncComponent(() => import('./Login.vue')),
     size: { width: 380, height: 330 },
     resizable: false,
     dialog: true
@@ -63,20 +64,20 @@ export const apps = {
   toolbox: {
     get name() { return t('apps.toolbox') },
     icon: toolboxIcon,
-    component: () => import(/* webpackChunkName: "toolbox" */ './Toolbox.vue'),
+    component: defineAsyncComponent(() => import('./Toolbox.vue')),
     size: { width: 860, height: 560 }
   },
   preferences: {
     get name() { return t('apps.preferences') },
     icon: preferencesIcon,
-    component: () => import(/* webpackChunkName: "preferences" */ './Preferences.vue'),
+    component: defineAsyncComponent(() => import('./Preferences.vue')),
     size: { width: 620, height: 440 },
     resizable: false
   },
   about: {
     get name() { return t('apps.about') },
     icon: appleIcon,
-    component: () => import(/* webpackChunkName: "about" */ './AboutThisMac.vue'),
+    component: defineAsyncComponent(() => import('./AboutThisMac.vue')),
     size: { width: 320, height: 380 },
     resizable: false,
     dialog: true

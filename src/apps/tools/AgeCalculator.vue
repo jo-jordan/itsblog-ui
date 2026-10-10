@@ -64,7 +64,7 @@
         <div class="tool-table__wrap">
           <table class="tool-table age__bazi">
             <thead>
-              <tr><th /><th v-for="pillar in $t('tools.ageCalculator.pillars')" :key="pillar">{{ pillar }}</th></tr>
+              <tr><th /><th v-for="pillar in $tm('tools.ageCalculator.pillars')" :key="pillar">{{ pillar }}</th></tr>
             </thead>
             <tbody>
               <tr v-for="row in result.bazi" :key="row.id" :class="{ 'age__bazi-main': row.main }">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import LunarDatePicker from './LunarDatePicker'
+import LunarDatePicker from './LunarDatePicker.vue'
 import { compare, dayNumber, formatYmd, nextAnniversary, parseYmd, span, today, weekday } from './lib/dates'
 import { lunarDateText, lunarOf, lunarToSolar, nextLunarAnniversary, signName, zodiacName, Solar, MIN_YEAR, MAX_YEAR } from './lib/calendar'
 import { formatLongDate, formatNumber, t, tc, weekdayName } from './lib/i18n'

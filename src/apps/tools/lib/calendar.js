@@ -2,7 +2,7 @@
 // It is big, so only the toolbox chunk imports this file.
 import { Solar, Lunar, LunarYear, HolidayUtil } from 'lunar-javascript'
 import { countWeekdays, dayNumber, formatYmd, fromDayNumber, isWeekend, today } from './dates'
-import { t, tc } from './i18n'
+import { t, tc, tm } from './i18n'
 
 // The library is always left in Chinese: its own I18n.setLanguage() is global,
 // only partly translated, and changes the very strings this file and the tools
@@ -31,7 +31,7 @@ export function dateOfSolar(solar) {
 // A name the library gives in Chinese, looked up in a tools.calendar.<map> table;
 // anything the table lacks (and everything in Chinese) stays as it is
 function translated(map, name) {
-  const names = t(`tools.calendar.${map}`)
+  const names = tm(`tools.calendar.${map}`)
   return (names && typeof names === 'object' && names[name]) || name
 }
 
@@ -65,13 +65,13 @@ export function daysAway(days) {
 
 // Lunar month by number, negative for a leap month: '六月' / '闰六月', '6th month' / 'Leap 6th month'
 export function lunarMonthLabel(month) {
-  const name = t('tools.calendar.monthNames')[Math.abs(month) - 1]
+  const name = tm('tools.calendar.monthNames')[Math.abs(month) - 1]
   return month < 0 ? t('tools.calendar.leapMonth', { month: name }) : name
 }
 
 // Lunar day by number: '十五' / 'Day 15'
 export function lunarDayName(day) {
-  return t('tools.calendar.dayNames')[day - 1]
+  return tm('tools.calendar.dayNames')[day - 1]
 }
 
 // Lunar month and day by number: '八月十五' / '8th month, day 15'
@@ -316,7 +316,7 @@ export function cellInfo(date) {
     label = termName(term)
     kind = 'term'
   } else {
-    label = lunar.getDay() === 1 ? lunarMonthName(lunar) : t('tools.calendar.cellDays')[lunar.getDay() - 1]
+    label = lunar.getDay() === 1 ? lunarMonthName(lunar) : tm('tools.calendar.cellDays')[lunar.getDay() - 1]
     kind = lunar.getDay() === 1 ? 'month' : 'lunar'
   }
   return { label, kind, lunar, holiday: holidayOf(date) }

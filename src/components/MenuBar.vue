@@ -22,11 +22,10 @@
           <template v-else>{{ menu.label }}</template>
         </button>
         <div v-if="openKey === menu.key" class="aqua-menu" role="menu">
-          <template v-for="(item, index) in menu.items">
-            <div v-if="item.separator" :key="index" class="aqua-menu__separator" role="separator" />
+          <template v-for="(item, index) in menu.items" :key="index">
+            <div v-if="item.separator" class="aqua-menu__separator" role="separator" />
             <div
               v-else
-              :key="index"
               class="aqua-menu__item"
               :class="{ 'is-disabled': item.disabled, 'is-checked': item.checked }"
               role="menuitem"
@@ -44,7 +43,10 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { useSessionStore } from '../store/session'
+import { useSystemStore } from '../store/system'
+import { useWindowsStore } from '../store/windows'
+import { mapState } from 'pinia'
 import { apps } from '../apps/registry'
 import { findPost } from '../utils/posts'
 import site from '../config/site'
@@ -65,8 +67,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('windows', ['windows']),
-    ...mapGetters('windows', ['focused', 'activeAppId']),
+    ...mapState(useWindowsStore, ['windows']),
+    ...mapState(useWindowsStore, ['focused', 'activeAppId']),
     activeApp() {
       return apps[this.activeAppId]
     },
@@ -90,7 +92,7 @@ export default {
     menus() {
       const name = this.activeApp.name
       const appWindows = this.windows.filter(w => w.appId === this.activeAppId)
-      const magnification = this.$store.state.system.prefs.magnification
+      const magnification = useSystemStore().prefs.magnification
       return [
         {
           key: 'apple',
@@ -101,14 +103,14 @@ export default {
             { label: this.$t('menu.preferences'), action: () => this.open('preferences') },
             { label: this.$t(magnification ? 'menu.magnificationOff' : 'menu.magnificationOn'), action: () => this.setPref('magnification', !magnification) },
             SEPARATOR,
-            { label: this.$t('menu.forceQuit'), disabled: !this.windows.length, action: () => this.dispatch('windows/closeAll') },
+            { label: this.$t('menu.forceQuit'), disabled: !this.windows.length, action: () => useWindowsStore().closeAll() },
             SEPARATOR,
-            { label: this.$t('menu.sleep'), action: () => this.dispatch('system/sleep') },
-            { label: this.$t('menu.restart'), action: () => this.dispatch('system/restart') },
-            { label: this.$t('menu.shutDown'), action: () => this.dispatch('system/shutDown') },
+            { label: this.$t('menu.sleep'), action: () => useSystemStore().sleep() },
+            { label: this.$t('menu.restart'), action: () => useSystemStore().restart() },
+            { label: this.$t('menu.shutDown'), action: () => useSystemStore().shutDown() },
             SEPARATOR,
-            this.$store.state.session.loggedIn
-              ? { label: this.$t('menu.logOut', { name: site.owner.name }), action: () => this.dispatch('session/logout') }
+            useSessionStore().loggedIn
+              ? { label: this.$t('menu.logOut', { name: site.owner.name }), action: () => useSessionStore().logout() }
               : { label: this.$t('menu.logIn'), action: () => this.open('login') }
           ]
         },
@@ -121,12 +123,12 @@ export default {
             {
               label: this.$t('menu.hide', { name }),
               disabled: !appWindows.some(w => !w.minimized),
-              action: () => appWindows.forEach(w => this.dispatch('windows/minimize', w.id))
+              action: () => appWindows.forEach(w => useWindowsStore().minimize(w.id))
             },
             {
               label: this.$t('menu.quit', { name }),
               disabled: this.activeAppId === 'finder' || !appWindows.length,
-              action: () => this.dispatch('windows/closeApp', this.activeAppId)
+              action: () => useWindowsStore().closeApp(this.activeAppId)
             }
           ]
         },
@@ -137,20 +139,20 @@ export default {
             { label: this.$t('menu.newFinderWindow'), action: () => this.open('finder', { newWindow: Date.now() }) },
             { label: this.$t('menu.find'), action: () => this.open('sherlock') },
             SEPARATOR,
-            { label: this.$t('menu.closeWindow'), disabled: !this.focused, action: () => this.dispatch('windows/close', this.focused.id) }
+            { label: this.$t('menu.closeWindow'), disabled: !this.focused, action: () => useWindowsStore().close(this.focused.id) }
           ]
         },
         {
           key: 'window',
           label: this.$t('menu.window'),
           items: [
-            { label: this.$t('menu.minimize'), disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/minimize', this.focused.id) },
-            { label: this.$t('menu.zoom'), disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/toggleZoom', this.focused.id) },
+            { label: this.$t('menu.minimize'), disabled: !this.focused || this.isDialog(this.focused), action: () => useWindowsStore().minimize(this.focused.id) },
+            { label: this.$t('menu.zoom'), disabled: !this.focused || this.isDialog(this.focused), action: () => useWindowsStore().toggleZoom(this.focused.id) },
             ...(this.windows.length ? [SEPARATOR] : []),
             ...this.windows.map(win => ({
               label: this.windowLabel(win),
               checked: this.focused && this.focused.id === win.id,
-              action: () => this.dispatch('windows/restore', win.id)
+              action: () => useWindowsStore().restore(win.id)
             }))
           ]
         },
@@ -174,7 +176,7 @@ export default {
     document.addEventListener('pointerdown', this.close)
     document.addEventListener('keydown', this.onKeydown)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
     document.removeEventListener('pointerdown', this.close)
     document.removeEventListener('keydown', this.onKeydown)
@@ -209,13 +211,10 @@ export default {
       }
     },
     open(appId, props) {
-      this.dispatch('windows/open', { appId, props })
-    },
-    dispatch(type, payload) {
-      this.$store.dispatch(type, payload)
+      useWindowsStore().open({ appId, props })
     },
     setPref(key, value) {
-      this.dispatch('system/setPref', { key, value })
+      useSystemStore().setPref({ key, value })
     },
     openHelp() {
       this.$router.push('/posts/welcome').catch(() => {})

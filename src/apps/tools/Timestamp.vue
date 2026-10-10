@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import ZoneSelect from './ZoneSelect'
+import ZoneSelect from './ZoneSelect.vue'
 import { pad, weekday } from './lib/dates'
 import { relativeTime, t, weekdayName } from './lib/i18n'
 import { cityName, formatOffset, formatParts, isDst, LOCAL_ZONE, zonedToEpoch, zoneOffset, zoneParts } from './lib/zones'
@@ -208,7 +208,7 @@ export default {
       }
     }, 47)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
   methods: {

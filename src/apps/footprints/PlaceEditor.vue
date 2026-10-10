@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import FootprintsMap from './FootprintsMap'
+import FootprintsMap from './FootprintsMap.vue'
 import { CATEGORIES, categoryLabel } from './shared'
 import { footprints as api } from '../../api/client'
 
@@ -86,6 +86,7 @@ export default {
     // The place being edited, or null for a new one
     place: { type: Object, default: null }
   },
+  emits: ['close', 'saved'],
   data() {
     const p = this.place || {}
     return {

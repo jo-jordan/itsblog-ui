@@ -91,6 +91,7 @@ export default {
     place: { type: Object, required: true },
     admin: { type: Boolean, default: false }
   },
+  emits: ['close', 'edit', 'delete', 'open-photo', 'changed'],
   data() {
     return {
       visit: { start_date: '', end_date: '', note: '' },

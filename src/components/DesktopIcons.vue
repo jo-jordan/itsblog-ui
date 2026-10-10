@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { useWindowsStore } from '../store/windows'
 import { findPost } from '../utils/posts'
 import { viewport } from '../utils/viewport'
 import hardDisk from '../assets/icons/harddisk.svg'
@@ -42,7 +43,7 @@ export default {
   mounted() {
     document.addEventListener('pointerdown', this.deselect)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('pointerdown', this.deselect)
   },
   methods: {
@@ -57,7 +58,7 @@ export default {
     },
     openIcon(icon) {
       if (icon.id === 'hd') {
-        this.$store.dispatch('windows/open', { appId: 'finder' })
+        useWindowsStore().open({ appId: 'finder' })
       } else {
         this.$router.push('/posts/welcome').catch(() => {})
       }

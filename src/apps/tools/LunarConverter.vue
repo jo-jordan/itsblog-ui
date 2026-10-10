@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import LunarDatePicker from './LunarDatePicker'
+import LunarDatePicker from './LunarDatePicker.vue'
 import { dayNumber, formatYmd, parseYmd, today, weekday } from './lib/dates'
 import { daysAway, lunarMonthsOf, lunarOf, lunarText, lunarToSolar, zodiacName, MAX_YEAR, MIN_YEAR } from './lib/calendar'
 import { formatLongDate, t, weekdayName } from './lib/i18n'

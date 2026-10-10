@@ -1,13 +1,13 @@
 // Dates and numbers in the current language. Dates are plain { y, m, d }
 // objects or 'YYYY-MM-DD' strings, formatted in UTC so no time zone shifts them.
-import i18n from './index'
+import { currentLocale, t, tm } from './index'
 
 const formatters = {}
 
 function formatter(options) {
-  const key = `${i18n.locale}|${JSON.stringify(options)}`
+  const key = `${currentLocale()}|${JSON.stringify(options)}`
   if (!formatters[key]) {
-    formatters[key] = new Intl.DateTimeFormat(i18n.locale, { ...options, timeZone: 'UTC' })
+    formatters[key] = new Intl.DateTimeFormat(currentLocale(), { ...options, timeZone: 'UTC' })
   }
   return formatters[key]
 }
@@ -49,12 +49,12 @@ export function formatYearMonth(date) {
 
 // 0 = Sunday … 6 = Saturday. long: 星期三 / Wednesday, short: 周三 / Wed, narrow: 三 / W
 export function weekdayName(weekday, style = 'short') {
-  return i18n.t(`date.weekdays.${style}`)[weekday]
+  return tm(`date.weekdays.${style}`)[weekday]
 }
 
 // 1,234 in both languages, but spelled by the current one
 export function formatNumber(value, options) {
-  return Number(value).toLocaleString(i18n.locale, options)
+  return Number(value).toLocaleString(currentLocale(), options)
 }
 
 const RELATIVE_UNITS = [
@@ -70,9 +70,9 @@ const RELATIVE_UNITS = [
 export function relativeTime(ms) {
   const abs = Math.abs(ms)
   if (abs < 1000) {
-    return i18n.t('date.now')
+    return t('date.now')
   }
   const [size, unit] = RELATIVE_UNITS.find(([unitSize]) => abs >= unitSize)
   const amount = Math.floor(abs / size) * (ms > 0 ? 1 : -1)
-  return new Intl.RelativeTimeFormat(i18n.locale, { numeric: 'always' }).format(amount, unit)
+  return new Intl.RelativeTimeFormat(currentLocale(), { numeric: 'always' }).format(amount, unit)
 }

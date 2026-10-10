@@ -100,7 +100,7 @@ function geocodeJson(item) {
 
 async function nominatim(path, params) {
   const url = `${NOMINATIM}/${path}?${new URLSearchParams({ format: 'jsonv2', addressdetails: '1', 'accept-language': 'zh-CN,zh,en', ...params })}`
-  const response = await fetch(url, { headers: { 'User-Agent': 'itsblog/1.0 (+https://edgeless.me)' } })
+  const response = await fetch(url, { headers: { 'User-Agent': 'itsblog/1.0 (+https://edgeless.me)' }})
   if (!response.ok) {
     throw apiError(502, 'geocoderUnavailable')
   }

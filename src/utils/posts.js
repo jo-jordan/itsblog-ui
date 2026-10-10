@@ -3,14 +3,14 @@ import { DEFAULT_LOCALE, LOCALES, currentLocale, t } from '../i18n'
 
 // Every Markdown file under content/posts is bundled at build time.
 // <slug>.md is the post in the default language, <slug>.<locale>.md a translation.
-const context = require.context('../../content/posts', true, /\.md$/)
+const files = import.meta.glob('../../content/posts/**/*.md', { eager: true, query: '?raw', import: 'default' })
 
 const sources = {}
-context.keys().forEach(key => {
-  const name = key.replace(/^\.\//, '').replace(/\.md$/, '').split('/').pop()
+Object.keys(files).forEach(key => {
+  const name = key.replace(/\.md$/, '').split('/').pop()
   const locale = LOCALES.map(item => item.id).find(id => name.endsWith(`.${id}`)) || DEFAULT_LOCALE
   const slug = name.endsWith(`.${locale}`) ? name.slice(0, -locale.length - 1) : name
-  sources[slug] = { ...sources[slug], [locale]: parseFrontMatter(context(key)) }
+  sources[slug] = { ...sources[slug], [locale]: parseFrontMatter(files[key]) }
 })
 
 function toPost(slug, locale) {

@@ -50,22 +50,22 @@
 
 <script>
 import './tools/lib/i18n'
-import ToolGlyph from './tools/ToolGlyph'
-import Almanac from './tools/Almanac'
-import MonthCalendar from './tools/MonthCalendar'
-import LunarConverter from './tools/LunarConverter'
-import SolarTerms from './tools/SolarTerms'
-import Holidays from './tools/Holidays'
-import DateDiff from './tools/DateDiff'
-import DateShift from './tools/DateShift'
-import Countdowns from './tools/Countdowns'
-import AgeCalculator from './tools/AgeCalculator'
-import WeekInfo from './tools/WeekInfo'
-import Timestamp from './tools/Timestamp'
-import WorldClock from './tools/WorldClock'
-import Duration from './tools/Duration'
-import Cron from './tools/Cron'
-import Timers from './tools/Timers'
+import ToolGlyph from './tools/ToolGlyph.vue'
+import Almanac from './tools/Almanac.vue'
+import MonthCalendar from './tools/MonthCalendar.vue'
+import LunarConverter from './tools/LunarConverter.vue'
+import SolarTerms from './tools/SolarTerms.vue'
+import Holidays from './tools/Holidays.vue'
+import DateDiff from './tools/DateDiff.vue'
+import DateShift from './tools/DateShift.vue'
+import Countdowns from './tools/Countdowns.vue'
+import AgeCalculator from './tools/AgeCalculator.vue'
+import WeekInfo from './tools/WeekInfo.vue'
+import Timestamp from './tools/Timestamp.vue'
+import WorldClock from './tools/WorldClock.vue'
+import Duration from './tools/Duration.vue'
+import Cron from './tools/Cron.vue'
+import Timers from './tools/Timers.vue'
 import { load, save } from './tools/lib/storage'
 import { viewport } from '../utils/viewport'
 import { apps } from './registry'
@@ -113,6 +113,7 @@ export default {
     win: { type: Object, required: true },
     focused: { type: Boolean, default: false }
   },
+  emits: ['title'],
   data() {
     const saved = load('tool', 'almanac')
     return {

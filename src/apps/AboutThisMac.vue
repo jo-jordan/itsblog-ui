@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { useWindowsStore } from '../store/windows'
 import site from '../config/site'
 import appleLogo from '../assets/macos-x-logo.png'
 
@@ -50,7 +51,7 @@ export default {
       window.open(site.sourceUrl, '_blank', 'noopener')
     },
     moreInfo() {
-      this.$store.dispatch('windows/open', { appId: 'addressBook' })
+      useWindowsStore().open({ appId: 'addressBook' })
     }
   }
 }

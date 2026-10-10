@@ -10,11 +10,11 @@
       <strong>{{ owner }}</strong>
     </div>
 
-    <i18n v-if="!configured" path="login.notConfigured" tag="p" class="login__note">
+    <i18n-t v-if="!configured" keypath="login.notConfigured" tag="p" class="login__note" scope="global">
       <template #secret>
         <code>ADMIN_PASSWORD</code>
       </template>
-    </i18n>
+    </i18n-t>
     <template v-else>
       <label class="login__field">
         <span>{{ $t('login.password') }}</span>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import { useSessionStore } from '../store/session'
+import { useWindowsStore } from '../store/windows'
 import site from '../config/site'
 import appleLogo from '../assets/macos-x-logo.png'
 import avatar from '../assets/logo.png'
@@ -53,7 +55,7 @@ export default {
   },
   computed: {
     configured() {
-      return this.$store.state.session.configured
+      return useSessionStore().configured
     }
   },
   mounted() {
@@ -66,7 +68,7 @@ export default {
       this.busy = true
       this.error = ''
       try {
-        await this.$store.dispatch('session/login', this.password)
+        await useSessionStore().login(this.password)
         this.close()
       } catch (e) {
         // Like the real login window, a wrong password shakes the panel
@@ -79,7 +81,7 @@ export default {
       }
     },
     close() {
-      this.$store.dispatch('windows/close', this.win.id)
+      useWindowsStore().close(this.win.id)
     }
   }
 }
