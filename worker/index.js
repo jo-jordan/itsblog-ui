@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import api from './api'
+import { errorMessage, message, requestLocale } from './messages'
 
 // Runs in front of the static Vue build: canonicalises www.edgeless.me,
 // serves the footprints API and its photos, and hands everything else to
@@ -39,12 +40,14 @@ app.get('/media/*', async c => {
 
 app.all('*', c => c.env.ASSETS.fetch(c.req.raw))
 
+// Errors thrown anywhere in the API end up here (the sub-apps have no handler
+// of their own) and are worded in the visitor's language
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message }, err.status)
+    return c.json({ error: errorMessage(c, err) }, err.status)
   }
   console.error(err)
-  return c.json({ error: '服务器出错了' }, 500)
+  return c.json({ error: message(requestLocale(c), 'serverError') }, 500)
 })
 
 export default app

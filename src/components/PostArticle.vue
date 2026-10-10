@@ -5,7 +5,7 @@
       <p class="post-article__meta">
         <time :datetime="post.date">{{ date }}</time>
         <span>· {{ post.category }}</span>
-        <span>· 约 {{ minutes }} 分钟</span>
+        <span>· {{ $t('posts.minutes', { n: minutes }) }}</span>
       </p>
       <ul v-if="post.tags.length" class="post-article__tags">
         <li v-for="tag in post.tags" :key="tag">{{ tag }}</li>
@@ -17,7 +17,8 @@
 
 <script>
 import { renderMarkdown } from '../utils/markdown'
-import { formatDate, readingMinutes } from '../utils/posts'
+import { readingMinutes } from '../utils/posts'
+import { formatLongDate } from '../i18n/format'
 import 'github-markdown-css'
 
 export default {
@@ -30,7 +31,7 @@ export default {
       return renderMarkdown(this.post.body)
     },
     date() {
-      return formatDate(this.post.date)
+      return formatLongDate(this.post.date)
     },
     minutes() {
       return readingMinutes(this.post.body)

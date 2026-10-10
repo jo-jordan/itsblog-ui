@@ -1,7 +1,7 @@
 <template>
   <div class="footprints" :class="{ 'is-inactive': !focused }">
     <div class="footprints__toolbar">
-      <div class="aqua-segmented" role="tablist" aria-label="显示方式">
+      <div class="aqua-segmented" role="tablist" :aria-label="$t('footprints.views.label')">
         <button
           v-for="option in views"
           :key="option.id"
@@ -13,17 +13,17 @@
         >{{ option.label }}</button>
       </div>
       <p class="footprints__stats">
-        <strong>{{ stats.places }}</strong> 个地方 ·
-        <strong>{{ stats.countries }}</strong> 个国家/地区 ·
-        <strong>{{ stats.cities }}</strong> 座城市
-        <template v-if="stats.since"> · 始于 {{ stats.since }} 年</template>
+        <strong>{{ stats.places }}</strong> {{ $tc('footprints.stats.places', stats.places) }} ·
+        <strong>{{ stats.countries }}</strong> {{ $tc('footprints.stats.countries', stats.countries) }} ·
+        <strong>{{ stats.cities }}</strong> {{ $tc('footprints.stats.cities', stats.cities) }}
+        <template v-if="stats.since"> · {{ $t('footprints.stats.since', { year: stats.since }) }}</template>
       </p>
-      <input v-model.trim="query" type="search" class="aqua-search footprints__search" placeholder="筛选" aria-label="筛选地点">
-      <button v-if="admin" type="button" class="aqua-button" @click="editing = { place: null }">新地点…</button>
+      <input v-model.trim="query" type="search" class="aqua-search footprints__search" :placeholder="$t('footprints.filter')" :aria-label="$t('footprints.filterLabel')">
+      <button v-if="admin" type="button" class="aqua-button" @click="editing = { place: null }">{{ $t('footprints.newPlaceButton') }}</button>
     </div>
 
     <div class="footprints__body">
-      <aside class="footprints__sidebar aqua-scroll" aria-label="地点列表">
+      <aside class="footprints__sidebar aqua-scroll" :aria-label="$t('footprints.placeList')">
         <template v-for="group in groups">
           <h3 :key="`h-${group.country}`">{{ group.country }} <small>{{ group.places.length }}</small></h3>
           <div
@@ -41,14 +41,14 @@
             <small>{{ place.city || place.region }}</small>
           </div>
         </template>
-        <p v-if="!loading && !filtered.length" class="footprints__empty-list">{{ query ? '没有符合条件的地方' : '还没有足迹' }}</p>
+        <p v-if="!loading && !filtered.length" class="footprints__empty-list">{{ query ? $t('footprints.noMatches') : $t('footprints.noPlaces') }}</p>
       </aside>
 
       <main class="footprints__main">
         <div v-if="error" class="footprints__state">
           <img :src="icon" alt="">
-          <p>{{ error }}</p>
-          <button type="button" class="aqua-button" @click="load">重试</button>
+          <p>{{ $t('footprints.loadFailed', { message: error }) }}</p>
+          <button type="button" class="aqua-button" @click="load">{{ $t('footprints.retry') }}</button>
         </div>
 
         <template v-else>
@@ -65,7 +65,7 @@
               <span class="fp-card__photo" :style="place.cover ? { backgroundImage: `url(${place.cover.thumb})` } : null">
                 <img v-if="!place.cover" :src="icon" alt="">
               </span>
-              <strong>{{ place.name }} <span v-if="!place.published" class="fp-badge fp-badge--draft">未公开</span></strong>
+              <strong>{{ place.name }} <span v-if="!place.published" class="fp-badge fp-badge--draft">{{ $t('footprints.draft') }}</span></strong>
               <small>{{ location(place) }}</small>
               <small>{{ range(place) }}</small>
             </button>
@@ -77,21 +77,21 @@
               <button v-for="place in year.places" :key="place.id" type="button" class="fp-timeline__item" @click="select(place.id)">
                 <span class="fp-timeline__date">{{ range(place) }}</span>
                 <strong>{{ place.name }}</strong>
-                <small>{{ location(place) }}<template v-if="place.visit_count > 1"> · 去过 {{ place.visit_count }} 次</template></small>
+                <small>{{ location(place) }}<template v-if="place.visit_count > 1"> · {{ $t('footprints.visitCount', { n: place.visit_count }) }}</template></small>
               </button>
             </section>
-            <p v-if="!timeline.length" class="footprints__empty-list">还没有带日期的足迹</p>
+            <p v-if="!timeline.length" class="footprints__empty-list">{{ $t('footprints.noDatedPlaces') }}</p>
           </div>
 
           <div v-if="!loading && !places.length" class="footprints__welcome">
             <img :src="icon" alt="">
-            <p>还没有记录任何足迹</p>
-            <small v-if="admin">点工具栏上的“新地点…”开始记录</small>
+            <p>{{ $t('footprints.welcome') }}</p>
+            <small v-if="admin">{{ $t('footprints.welcomeHint') }}</small>
           </div>
         </template>
 
         <transition name="fp-drawer">
-          <aside v-if="selectedId" class="footprints__drawer aqua-scroll" aria-label="地点详情">
+          <aside v-if="selectedId" class="footprints__drawer aqua-scroll" :aria-label="$t('footprints.placeDetails')">
             <place-detail
               v-if="detail"
               :place="detail"
@@ -102,35 +102,35 @@
               @changed="onChanged"
               @open-photo="lightbox = $event"
             />
-            <p v-else class="footprints__loading">{{ detailError || '正在载入…' }}</p>
+            <p v-else class="footprints__loading">{{ detailError || $t('footprints.loading') }}</p>
           </aside>
         </transition>
 
-        <div v-if="lightbox !== null && detail" class="fp-lightbox" role="dialog" aria-label="照片" tabindex="-1" @click.self="lightbox = null" @keydown.esc="lightbox = null" @keydown.left="step(-1)" @keydown.right="step(1)">
+        <div v-if="lightbox !== null && detail" class="fp-lightbox" role="dialog" :aria-label="$t('footprints.lightbox.label')" tabindex="-1" @click.self="lightbox = null" @keydown.esc="lightbox = null" @keydown.left="step(-1)" @keydown.right="step(1)">
           <figure>
             <img :src="detail.photos[lightbox].url" :alt="detail.photos[lightbox].caption">
             <figcaption>{{ detail.photos[lightbox].caption }} <small>{{ lightbox + 1 }} / {{ detail.photos.length }}</small></figcaption>
           </figure>
-          <button type="button" class="fp-lightbox__nav fp-lightbox__nav--prev" aria-label="上一张" @click="step(-1)">‹</button>
-          <button type="button" class="fp-lightbox__nav fp-lightbox__nav--next" aria-label="下一张" @click="step(1)">›</button>
-          <button type="button" class="fp-lightbox__close" aria-label="关闭" @click="lightbox = null">×</button>
+          <button type="button" class="fp-lightbox__nav fp-lightbox__nav--prev" :aria-label="$t('footprints.lightbox.previous')" @click="step(-1)">‹</button>
+          <button type="button" class="fp-lightbox__nav fp-lightbox__nav--next" :aria-label="$t('footprints.lightbox.next')" @click="step(1)">›</button>
+          <button type="button" class="fp-lightbox__close" :aria-label="$t('footprints.lightbox.close')" @click="lightbox = null">×</button>
         </div>
       </main>
     </div>
 
-    <aqua-sheet :open="Boolean(editing)" label="编辑地点" width="600px" @close="editing = null">
+    <aqua-sheet :open="Boolean(editing)" :label="$t('footprints.editSheet')" width="600px" @close="editing = null">
       <place-editor v-if="editing" :place="editing.place" @close="editing = null" @saved="onSaved" />
     </aqua-sheet>
 
-    <aqua-sheet :open="confirmDelete" label="删除地点" width="380px" @close="confirmDelete = false">
+    <aqua-sheet :open="confirmDelete" :label="$t('footprints.deleteSheet')" width="380px" @close="confirmDelete = false">
       <div v-if="detail" class="fp-confirm">
         <img :src="icon" alt="">
         <div>
-          <strong>确定要删除“{{ detail.name }}”吗？</strong>
-          <p>它的到访记录和 {{ detail.photos.length }} 张照片也会一起删除，且不能恢复。</p>
+          <strong>{{ $t('footprints.deleteTitle', { name: detail.name }) }}</strong>
+          <p>{{ $tc('footprints.deleteBody', detail.photos.length, { n: detail.photos.length }) }}</p>
           <div class="fp-confirm__buttons">
-            <button type="button" class="aqua-button aqua-button--default" @click="confirmDelete = false">取消</button>
-            <button type="button" class="aqua-button" @click="remove">删除</button>
+            <button type="button" class="aqua-button aqua-button--default" @click="confirmDelete = false">{{ $t('footprints.cancel') }}</button>
+            <button type="button" class="aqua-button" @click="remove">{{ $t('footprints.delete') }}</button>
           </div>
         </div>
       </div>
@@ -159,11 +159,6 @@ export default {
   data() {
     return {
       icon,
-      views: [
-        { id: 'map', label: '地图' },
-        { id: 'cards', label: '相册' },
-        { id: 'timeline', label: '时间线' }
-      ],
       view: 'map',
       places: [],
       loading: true,
@@ -184,6 +179,17 @@ export default {
     compact() {
       return viewport.compact
     },
+    views() {
+      return ['map', 'cards', 'timeline'].map(id => ({ id, label: this.$t(`footprints.views.${id}`) }))
+    },
+    // Window and page titles, recomputed when the language changes
+    titles() {
+      const place = this.detail
+      return {
+        window: place ? this.$t('footprints.titleWithPlace', { name: place.name }) : this.$t('footprints.title'),
+        document: place ? this.$t('footprints.documentTitle', { name: place.name, site: site.title }) : site.title
+      }
+    },
     filtered() {
       const q = this.query.toLowerCase()
       return q
@@ -194,7 +200,7 @@ export default {
     groups() {
       const byCountry = {}
       this.filtered.forEach(place => {
-        const country = place.country || '其他'
+        const country = place.country || this.$t('footprints.otherCountry')
         ;(byCountry[country] = byCountry[country] || []).push(place)
       })
       return Object.keys(byCountry)
@@ -232,9 +238,9 @@ export default {
         }
       }
     },
-    detail(place) {
-      this.$emit('title', place ? `足迹 — ${place.name}` : '足迹')
-      document.title = place ? `${place.name} — 足迹 — ${site.title}` : site.title
+    titles(titles) {
+      this.$emit('title', titles.window)
+      document.title = titles.document
     },
     // Signing in or out changes which places (drafts) are visible
     admin() {
@@ -263,7 +269,7 @@ export default {
       try {
         this.places = await api.list()
       } catch (e) {
-        this.error = `无法载入足迹：${e.message}`
+        this.error = e.message
       } finally {
         this.loading = false
       }
@@ -562,6 +568,11 @@ export default {
   display: grid;
   grid-template-columns: 190px 1fr;
   gap: 0 12px;
+
+  // "September 30, 2025 – January 12, 2026" needs more room than the Chinese dates
+  &:lang(en) {
+    grid-template-columns: 250px 1fr;
+  }
   width: 100%;
   padding: 6px 0 6px 14px;
   border: 0;
@@ -684,7 +695,8 @@ export default {
     flex: 1;
   }
 
-  .fp-timeline__item {
+  .fp-timeline__item,
+  .fp-timeline__item:lang(en) {
     grid-template-columns: 1fr;
 
     small {

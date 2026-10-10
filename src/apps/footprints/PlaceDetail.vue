@@ -1,69 +1,69 @@
 <template>
   <article class="fp-detail">
     <header class="fp-detail__header">
-      <button type="button" class="fp-detail__close" aria-label="关闭详情" @click="$emit('close')">×</button>
+      <button type="button" class="fp-detail__close" :aria-label="$t('footprints.detail.close')" @click="$emit('close')">×</button>
       <div v-if="place.cover" class="fp-detail__cover" :style="{ backgroundImage: `url(${place.cover.url})` }" />
       <h2 class="selectable">{{ place.name }}</h2>
       <p class="fp-detail__location">{{ location }}</p>
       <p class="fp-detail__meta">
         <span class="fp-badge">{{ category }}</span>
-        <span v-if="place.rating" class="fp-stars" :aria-label="`${place.rating} 星`">{{ stars }}</span>
-        <span v-if="!place.published" class="fp-badge fp-badge--draft">未公开</span>
+        <span v-if="place.rating" class="fp-stars" :aria-label="$tc('footprints.detail.stars', place.rating, { n: place.rating })">{{ stars }}</span>
+        <span v-if="!place.published" class="fp-badge fp-badge--draft">{{ $t('footprints.draft') }}</span>
       </p>
       <div v-if="admin" class="fp-detail__admin">
-        <button type="button" class="aqua-button" @click="$emit('edit')">编辑…</button>
-        <button type="button" class="aqua-button" @click="$emit('delete')">删除…</button>
+        <button type="button" class="aqua-button" @click="$emit('edit')">{{ $t('footprints.detail.edit') }}</button>
+        <button type="button" class="aqua-button" @click="$emit('delete')">{{ $t('footprints.detail.delete') }}</button>
       </div>
     </header>
 
     <section class="fp-detail__section">
-      <h3>到访记录</h3>
+      <h3>{{ $t('footprints.detail.visits') }}</h3>
       <ul class="fp-visits">
         <li v-for="entry in place.visits" :key="entry.id">
           <time :datetime="entry.start_date">{{ range(entry) }}</time>
           <span v-if="entry.note" class="fp-visits__note">{{ entry.note }}</span>
-          <button v-if="admin" type="button" class="fp-remove" aria-label="删除这次到访" @click="removeVisit(entry)">×</button>
+          <button v-if="admin" type="button" class="fp-remove" :aria-label="$t('footprints.detail.removeVisit')" @click="removeVisit(entry)">×</button>
         </li>
-        <li v-if="!place.visits.length" class="fp-muted">还没有记录日期</li>
+        <li v-if="!place.visits.length" class="fp-muted">{{ $t('footprints.detail.noVisits') }}</li>
       </ul>
       <form v-if="admin" class="fp-visit-form" @submit.prevent="addVisit">
-        <input v-model="visit.start_date" type="date" class="aqua-field" aria-label="到访日期" required>
+        <input v-model="visit.start_date" type="date" class="aqua-field" :aria-label="$t('footprints.detail.arrival')" required>
         <span>–</span>
-        <input v-model="visit.end_date" type="date" class="aqua-field" aria-label="离开日期">
-        <input v-model="visit.note" class="aqua-field" placeholder="备注" aria-label="备注" maxlength="500">
-        <button type="submit" class="aqua-button" :disabled="!visit.start_date || busy">添加</button>
+        <input v-model="visit.end_date" type="date" class="aqua-field" :aria-label="$t('footprints.detail.departure')">
+        <input v-model="visit.note" class="aqua-field" :placeholder="$t('footprints.detail.note')" :aria-label="$t('footprints.detail.note')" maxlength="500">
+        <button type="submit" class="aqua-button" :disabled="!visit.start_date || busy">{{ $t('footprints.detail.add') }}</button>
       </form>
     </section>
 
     <section v-if="html" class="fp-detail__section">
-      <h3>游记</h3>
+      <h3>{{ $t('footprints.detail.story') }}</h3>
       <div class="markdown-body" v-html="html" />
     </section>
 
     <section v-if="place.photos.length || admin" class="fp-detail__section">
-      <h3>照片 <small v-if="place.photos.length">{{ place.photos.length }}</small></h3>
+      <h3>{{ $t('footprints.detail.photos') }} <small v-if="place.photos.length">{{ place.photos.length }}</small></h3>
       <ul class="fp-photos">
         <li v-for="(photo, index) in place.photos" :key="photo.id">
-          <button type="button" class="fp-photos__thumb" :aria-label="photo.caption || `照片 ${index + 1}`" @click="$emit('open-photo', index)">
+          <button type="button" class="fp-photos__thumb" :aria-label="photo.caption || $t('footprints.detail.photoN', { n: index + 1 })" @click="$emit('open-photo', index)">
             <img :src="photo.thumb" :alt="photo.caption" loading="lazy">
           </button>
           <div v-if="admin" class="fp-photos__tools">
             <input
               class="aqua-field"
               :value="photo.caption"
-              placeholder="说明"
-              aria-label="照片说明"
+              :placeholder="$t('footprints.detail.caption')"
+              :aria-label="$t('footprints.detail.captionLabel')"
               maxlength="300"
               @change="updateCaption(photo, $event.target.value)"
             >
-            <button type="button" class="fp-link" :disabled="isCover(photo)" @click="setCover(photo)">{{ isCover(photo) ? '封面' : '设为封面' }}</button>
-            <button type="button" class="fp-remove" aria-label="删除照片" @click="removePhoto(photo)">×</button>
+            <button type="button" class="fp-link" :disabled="isCover(photo)" @click="setCover(photo)">{{ isCover(photo) ? $t('footprints.detail.cover') : $t('footprints.detail.setCover') }}</button>
+            <button type="button" class="fp-remove" :aria-label="$t('footprints.detail.removePhoto')" @click="removePhoto(photo)">×</button>
           </div>
         </li>
       </ul>
       <div v-if="admin" class="fp-upload">
         <label class="aqua-button" :class="{ 'is-disabled': busy }">
-          添加照片…
+          {{ $t('footprints.detail.addPhotos') }}
           <input type="file" accept="image/*" multiple hidden :disabled="busy" @change="upload($event.target.files); $event.target.value = ''">
         </label>
         <div v-if="progress" class="fp-progress" role="progressbar" :aria-valuenow="progress.done" :aria-valuemax="progress.total">
@@ -82,7 +82,7 @@
 import { renderMarkdown } from '../../utils/markdown'
 import { resizeImage } from '../../utils/images'
 import { footprints as api } from '../../api/client'
-import { CATEGORIES, placeLocation, stars, visitRange } from './shared'
+import { categoryLabel, placeLocation, stars, visitRange } from './shared'
 import 'github-markdown-css'
 
 export default {
@@ -107,7 +107,7 @@ export default {
       return placeLocation(this.place)
     },
     category() {
-      return CATEGORIES[this.place.category] || CATEGORIES.other
+      return categoryLabel(this.place.category)
     },
     stars() {
       return stars(this.place.rating)

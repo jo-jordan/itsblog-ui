@@ -1,45 +1,54 @@
 <template>
   <div class="tool holidays">
     <div class="tool-bar">
-      <button type="button" class="aqua-button" aria-label="上一年" @click="year = Math.max(years[0], year - 1)">◀</button>
-      <label for="holidays-year">年份：</label>
+      <button type="button" class="aqua-button" :aria-label="$t('tools.calendar.previousYear')" @click="year = Math.max(years[0], year - 1)">◀</button>
+      <label for="holidays-year">{{ $t('tools.calendar.yearLabel') }}</label>
       <select id="holidays-year" v-model.number="year" class="aqua-popup">
-        <option v-for="y in years" :key="y" :value="y">{{ y }}年</option>
+        <option v-for="y in years" :key="y" :value="y">{{ $t('tools.calendar.yearOption', { y }) }}</option>
       </select>
-      <button type="button" class="aqua-button" aria-label="下一年" @click="year = Math.min(years[years.length - 1], year + 1)">▶</button>
-      <button type="button" class="aqua-button" @click="year = thisYear">今年</button>
+      <button type="button" class="aqua-button" :aria-label="$t('tools.calendar.nextYear')" @click="year = Math.min(years[years.length - 1], year + 1)">▶</button>
+      <button type="button" class="aqua-button" @click="year = thisYear">{{ $t('tools.calendar.thisYear') }}</button>
     </div>
 
     <template v-if="covered">
-      <p class="holidays__summary">
-        {{ year }} 年共 <strong>{{ totals.rest }}</strong> 天假期（含周末），调休上班 <strong>{{ totals.work }}</strong> 天，全年法定工作日 <strong>{{ totals.workdays }}</strong> 天。
-      </p>
+      <i18n path="tools.holidays.summary" tag="p" class="holidays__summary">
+        <template #year>{{ year }}</template>
+        <template #rest><strong>{{ totals.rest }}</strong></template>
+        <template #work><strong>{{ totals.work }}</strong></template>
+        <template #workdays><strong>{{ totals.workdays }}</strong></template>
+      </i18n>
       <div class="tool-table__wrap">
         <table class="tool-table">
           <thead>
-            <tr><th>节日</th><th>放假时间</th><th>天数</th><th>调休上班</th></tr>
+            <tr>
+              <th>{{ $t('tools.holidays.holiday') }}</th>
+              <th>{{ $t('tools.holidays.daysOff') }}</th>
+              <th>{{ $t('tools.holidays.length') }}</th>
+              <th>{{ $t('tools.holidays.makeUp') }}</th>
+            </tr>
           </thead>
           <tbody>
             <tr v-for="item in items" :key="item.key">
               <td><strong>{{ item.name }}</strong><br><small class="tool-muted">{{ item.target }}</small></td>
               <td>{{ item.rest }}</td>
-              <td>{{ item.days }} 天</td>
-              <td>{{ item.work || '无' }}</td>
+              <td>{{ $tc('tools.common.days', item.days) }}</td>
+              <td>{{ item.work || $t('tools.calendar.none') }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </template>
     <p v-else class="tool-note">
-      lunar-javascript {{ version }} 中没有 {{ year }} 年的放假安排，因此这里不显示任何日期，以免误导。现有数据覆盖 {{ range[0] }}–{{ range[1] }} 年；国务院办公厅通常在前一年的 11–12 月公布下一年的安排，届时更新依赖即可。
+      {{ $t('tools.holidays.uncovered', { version, year, first: range[0], last: range[1] }) }}
     </p>
-    <p class="tool-hint">数据来自 lunar-javascript 内置的国务院办公厅节假日安排。</p>
+    <p class="tool-hint">{{ $t('tools.holidays.source') }}</p>
   </div>
 </template>
 
 <script>
-import { today, weekday, WEEKDAYS } from './lib/dates'
-import { countOfficialWorkdays, hasHolidayData, holidayDataRange, holidayMap } from './lib/calendar'
+import { today, weekday } from './lib/dates'
+import { countOfficialWorkdays, hasHolidayData, holidayDataRange, holidayMap, holidayName } from './lib/calendar'
+import { formatMonthDay, t, weekdayName } from './lib/i18n'
 import { version } from 'lunar-javascript/package.json'
 
 function toDate(text) {
@@ -49,7 +58,7 @@ function toDate(text) {
 
 function dayLabel(text) {
   const date = toDate(text)
-  return `${date.m}月${date.d}日（周${WEEKDAYS[weekday(date)]}）`
+  return t('tools.holidays.day', { date: formatMonthDay(date), week: weekdayName(weekday(date), 'short') })
 }
 
 export default {
@@ -91,11 +100,12 @@ export default {
           const rest = group.rest.sort()
           return {
             key: `${group.name}${group.target}`,
-            name: group.name,
-            target: `${toDate(group.target).m}月${toDate(group.target).d}日`,
-            rest: rest.length ? (rest.length > 1 ? `${dayLabel(rest[0])} 至 ${dayLabel(rest[rest.length - 1])}` : dayLabel(rest[0])) : '—',
+            name: holidayName(group.name),
+            target: formatMonthDay(toDate(group.target)),
+            rest: rest.length ? (rest.length > 1 ? t('tools.holidays.range', { from: dayLabel(rest[0]), to: dayLabel(rest[rest.length - 1]) }) : dayLabel(rest[0])) : '—',
             days: rest.length,
-            work: group.work.sort().map(dayLabel).join('、')
+            workCount: group.work.length,
+            work: group.work.sort().map(dayLabel).join(t('tools.calendar.listSeparator'))
           }
         })
     },
@@ -105,7 +115,7 @@ export default {
       const end = { y: year, m: 12, d: 31 }
       return {
         rest: this.items.reduce((sum, item) => sum + item.days, 0),
-        work: this.items.reduce((sum, item) => sum + (item.work ? item.work.split('、').length : 0), 0),
+        work: this.items.reduce((sum, item) => sum + item.workCount, 0),
         workdays: countOfficialWorkdays(start, end)
       }
     }

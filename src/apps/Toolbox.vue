@@ -1,7 +1,7 @@
 <template>
   <div class="toolbox" :class="{ 'is-inactive': !focused, 'is-compact': compact }">
-    <nav v-if="!compact" class="toolbox__sidebar aqua-scroll" aria-label="工具">
-      <section v-for="group in groups" :key="group.name" class="toolbox__group">
+    <nav v-if="!compact" class="toolbox__sidebar aqua-scroll" :aria-label="$t('tools.toolbox.label')">
+      <section v-for="group in groups" :key="group.id" class="toolbox__group">
         <h3 class="toolbox__heading">{{ group.name }}</h3>
         <ul class="toolbox__list">
           <li v-for="item in group.tools" :key="item.id">
@@ -22,9 +22,9 @@
     </nav>
 
     <div v-else class="toolbox__picker">
-      <label for="toolbox-picker">工具：</label>
+      <label for="toolbox-picker">{{ $t('tools.toolbox.picker') }}</label>
       <select id="toolbox-picker" class="aqua-popup" :value="current" @change="select($event.target.value)">
-        <optgroup v-for="group in groups" :key="group.name" :label="group.name">
+        <optgroup v-for="group in groups" :key="group.id" :label="group.name">
           <option v-for="item in group.tools" :key="item.id" :value="item.id">{{ item.name }}</option>
         </optgroup>
       </select>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import './tools/lib/i18n'
 import ToolGlyph from './tools/ToolGlyph'
 import Almanac from './tools/Almanac'
 import MonthCalendar from './tools/MonthCalendar'
@@ -67,36 +68,38 @@ import Cron from './tools/Cron'
 import Timers from './tools/Timers'
 import { load, save } from './tools/lib/storage'
 import { viewport } from '../utils/viewport'
+import { apps } from './registry'
 
+// Names and summaries are in locales/<locale>/toolbox.js, keyed by these ids
 const groups = [
   {
-    name: '日历',
+    id: 'calendar',
     tools: [
-      { id: 'almanac', glyph: 'almanac', name: '黄历', component: Almanac, summary: '农历、干支、宜忌、冲煞、值神、星宿与十二时辰吉凶' },
-      { id: 'calendar', glyph: 'calendar', name: '万年历', component: MonthCalendar, summary: '月历，含农历、节气、节日与法定放假调休' },
-      { id: 'converter', glyph: 'converter', name: '农历公历互转', component: LunarConverter, summary: '公历与农历日期互相换算，支持闰月' },
-      { id: 'terms', glyph: 'terms', name: '二十四节气', component: SolarTerms, summary: '任一年份的二十四节气交节时刻' },
-      { id: 'holidays', glyph: 'holidays', name: '法定节假日', component: Holidays, summary: '国务院办公厅公布的放假与调休安排' }
+      { id: 'almanac', glyph: 'almanac', component: Almanac },
+      { id: 'calendar', glyph: 'calendar', component: MonthCalendar },
+      { id: 'converter', glyph: 'converter', component: LunarConverter },
+      { id: 'terms', glyph: 'terms', component: SolarTerms },
+      { id: 'holidays', glyph: 'holidays', component: Holidays }
     ]
   },
   {
-    name: '日期计算',
+    id: 'dates',
     tools: [
-      { id: 'diff', glyph: 'diff', name: '日期间隔', component: DateDiff, summary: '两个日期之间相隔多少天、周、月、年和工作日' },
-      { id: 'shift', glyph: 'shift', name: '日期推算', component: DateShift, summary: '从某天起加减若干天、周、月、年或工作日' },
-      { id: 'countdown', glyph: 'countdown', name: '倒数日', component: Countdowns, summary: '纪念日与倒数日，支持每年重复和农历日期' },
-      { id: 'age', glyph: 'age', name: '年龄计算', component: AgeCalculator, summary: '周岁、虚岁、下次生日与生辰八字' },
-      { id: 'week', glyph: 'week', name: '星期与周数', component: WeekInfo, summary: '星期、ISO 周数、一年中的第几天与季度' }
+      { id: 'diff', glyph: 'diff', component: DateDiff },
+      { id: 'shift', glyph: 'shift', component: DateShift },
+      { id: 'countdown', glyph: 'countdown', component: Countdowns },
+      { id: 'age', glyph: 'age', component: AgeCalculator },
+      { id: 'week', glyph: 'week', component: WeekInfo }
     ]
   },
   {
-    name: '时间',
+    id: 'time',
     tools: [
-      { id: 'timestamp', glyph: 'timestamp', name: '时间戳转换', component: Timestamp, summary: 'Unix 时间戳与日期时间互转' },
-      { id: 'worldclock', glyph: 'worldclock', name: '世界时钟', component: WorldClock, summary: '各地时间与时区换算' },
-      { id: 'duration', glyph: 'duration', name: '时长计算', component: Duration, summary: '秒数与时分秒换算，时长与时刻加减' },
-      { id: 'cron', glyph: 'cron', name: 'Cron 表达式', component: Cron, summary: '解释 cron 表达式并列出接下来的执行时间' },
-      { id: 'timer', glyph: 'timer', name: '秒表与倒计时', component: Timers, summary: '秒表、倒计时与番茄钟' }
+      { id: 'timestamp', glyph: 'timestamp', component: Timestamp },
+      { id: 'worldclock', glyph: 'worldclock', component: WorldClock },
+      { id: 'duration', glyph: 'duration', component: Duration },
+      { id: 'cron', glyph: 'cron', component: Cron },
+      { id: 'timer', glyph: 'timer', component: Timers }
     ]
   }
 ]
@@ -113,9 +116,8 @@ export default {
   data() {
     const saved = load('tool', 'almanac')
     return {
-      groups,
       current: tools.some(tool => tool.id === saved) ? saved : 'almanac',
-      // Handed to the tool when another tool opens it, e.g. 万年历 → 黄历 for a day
+      // Handed to the tool when another tool opens it, e.g. the calendar opens the almanac for a day
       params: null
     }
   },
@@ -123,15 +125,30 @@ export default {
     compact() {
       return viewport.compact
     },
+    // Names and summaries in the current language
+    groups() {
+      return groups.map(group => ({
+        id: group.id,
+        name: this.$t(`tools.toolbox.groups.${group.id}`),
+        tools: group.tools.map(tool => ({
+          ...tool,
+          name: this.$t(`tools.toolbox.names.${tool.id}`),
+          summary: this.$t(`tools.toolbox.summaries.${tool.id}`)
+        }))
+      }))
+    },
     tool() {
-      return tools.find(tool => tool.id === this.current)
+      return this.groups.reduce((all, group) => all.concat(group.tools), []).find(tool => tool.id === this.current)
+    },
+    title() {
+      return `${apps.toolbox.name} — ${this.tool.name}`
     }
   },
   watch: {
-    'tool.name': {
+    title: {
       immediate: true,
-      handler(name) {
-        this.$emit('title', `实用工具 — ${name}`)
+      handler(title) {
+        this.$emit('title', title)
       }
     }
   },

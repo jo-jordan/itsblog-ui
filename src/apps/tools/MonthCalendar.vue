@@ -1,33 +1,33 @@
 <template>
   <div class="tool month-cal">
     <div class="tool-bar">
-      <button type="button" class="aqua-button month-cal__nav" aria-label="上一年" @click="shift(-12)">«</button>
-      <button type="button" class="aqua-button month-cal__nav" aria-label="上个月" @click="shift(-1)">‹</button>
-      <select v-model.number="year" class="aqua-popup" aria-label="年份">
-        <option v-for="y in years" :key="y" :value="y">{{ y }}年</option>
+      <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.calendar.previousYear')" @click="shift(-12)">«</button>
+      <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.monthCalendar.previousMonth')" @click="shift(-1)">‹</button>
+      <select v-model.number="year" class="aqua-popup" :aria-label="$t('tools.monthCalendar.year')">
+        <option v-for="y in years" :key="y" :value="y">{{ $t('tools.calendar.yearOption', { y }) }}</option>
       </select>
-      <select v-model.number="month" class="aqua-popup" aria-label="月份">
-        <option v-for="m in 12" :key="m" :value="m">{{ m }}月</option>
+      <select v-model.number="month" class="aqua-popup" :aria-label="$t('tools.monthCalendar.month')">
+        <option v-for="m in 12" :key="m" :value="m">{{ $t('tools.monthCalendar.months')[m - 1] }}</option>
       </select>
-      <button type="button" class="aqua-button month-cal__nav" aria-label="下个月" @click="shift(1)">›</button>
-      <button type="button" class="aqua-button month-cal__nav" aria-label="下一年" @click="shift(12)">»</button>
-      <button type="button" class="aqua-button" @click="goToday">今天</button>
+      <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.monthCalendar.nextMonth')" @click="shift(1)">›</button>
+      <button type="button" class="aqua-button month-cal__nav" :aria-label="$t('tools.calendar.nextYear')" @click="shift(12)">»</button>
+      <button type="button" class="aqua-button" @click="goToday">{{ $t('tools.common.today') }}</button>
       <span class="tool-bar__spacer" />
-      <div class="aqua-segmented" role="group" aria-label="每周第一天">
-        <button type="button" :class="{ 'is-selected': weekStart === 1 }" :aria-pressed="weekStart === 1 ? 'true' : 'false'" @click="setWeekStart(1)">周一开始</button>
-        <button type="button" :class="{ 'is-selected': weekStart === 0 }" :aria-pressed="weekStart === 0 ? 'true' : 'false'" @click="setWeekStart(0)">周日开始</button>
+      <div class="aqua-segmented" role="group" :aria-label="$t('tools.monthCalendar.weekStart')">
+        <button type="button" :class="{ 'is-selected': weekStart === 1 }" :aria-pressed="weekStart === 1 ? 'true' : 'false'" @click="setWeekStart(1)">{{ $t('tools.monthCalendar.mondayFirst') }}</button>
+        <button type="button" :class="{ 'is-selected': weekStart === 0 }" :aria-pressed="weekStart === 0 ? 'true' : 'false'" @click="setWeekStart(0)">{{ $t('tools.monthCalendar.sundayFirst') }}</button>
       </div>
     </div>
 
     <p class="month-cal__caption">
-      {{ year }}年{{ month }}月 · 农历{{ caption }}
+      {{ $t('tools.monthCalendar.caption', { date: title, lunar: caption }) }}
     </p>
 
-    <p v-if="!covered" class="tool-note">lunar-javascript 尚未收录 {{ year }} 年的法定放假安排（现有数据覆盖 {{ range[0] }}–{{ range[1] }} 年），本月不显示休/班标记。</p>
+    <p v-if="!covered" class="tool-note">{{ $t('tools.monthCalendar.uncovered', { year, first: range[0], last: range[1] }) }}</p>
 
-    <div class="month-cal__grid" role="grid" :aria-label="`${year}年${month}月`">
+    <div class="month-cal__grid" role="grid" :aria-label="title">
       <div class="month-cal__row" role="row">
-        <div v-for="name in headers" :key="name.label" role="columnheader" class="month-cal__head" :class="{ 'is-weekend': name.weekend }">
+        <div v-for="name in headers" :key="name.weekday" role="columnheader" class="month-cal__head" :class="{ 'is-weekend': name.weekend }">
           {{ name.label }}
         </div>
       </div>
@@ -45,14 +45,14 @@
         >
           <span class="month-cal__day">{{ cell.day }}</span>
           <span class="month-cal__sub" :class="`is-${cell.kind}`">{{ cell.label }}</span>
-          <span v-if="cell.badge" class="month-cal__badge" :class="cell.badge === '班' ? 'is-work' : 'is-rest'">{{ cell.badge }}</span>
+          <span v-if="cell.holiday" class="month-cal__badge" :class="cell.holiday.work ? 'is-work' : 'is-rest'">{{ cell.badge }}</span>
         </button>
       </div>
     </div>
-    <p class="tool-hint">点击任意一天即可查看当天的黄历。</p>
+    <p class="tool-hint">{{ $t('tools.monthCalendar.hint') }}</p>
 
     <div v-if="events.length" class="tool-section">
-      <h4>本月节气与假日</h4>
+      <h4>{{ $t('tools.monthCalendar.events') }}</h4>
       <ul class="month-cal__events">
         <li v-for="event in events" :key="event.key">
           <span class="month-cal__event-date">{{ event.date }}</span>
@@ -64,8 +64,12 @@
 </template>
 
 <script>
-import { addDays, dayNumber, daysInMonth, formatYmd, isWeekend, sameDay, today, weekday, WEEKDAYS } from './lib/dates'
-import { cellInfo, hasHolidayData, holidayDataRange, holidayMap, lunarOf, lunarText, MAX_YEAR, MIN_YEAR, solarTermsOf } from './lib/calendar'
+import { addDays, dayNumber, daysInMonth, formatYmd, isWeekend, sameDay, today, weekday } from './lib/dates'
+import {
+  cellInfo, hasHolidayData, holidayBadge, holidayDataRange, holidayMap, holidayName, holidayStatus,
+  lunarDateText, lunarOf, lunarText, MAX_YEAR, MIN_YEAR, solarTermsOf, termName
+} from './lib/calendar'
+import { formatLongDate, formatMonthDay, formatYearMonth, t, tc, weekdayName } from './lib/i18n'
 import { load, save } from './lib/storage'
 
 export default {
@@ -86,8 +90,11 @@ export default {
     headers() {
       return Array.from({ length: 7 }, (_, i) => {
         const w = (i + this.weekStart) % 7
-        return { label: WEEKDAYS[w], weekend: w === 0 || w === 6 }
+        return { weekday: w, label: weekdayName(w, t('tools.monthCalendar.headerStyle')), weekend: w === 0 || w === 6 }
       })
+    },
+    title() {
+      return formatYearMonth({ y: this.year, m: this.month })
     },
     covered() {
       return hasHolidayData(this.year)
@@ -105,21 +112,28 @@ export default {
         const date = addDays(start, i)
         const info = cellInfo(date)
         const inMonth = date.m === this.month
-        const badge = info.holiday ? (info.holiday.work ? '班' : '休') : ''
+        const named = info.kind === 'festival' || info.kind === 'term'
         cells.push({
           key: formatYmd(date),
           date,
           day: date.d,
           label: info.label,
           kind: info.kind,
-          badge,
-          aria: `${date.y}年${date.m}月${date.d}日 星期${WEEKDAYS[weekday(date)]} 农历${lunarText(info.lunar)}${info.kind === 'festival' || info.kind === 'term' ? ` ${info.label}` : ''}${info.holiday ? ` ${info.holiday.name}${info.holiday.work ? '调休上班' : '放假'}` : ''}`,
+          holiday: info.holiday,
+          badge: info.holiday ? holidayBadge(info.holiday) : '',
+          aria: [
+            formatLongDate(date),
+            weekdayName(weekday(date), 'long'),
+            lunarDateText(info.lunar),
+            named && info.label,
+            info.holiday && holidayStatus(info.holiday)
+          ].filter(Boolean).join(t('tools.monthCalendar.ariaSeparator')),
           classes: {
             'is-other': !inMonth,
             'is-today': sameDay(date, now),
             'is-weekend': isWeekend(date),
-            'is-rest': badge === '休',
-            'is-work': badge === '班'
+            'is-rest': Boolean(info.holiday) && !info.holiday.work,
+            'is-work': Boolean(info.holiday) && info.holiday.work
           }
         })
       }
@@ -133,15 +147,21 @@ export default {
     caption() {
       const first = lunarOf({ y: this.year, m: this.month, d: 1 })
       const last = lunarOf({ y: this.year, m: this.month, d: daysInMonth(this.year, this.month) })
-      const from = `${first.getYearInGanZhi()}年${lunarText(first)}`
-      const to = first.getYearInGanZhi() === last.getYearInGanZhi() ? lunarText(last) : `${last.getYearInGanZhi()}年${lunarText(last)}`
-      return `${from} — ${to}`
+      const withYear = lunar => t('tools.monthCalendar.captionYear', { year: lunar.getYearInGanZhi(), text: lunarText(lunar) })
+      const to = first.getYearInGanZhi() === last.getYearInGanZhi() ? lunarText(last) : withYear(last)
+      return `${withYear(first)} — ${to}`
     },
     events() {
       const list = []
+      const monthDay = d => formatMonthDay({ y: this.year, m: this.month, d })
       solarTermsOf(this.year).forEach(term => {
         if (term.solar.getMonth() === this.month) {
-          list.push({ key: `t${term.name}`, order: term.solar.getDay(), date: `${this.month}月${term.solar.getDay()}日`, text: `${term.name} ${term.solar.toYmdHms().slice(11, 16)} 交节` })
+          list.push({
+            key: `t${term.name}`,
+            order: term.solar.getDay(),
+            date: monthDay(term.solar.getDay()),
+            text: t('tools.monthCalendar.termEvent', { name: termName(term.name), time: term.solar.toYmdHms().slice(11, 16) })
+          })
         }
       })
       // Group the arranged days of this month by holiday
@@ -151,16 +171,21 @@ export default {
         if (m !== this.month) {
           return
         }
-        const key = `${holiday.name}${holiday.work ? '班' : '休'}`
+        const key = `${holiday.name}${holiday.work ? '-work' : '-rest'}`
         groups[key] = groups[key] || { holiday, days: [] }
         groups[key].days.push(d)
       })
       Object.keys(groups).forEach(key => {
         const { holiday, days } = groups[key]
         const text = days.length > 1 && days[days.length - 1] - days[0] === days.length - 1
-          ? `${this.month}月${days[0]}日–${days[days.length - 1]}日`
-          : days.map(d => `${this.month}月${d}日`).join('、')
-        list.push({ key, order: days[0], date: text, text: `${holiday.name}${holiday.work ? '调休上班' : `放假（${days.length} 天在本月）`}` })
+          ? t('tools.monthCalendar.dayRange', { from: monthDay(days[0]), to: days[days.length - 1] })
+          : days.map(monthDay).join(t('tools.calendar.listSeparator'))
+        list.push({
+          key,
+          order: days[0],
+          date: text,
+          text: holiday.work ? holidayStatus(holiday) : tc('tools.monthCalendar.restEvent', days.length, { name: holidayName(holiday.name) })
+        })
       })
       return list.sort((a, b) => a.order - b.order)
     }
@@ -353,6 +378,17 @@ export default {
   &.is-work {
     background: #5c6676;
   }
+}
+
+// "Off" and "Work" need more room than 休 and 班
+.month-cal__badge:lang(en) {
+  top: 2px;
+  right: 2px;
+  width: auto;
+  height: 12px;
+  padding: 0 3px;
+  font-size: 9px;
+  line-height: 12px;
 }
 
 .month-cal__events {

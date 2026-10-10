@@ -1,6 +1,8 @@
 // Durations written the way people type them: "1:45:30", "2:20" (h:mm),
-// "1天2小时30分", "1h 30m", "90s" or a bare number of seconds.
+// "1天2小时30分", "1h 30m", "90s" or a bare number of seconds. Chinese and
+// English units are read whatever the language; only the output follows it.
 import { pad } from './dates'
+import { formatNumber, t, tc } from './i18n'
 
 const UNIT_SECONDS = [
   [/^(周|星期|w|wk|wks|weeks?)$/i, 604800],
@@ -33,14 +35,14 @@ export function parseDuration(text) {
     found = true
     return ''
   })
-  return found && !rest.replace(/[\s,，、和又零]/g, '') ? total : null
+  return found && !rest.replace(/\band\b/gi, '').replace(/[\s,，、和又零]/g, '') ? total : null
 }
 
 // "1:45:30 + 2:20 - 15m" → { seconds } or { error }
 export function evaluateDurations(expression) {
   const text = String(expression || '').trim()
   if (!text) {
-    return { error: '请输入时长' }
+    return { error: t('tools.duration.errors.empty') }
   }
   const terms = text.split(/([+\-−])/).map(part => part.trim())
   let sign = 1
@@ -56,17 +58,22 @@ export function evaluateDurations(expression) {
     }
     const seconds = parseDuration(term)
     if (seconds === null) {
-      return { error: `看不懂“${term}”` }
+      return { error: t('tools.duration.errors.unreadable', { term }) }
     }
     total += sign * seconds
     sign = 1
     count++
   }
-  return count ? { seconds: total, count } : { error: '请输入时长' }
+  return count ? { seconds: total, count } : { error: t('tools.duration.errors.empty') }
 }
 
 function round(seconds) {
   return Math.round(seconds * 1000) / 1000
+}
+
+// "3 hours" / "1 hour"; only exactly one is singular (not 0.5 or 1.5)
+function amount(unit, n) {
+  return tc(`tools.duration.parts.${unit}`, n === 1 ? 1 : 2, { n })
 }
 
 // Seconds → readable forms
@@ -81,26 +88,26 @@ export function formatDuration(totalSeconds) {
   const seconds = whole % 60 + fraction
   const parts = []
   if (days) {
-    parts.push(`${days} 天`)
+    parts.push(amount('days', days))
   }
   if (hours) {
-    parts.push(`${hours} 小时`)
+    parts.push(amount('hours', hours))
   }
   if (minutes) {
-    parts.push(`${minutes} 分`)
+    parts.push(amount('minutes', minutes))
   }
   if (seconds || !parts.length) {
-    parts.push(`${seconds} 秒`)
+    parts.push(amount('seconds', seconds))
   }
   const allHours = Math.floor(whole / 3600)
   return {
-    text: sign + parts.join(' '),
+    text: sign + parts.join(t('tools.duration.parts.separator')),
     clock: `${sign}${allHours}:${pad(minutes)}:${pad(whole % 60)}${fraction ? String(fraction).slice(1) : ''}`,
     totals: {
-      seconds: sign + abs.toLocaleString('zh-CN'),
-      minutes: sign + round(abs / 60).toLocaleString('zh-CN'),
-      hours: sign + round(abs / 3600).toLocaleString('zh-CN'),
-      days: sign + round(abs / 86400).toLocaleString('zh-CN')
+      seconds: sign + formatNumber(abs),
+      minutes: sign + formatNumber(round(abs / 60)),
+      hours: sign + formatNumber(round(abs / 3600)),
+      days: sign + formatNumber(round(abs / 86400))
     }
   }
 }

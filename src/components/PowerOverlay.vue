@@ -1,12 +1,12 @@
 <template>
   <transition name="power-fade">
     <div v-if="power === 'sleep' || power === 'off'" class="power" :class="`power--${power}`" @click="wake">
-      <button v-if="power === 'off'" type="button" class="power__button" aria-label="开机">
+      <button v-if="power === 'off'" type="button" class="power__button" :aria-label="$t('desktop.power.on')">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3v9" />
           <path d="M6.3 6.8a8 8 0 1 0 11.4 0" />
         </svg>
-        <span>按下电源键开机</span>
+        <span>{{ $t('desktop.power.hint') }}</span>
       </button>
     </div>
   </transition>

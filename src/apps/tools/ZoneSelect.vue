@@ -1,29 +1,34 @@
 <template>
-  <select :value="value" class="aqua-popup zone-select" :aria-label="label" @change="$emit('input', $event.target.value)">
-    <optgroup label="常用城市">
-      <option v-for="city in cities" :key="`c-${city.zone}`" :value="city.zone">{{ city.name }}（{{ city.zone }}）</option>
+  <select :value="value" class="aqua-popup zone-select" :aria-label="label || $t('tools.zones.label')" @change="$emit('input', $event.target.value)">
+    <optgroup :label="$t('tools.zones.popular')">
+      <option v-for="city in cities" :key="`c-${city.zone}`" :value="city.zone">{{ $t('tools.zones.cityOption', city) }}</option>
     </optgroup>
-    <optgroup label="全部时区">
-      <option v-for="zone in zones" :key="zone" :value="zone">{{ zone }}{{ zone === localZone ? '（本机）' : '' }}</option>
+    <optgroup :label="$t('tools.zones.all')">
+      <option v-for="zone in zones" :key="zone" :value="zone">{{ zone === localZone ? $t('tools.zones.localOption', { zone }) : zone }}</option>
     </optgroup>
   </select>
 </template>
 
 <script>
-import { allZones, CITIES, LOCAL_ZONE } from './lib/zones'
+import { allZones, cities, LOCAL_ZONE } from './lib/zones'
 
-// IANA time zone picker: Chinese city names first, then every zone the browser knows
+// IANA time zone picker: well-known cities first, then every zone the browser knows
 export default {
   name: 'ZoneSelect',
   props: {
     value: { type: String, required: true },
-    label: { type: String, default: '时区' }
+    // Accessible name; "Time zone" in the current language when empty
+    label: { type: String, default: '' }
   },
   data() {
     return {
-      cities: CITIES,
       zones: allZones(),
       localZone: LOCAL_ZONE
+    }
+  },
+  computed: {
+    cities() {
+      return cities()
     }
   }
 }

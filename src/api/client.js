@@ -1,7 +1,10 @@
+import { currentLocale, t } from '../i18n'
+
 // Talks to the Worker API. The custom header proves the request came from
-// our own pages (the Worker rejects admin writes without it).
+// our own pages (the Worker rejects admin writes without it); Accept-Language
+// tells the Worker which language to write its error messages in.
 export async function request(path, { method = 'GET', body, form } = {}) {
-  const headers = { 'X-Requested-With': 'itsblog' }
+  const headers = { 'X-Requested-With': 'itsblog', 'Accept-Language': currentLocale() }
   let payload
   if (form) {
     payload = form
@@ -13,14 +16,14 @@ export async function request(path, { method = 'GET', body, form } = {}) {
   try {
     response = await fetch(`/api${path}`, { method, headers, body: payload, credentials: 'same-origin' })
   } catch (e) {
-    throw new Error('无法连接到服务器')
+    throw new Error(t('api.offline'))
   }
   if (response.status === 204) {
     return null
   }
   const data = await response.json().catch(() => null)
   if (!response.ok) {
-    throw new Error((data && data.error) || `请求失败（${response.status}）`)
+    throw new Error((data && data.error) || t('api.failed', { status: response.status }))
   }
   return data
 }

@@ -10,13 +10,13 @@
   >
     <header class="aqua-window__titlebar pinstripe" @pointerdown="startDrag" @dblclick="onTitleDoubleClick">
       <div class="traffic-lights" @pointerdown.stop @dblclick.stop @pointerenter="prefetchSnapshot">
-        <button type="button" class="traffic-light traffic-light--close" aria-label="关闭" @click="close">
+        <button type="button" class="traffic-light traffic-light--close" :aria-label="$t('desktop.window.close')" @click="close">
           <span aria-hidden="true">×</span>
         </button>
-        <button v-if="!app.dialog" type="button" class="traffic-light traffic-light--minimize" aria-label="最小化" @click="minimize">
+        <button v-if="!app.dialog" type="button" class="traffic-light traffic-light--minimize" :aria-label="$t('desktop.window.minimize')" @click="minimize">
           <span aria-hidden="true">−</span>
         </button>
-        <button v-if="!app.dialog" type="button" class="traffic-light traffic-light--zoom" aria-label="缩放" @click="zoom">
+        <button v-if="!app.dialog" type="button" class="traffic-light traffic-light--zoom" :aria-label="$t('desktop.window.zoom')" @click="zoom">
           <span aria-hidden="true">+</span>
         </button>
       </div>
@@ -27,7 +27,7 @@
     </header>
 
     <div class="aqua-window__body">
-      <component :is="app.component" :win="win" :focused="focused" @title="title = $event" />
+      <component :is="app.component" :win="win" :focused="focused" @title="customTitle = $event" />
     </div>
 
     <div v-if="resizable" class="aqua-window__grow" aria-hidden="true" @pointerdown.stop="startResize" />
@@ -46,7 +46,8 @@ export default {
   },
   data() {
     return {
-      title: apps[this.win.appId].name,
+      // Set by the application; windows without one are named after it
+      customTitle: null,
       animating: false,
       // The real window hides while the genie canvas draws its picture
       genieHidden: false,
@@ -58,6 +59,9 @@ export default {
   computed: {
     app() {
       return apps[this.win.appId]
+    },
+    title() {
+      return this.customTitle || this.app.name
     },
     focused() {
       return this.$store.state.windows.focusedId === this.win.id

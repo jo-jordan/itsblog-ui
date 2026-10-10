@@ -1,41 +1,42 @@
 <template>
   <div class="tool week-info">
     <div class="tool-bar">
-      <label for="week-date">日期：</label>
+      <label for="week-date">{{ $t('tools.weekInfo.date') }}</label>
       <input id="week-date" v-model="dateText" type="date" class="aqua-field" min="0001-01-01" max="9999-12-31">
-      <button type="button" class="aqua-button" aria-label="前一周" @click="move(-7)">◀ 前一周</button>
-      <button type="button" class="aqua-button" aria-label="后一周" @click="move(7)">后一周 ▶</button>
-      <button type="button" class="aqua-button" @click="dateText = todayText">今天</button>
+      <button type="button" class="aqua-button" :aria-label="$t('tools.weekInfo.previousWeek')" @click="move(-7)">◀ {{ $t('tools.weekInfo.previousWeek') }}</button>
+      <button type="button" class="aqua-button" :aria-label="$t('tools.weekInfo.nextWeek')" @click="move(7)">{{ $t('tools.weekInfo.nextWeek') }} ▶</button>
+      <button type="button" class="aqua-button" @click="dateText = todayText">{{ $t('tools.common.today') }}</button>
     </div>
 
     <template v-if="info">
-      <p class="tool-big">星期{{ info.week }}</p>
+      <p class="tool-big">{{ info.week }}</p>
       <p class="week-info__iso">{{ info.isoLabel }}</p>
       <dl class="tool-results">
-        <dt>ISO 周数</dt>
-        <dd>第 {{ info.isoWeek }} 周 <small>（ISO 周年 {{ info.isoYear }}，该年共 {{ info.isoWeeks }} 周）</small></dd>
-        <dt>本周</dt>
+        <dt>{{ $t('tools.weekInfo.isoWeek') }}</dt>
+        <dd>{{ $t('tools.weekInfo.weekNumber', { n: info.isoWeek }) }} <small>{{ $t('tools.weekInfo.isoDetail', { year: info.isoYear, weeks: info.isoWeeks }) }}</small></dd>
+        <dt>{{ $t('tools.weekInfo.thisWeek') }}</dt>
         <dd>{{ info.weekRange }}</dd>
-        <dt>本月第几周</dt>
-        <dd>第 {{ info.weekOfMonth }} 周 <small>（以周一为一周开始）</small></dd>
-        <dt>一年中的第</dt>
-        <dd>{{ info.dayOfYear }} 天 <small>（共 {{ info.daysInYear }} 天，已过 {{ info.percent }}%）</small></dd>
-        <dt>本年剩余</dt>
-        <dd>{{ info.remaining }} 天</dd>
-        <dt>季度</dt>
-        <dd>第 {{ info.quarter }} 季度（Q{{ info.quarter }}） <small>本季度第 {{ info.dayOfQuarter }} 天</small></dd>
-        <dt>本月</dt>
-        <dd>{{ info.monthDays }} 天</dd>
-        <dt>闰年</dt>
-        <dd>{{ info.leap ? `是，${info.year} 年为闰年（2 月有 29 天）` : `否，${info.year} 年为平年` }}</dd>
+        <dt>{{ $t('tools.weekInfo.weekOfMonth') }}</dt>
+        <dd>{{ $t('tools.weekInfo.weekNumber', { n: info.weekOfMonth }) }} <small>{{ $t('tools.weekInfo.weekOfMonthHint') }}</small></dd>
+        <dt>{{ $t('tools.weekInfo.dayOfYear') }}</dt>
+        <dd>{{ $t('tools.weekInfo.dayOfYearValue', { n: info.dayOfYear }) }} <small>{{ $t('tools.weekInfo.dayOfYearDetail', { total: info.daysInYear, percent: info.percent }) }}</small></dd>
+        <dt>{{ $t('tools.weekInfo.remaining') }}</dt>
+        <dd>{{ $tc('tools.common.days', info.remaining) }}</dd>
+        <dt>{{ $t('tools.weekInfo.quarter') }}</dt>
+        <dd>{{ $t('tools.weekInfo.quarterValue', { q: info.quarter }) }} <small>{{ $t('tools.weekInfo.dayOfQuarter', { n: info.dayOfQuarter }) }}</small></dd>
+        <dt>{{ $t('tools.weekInfo.thisMonth') }}</dt>
+        <dd>{{ $tc('tools.common.days', info.monthDays) }}</dd>
+        <dt>{{ $t('tools.weekInfo.leapYear') }}</dt>
+        <dd>{{ $t(info.leap ? 'tools.weekInfo.isLeap' : 'tools.weekInfo.notLeap', { year: info.year }) }}</dd>
       </dl>
     </template>
-    <p v-else class="tool-error">请输入有效日期。</p>
+    <p v-else class="tool-error">{{ $t('tools.weekInfo.invalid') }}</p>
   </div>
 </template>
 
 <script>
-import { addDays, dayNumber, dayOfYear, daysInMonth, formatYmd, isLeapYear, isoWeek, parseYmd, pad, today, weekday, WEEKDAYS } from './lib/dates'
+import { addDays, dayNumber, dayOfYear, daysInMonth, formatYmd, isLeapYear, isoWeek, parseYmd, pad, today, weekday } from './lib/dates'
+import { t, weekdayName } from './lib/i18n'
 
 export default {
   name: 'ToolWeekInfo',
@@ -58,7 +59,7 @@ export default {
       const isoDay = weekday(date) || 7
       const monday = addDays(date, 1 - isoDay)
       const sunday = addDays(monday, 6)
-      // A year has 53 ISO weeks when 12 月 28 日 falls in week 53
+      // A year has 53 ISO weeks when 28 December falls in week 53
       const isoWeeks = isoWeek({ y: iso.year, m: 12, d: 28 }).week
       const daysInYear = isLeapYear(date.y) ? 366 : 365
       const doy = dayOfYear(date)
@@ -68,12 +69,12 @@ export default {
       const lead = (weekday(firstOfMonth) || 7) - 1
       return {
         year: date.y,
-        week: WEEKDAYS[weekday(date)],
+        week: weekdayName(weekday(date), 'long'),
         isoLabel: `${iso.year}-W${pad(iso.week)}-${isoDay}`,
         isoWeek: iso.week,
         isoYear: iso.year,
         isoWeeks,
-        weekRange: `${formatYmd(monday)}（周一）至 ${formatYmd(sunday)}（周日）`,
+        weekRange: t('tools.weekInfo.weekRange', { from: formatYmd(monday), monday: weekdayName(1), to: formatYmd(sunday), sunday: weekdayName(0) }),
         weekOfMonth: Math.floor((date.d + lead - 1) / 7) + 1,
         dayOfYear: doy,
         daysInYear,

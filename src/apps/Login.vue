@@ -10,20 +10,22 @@
       <strong>{{ owner }}</strong>
     </div>
 
-    <p v-if="!configured" class="login__note">
-      还没有设置管理员密码。请在 Cloudflare 的 Worker 设置里添加名为 <code>ADMIN_PASSWORD</code> 的密钥。
-    </p>
+    <i18n v-if="!configured" path="login.notConfigured" tag="p" class="login__note">
+      <template #secret>
+        <code>ADMIN_PASSWORD</code>
+      </template>
+    </i18n>
     <template v-else>
       <label class="login__field">
-        <span>密码：</span>
+        <span>{{ $t('login.password') }}</span>
         <input ref="password" v-model="password" type="password" class="aqua-field" autocomplete="current-password" :disabled="busy">
       </label>
       <p class="login__error" role="alert">{{ error }}</p>
     </template>
 
     <div class="login__buttons">
-      <button type="button" class="aqua-button" @click="close">取消</button>
-      <button type="submit" class="aqua-button aqua-button--default" :disabled="!configured || busy || !password">登录</button>
+      <button type="button" class="aqua-button" @click="close">{{ $t('login.cancel') }}</button>
+      <button type="submit" class="aqua-button aqua-button--default" :disabled="!configured || busy || !password">{{ $t('login.logIn') }}</button>
     </div>
   </form>
 </template>
@@ -140,8 +142,14 @@ export default {
   align-self: stretch;
 
   span {
-    width: 52px;
+    flex: none;
+    min-width: 52px;
     text-align: right;
+
+    // The full-width Chinese colon brings its own space; "Password:" does not
+    &:lang(en) {
+      padding-right: 6px;
+    }
   }
 
   input {

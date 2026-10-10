@@ -2,51 +2,51 @@
   <div class="tool world-clock">
     <ul class="world-clock__grid">
       <li v-for="clock in clocks" :key="clock.zone" class="world-clock__item">
-        <button type="button" class="world-clock__remove" :aria-label="`移除 ${clock.name}`" title="移除" @click="remove(clock.zone)">×</button>
+        <button type="button" class="world-clock__remove" :aria-label="$t('tools.worldClock.removeCity', { name: clock.name })" :title="$t('tools.worldClock.remove')" @click="remove(clock.zone)">×</button>
         <analog-clock :hours="clock.parts.h" :minutes="clock.parts.mi" :seconds="clock.parts.s" :label="`${clock.name} ${clock.time}`" />
         <strong class="world-clock__city">{{ clock.name }}</strong>
         <span class="world-clock__time">{{ clock.time }}</span>
         <span class="world-clock__meta">{{ clock.day }}</span>
-        <span class="world-clock__meta">{{ clock.offset }}<span v-if="clock.dst" class="world-clock__dst">夏令时</span></span>
+        <span class="world-clock__meta">{{ clock.offset }}<span v-if="clock.dst" class="world-clock__dst">{{ $t('tools.worldClock.dst') }}</span></span>
         <span class="world-clock__meta">{{ clock.diff }}</span>
       </li>
     </ul>
 
     <div class="tool-bar world-clock__add">
-      <label for="world-clock-zone">添加城市或时区：</label>
-      <zone-select id="world-clock-zone" v-model="newZone" label="添加城市或时区" />
-      <button type="button" class="aqua-button" :disabled="zones.includes(newZone)" @click="add">添加</button>
+      <label for="world-clock-zone">{{ $t('tools.worldClock.addLabel') }}</label>
+      <zone-select id="world-clock-zone" v-model="newZone" :label="$t('tools.worldClock.addZone')" />
+      <button type="button" class="aqua-button" :disabled="zones.includes(newZone)" @click="add">{{ $t('tools.common.add') }}</button>
     </div>
 
     <fieldset class="aqua-group">
-      <legend>时区换算</legend>
+      <legend>{{ $t('tools.worldClock.converter') }}</legend>
       <div class="tool-form">
-        <label for="world-clock-time">时间：</label>
+        <label for="world-clock-time">{{ $t('tools.worldClock.time') }}</label>
         <div class="tool-inline">
           <input id="world-clock-time" v-model="sourceText" type="datetime-local" class="aqua-field">
-          <button type="button" class="aqua-button" @click="resetSource">现在</button>
+          <button type="button" class="aqua-button" @click="resetSource">{{ $t('tools.common.now') }}</button>
         </div>
-        <span class="tool-form__label">所在时区：</span>
-        <zone-select v-model="sourceZone" label="所在时区" />
+        <span class="tool-form__label">{{ $t('tools.worldClock.sourceZone') }}</span>
+        <zone-select v-model="sourceZone" :label="$t('tools.worldClock.sourceZoneLabel')" />
       </div>
-      <p v-if="conversion && !conversion.valid" class="tool-note">这一时刻在所选时区因夏令时调整并不存在，已按调整后的时间换算。</p>
+      <p v-if="conversion && !conversion.valid" class="tool-note">{{ $t('tools.worldClock.skipped') }}</p>
       <div v-if="conversion" class="tool-table__wrap world-clock__table">
         <table class="tool-table">
           <thead>
-            <tr><th>城市 / 时区</th><th>当地时间</th><th>星期</th><th>UTC 偏移</th><th>夏令时</th></tr>
+            <tr><th v-for="column in ['city', 'time', 'weekday', 'offset', 'dst']" :key="column">{{ $t(`tools.worldClock.columns.${column}`) }}</th></tr>
           </thead>
           <tbody>
             <tr v-for="row in conversion.rows" :key="row.zone" :class="{ 'is-selected': row.zone === sourceZone }">
               <td><strong>{{ row.name }}</strong> <small class="tool-muted">{{ row.zone }}</small></td>
               <td>{{ row.time }} <small v-if="row.shift" class="tool-muted">{{ row.shift }}</small></td>
-              <td>周{{ row.week }}</td>
+              <td>{{ row.week }}</td>
               <td>{{ row.offset }}</td>
               <td>{{ row.dst }}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p v-else class="tool-error">请输入有效的日期时间。</p>
+      <p v-else class="tool-error">{{ $t('tools.worldClock.invalidDate') }}</p>
     </fieldset>
   </div>
 </template>
@@ -54,7 +54,8 @@
 <script>
 import AnalogClock from './AnalogClock'
 import ZoneSelect from './ZoneSelect'
-import { dayNumber, pad, weekday, WEEKDAYS } from './lib/dates'
+import { dayNumber, pad, weekday } from './lib/dates'
+import { formatMonthDay, t, tc, weekdayName } from './lib/i18n'
 import { cityName, formatOffset, isDst, isValidZone, LOCAL_ZONE, observesDst, zonedToEpoch, zoneOffset, zoneParts } from './lib/zones'
 import { load, save } from './lib/storage'
 
@@ -72,7 +73,10 @@ function hoursText(minutes) {
 
 function dayShift(parts, reference) {
   const diff = dayNumber(parts) - dayNumber(reference)
-  return diff === 0 ? '' : diff === 1 ? '次日' : diff === -1 ? '前一日' : `${diff > 0 ? '+' : ''}${diff} 天`
+  if (Math.abs(diff) > 1) {
+    return t('tools.worldClock.shiftDays', { n: `${diff > 0 ? '+' : ''}${diff}` })
+  }
+  return diff === 0 ? '' : t(diff === 1 ? 'tools.worldClock.nextDay' : 'tools.worldClock.previousDay')
 }
 
 function inputValue(parts) {
@@ -111,10 +115,14 @@ export default {
           name: cityName(zone),
           parts,
           time: `${pad(parts.h)}:${pad(parts.mi)}:${pad(parts.s)}`,
-          day: `${shift === 0 ? '今天' : shift > 0 ? '明天' : '昨天'} ${parts.m}月${parts.d}日 周${WEEKDAYS[weekday(parts)]}`,
+          day: t('tools.worldClock.day', {
+            relative: t(shift === 0 ? 'tools.common.today' : shift > 0 ? 'tools.common.tomorrow' : 'tools.common.yesterday'),
+            date: formatMonthDay(parts),
+            weekday: weekdayName(weekday(parts), 'short')
+          }),
           offset: formatOffset(offset),
           dst: isDst(this.now, zone),
-          diff: diff === 0 ? '与本机时间相同' : `比本机${diff > 0 ? '快' : '慢'} ${hoursText(diff)} 小时`
+          diff: diff === 0 ? t('tools.worldClock.sameAsLocal') : tc(diff > 0 ? 'tools.worldClock.ahead' : 'tools.worldClock.behind', Math.abs(diff) === 60 ? 1 : 2, { n: hoursText(diff) })
         }
       })
     },
@@ -139,9 +147,9 @@ export default {
             name: cityName(zone),
             time: `${parts.y}-${pad(parts.m)}-${pad(parts.d)} ${pad(parts.h)}:${pad(parts.mi)}`,
             shift: dayShift(parts, source),
-            week: WEEKDAYS[weekday(parts)],
+            week: weekdayName(weekday(parts), 'short'),
             offset: formatOffset(zoneOffset(epoch, zone)),
-            dst: !observesDst(epoch, zone) ? '不实行' : isDst(epoch, zone) ? '是' : '否'
+            dst: t(!observesDst(epoch, zone) ? 'tools.worldClock.dstNone' : isDst(epoch, zone) ? 'tools.worldClock.dstYes' : 'tools.worldClock.dstNo')
           }
         })
       }

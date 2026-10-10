@@ -1,11 +1,11 @@
 <template>
   <div class="address-book">
     <aside class="address-book__groups">
-      <h3>组</h3>
-      <div class="aqua-row is-selected">全部</div>
+      <h3>{{ $t('addressBook.group') }}</h3>
+      <div class="aqua-row is-selected">{{ $t('addressBook.all') }}</div>
     </aside>
     <aside class="address-book__names">
-      <h3>名字</h3>
+      <h3>{{ $t('addressBook.name') }}</h3>
       <div class="aqua-row is-selected">{{ owner.name }}</div>
     </aside>
     <section class="address-book__card selectable">
@@ -13,15 +13,15 @@
         <img :src="avatar" alt="" class="address-book__avatar">
         <div>
           <h2>{{ owner.name }}</h2>
-          <p>{{ owner.tagline }}</p>
+          <p>{{ localize(owner.tagline) }}</p>
         </div>
       </header>
       <dl class="address-book__fields">
-        <dt>电子邮件</dt>
+        <dt>{{ $t('addressBook.email') }}</dt>
         <dd><a :href="`mailto:${email}`" @click.prevent="compose">{{ email }}</a></dd>
         <template v-for="link in links">
-          <dt :key="`${link.label}-label`">{{ link.label }}</dt>
-          <dd :key="link.label"><a :href="link.href" target="_blank" rel="noopener">{{ link.value }}</a></dd>
+          <dt :key="`${link.href}-label`">{{ localize(link.label) }}</dt>
+          <dd :key="link.href"><a :href="link.href" target="_blank" rel="noopener">{{ link.value }}</a></dd>
         </template>
       </dl>
     </section>
@@ -30,6 +30,7 @@
 
 <script>
 import site from '../config/site'
+import { localize } from '../i18n'
 import avatar from '../assets/logo.png'
 
 export default {
@@ -46,6 +47,7 @@ export default {
     }
   },
   methods: {
+    localize,
     compose() {
       this.$store.dispatch('windows/open', { appId: 'mail' })
     }

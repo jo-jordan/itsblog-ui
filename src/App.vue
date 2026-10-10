@@ -29,9 +29,20 @@ export default {
     ...mapState('system', ['prefs', 'power']),
     wallpaper() {
       return wallpaperBackground(this.prefs.wallpaper)
+    },
+    // Follows the post in the URL, in the current language
+    pageTitle() {
+      const post = this.$route.name === 'post' ? findPost(this.$route.params.slug) : null
+      return post ? `${post.title} — ${site.title}` : site.title
     }
   },
   watch: {
+    pageTitle: {
+      immediate: true,
+      handler(title) {
+        document.title = title
+      }
+    },
     // /posts/:slug opens that post in its own reader window and /places/:id
     // opens Footprints on that place, so links are shareable
     $route: {
@@ -42,12 +53,8 @@ export default {
           this.$store.dispatch('windows/open', { appId: 'footprints', props: { placeId: Number(route.params.id) }})
         } else if (post) {
           this.$store.dispatch('windows/open', { appId: 'reader', props: { slug: post.slug }})
-          document.title = `${post.title} — ${site.title}`
-        } else {
-          document.title = site.title
-          if (route.name === 'post') {
-            this.$router.replace('/')
-          }
+        } else if (route.name === 'post') {
+          this.$router.replace('/')
         }
       }
     },

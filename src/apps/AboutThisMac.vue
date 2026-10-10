@@ -2,18 +2,18 @@
   <div class="about-mac">
     <img :src="appleLogo" alt="" class="about-mac__logo">
     <div class="about-mac__name" role="img" aria-label="Mac OS X" />
-    <p class="about-mac__version">itsblog 版本 {{ version }}</p>
-    <button type="button" class="aqua-button" @click="openSource">软件更新…</button>
+    <p class="about-mac__version">{{ $t('about.version', { version }) }}</p>
+    <button type="button" class="aqua-button" @click="openSource">{{ $t('about.softwareUpdate') }}</button>
     <dl class="about-mac__specs">
-      <dt>处理器</dt>
+      <dt>{{ $t('about.processor') }}</dt>
       <dd>{{ processor }}</dd>
-      <dt>内存</dt>
+      <dt>{{ $t('about.memory') }}</dt>
       <dd>{{ memory }}</dd>
-      <dt>启动磁盘</dt>
+      <dt>{{ $t('about.startupDisk') }}</dt>
       <dd>{{ domain }}</dd>
     </dl>
-    <button type="button" class="aqua-button" @click="moreInfo">更多信息…</button>
-    <p class="about-mac__copyright">TM &amp; © {{ since }}–{{ year }} {{ owner }}<br>保留所有权利。</p>
+    <button type="button" class="aqua-button" @click="moreInfo">{{ $t('about.moreInfo') }}</button>
+    <p class="about-mac__copyright">TM &amp; © {{ since }}–{{ year }} {{ owner }}<br>{{ $t('about.rights') }}</p>
   </div>
 </template>
 
@@ -39,10 +39,10 @@ export default {
   computed: {
     processor() {
       const cores = navigator.hardwareConcurrency
-      return cores ? `${cores} 核浏览器引擎` : '浏览器引擎'
+      return cores ? this.$t('about.cores', { n: cores }) : this.$t('about.engine')
     },
     memory() {
-      return navigator.deviceMemory ? `至少 ${navigator.deviceMemory} GB` : '足够了'
+      return navigator.deviceMemory ? this.$t('about.atLeast', { n: navigator.deviceMemory }) : this.$t('about.enough')
     }
   },
   methods: {

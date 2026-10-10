@@ -1,0 +1,25 @@
+// 星期与周数: tools.weekInfo.*
+export default {
+  date: '日期：',
+  previousWeek: '前一周',
+  nextWeek: '后一周',
+  isoWeek: 'ISO 周数',
+  weekNumber: '第 {n} 周',
+  isoDetail: '（ISO 周年 {year}，该年共 {weeks} 周）',
+  thisWeek: '本周',
+  weekRange: '{from}（{monday}）至 {to}（{sunday}）',
+  weekOfMonth: '本月第几周',
+  weekOfMonthHint: '（以周一为一周开始）',
+  dayOfYear: '一年中的第',
+  dayOfYearValue: '{n} 天',
+  dayOfYearDetail: '（共 {total} 天，已过 {percent}%）',
+  remaining: '本年剩余',
+  quarter: '季度',
+  quarterValue: '第 {q} 季度（Q{q}）',
+  dayOfQuarter: '本季度第 {n} 天',
+  thisMonth: '本月',
+  leapYear: '闰年',
+  isLeap: '是，{year} 年为闰年（2 月有 29 天）',
+  notLeap: '否，{year} 年为平年',
+  invalid: '请输入有效日期。'
+}

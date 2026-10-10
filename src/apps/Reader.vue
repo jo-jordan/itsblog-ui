@@ -7,7 +7,7 @@
         <span v-else />
         <a v-if="links.older" :href="`/posts/${links.older.slug}`" @click.prevent="go(links.older)">{{ links.older.title }} →</a>
       </nav>
-      <p v-else class="reader__missing">找不到这篇文章。</p>
+      <p v-else class="reader__missing">{{ $t('posts.missing') }}</p>
     </div>
   </div>
 </template>
@@ -31,10 +31,10 @@ export default {
     }
   },
   watch: {
-    post: {
+    'post.title': {
       immediate: true,
-      handler(post) {
-        this.$emit('title', post ? `${post.title}.md` : '文本编辑')
+      handler(title) {
+        this.$emit('title', title ? `${title}.md` : null)
       }
     }
   },

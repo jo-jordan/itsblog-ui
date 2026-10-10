@@ -1,0 +1,25 @@
+// Week Info: tools.weekInfo.*
+export default {
+  date: 'Date:',
+  previousWeek: 'Previous Week',
+  nextWeek: 'Next Week',
+  isoWeek: 'ISO week',
+  weekNumber: 'Week {n}',
+  isoDetail: '(ISO year {year}, which has {weeks} weeks)',
+  thisWeek: 'This week',
+  weekRange: '{from} ({monday}) to {to} ({sunday})',
+  weekOfMonth: 'Week of month',
+  weekOfMonthHint: '(weeks start on Monday)',
+  dayOfYear: 'Day of year',
+  dayOfYearValue: 'Day {n}',
+  dayOfYearDetail: '(of {total}, {percent}% elapsed)',
+  remaining: 'Left in year',
+  quarter: 'Quarter',
+  quarterValue: 'Q{q}',
+  dayOfQuarter: 'day {n} of the quarter',
+  thisMonth: 'This month',
+  leapYear: 'Leap year',
+  isLeap: 'Yes, {year} is a leap year (February has 29 days)',
+  notLeap: 'No, {year} is a common year',
+  invalid: 'Enter a valid date.'
+}

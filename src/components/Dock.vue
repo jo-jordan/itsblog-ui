@@ -70,14 +70,14 @@ export default {
         key: `window-${win.id}`,
         appId: win.appId,
         windowId: win.id,
-        label: `${apps[win.appId].name} 窗口`,
+        label: this.$t('desktop.dockWindow', { name: apps[win.appId].name }),
         icon: apps[win.appId].icon
       }))
       return [
         ...appItems,
         { key: 'separator', separator: true },
         ...minimizedItems,
-        { key: 'trash', trash: true, label: '废纸篓', icon: trashIcon }
+        { key: 'trash', trash: true, label: this.$t('desktop.trash'), icon: trashIcon }
       ]
     }
   },

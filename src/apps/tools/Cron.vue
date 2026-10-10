@@ -1,32 +1,32 @@
 <template>
   <div class="tool cron">
     <div class="tool-form">
-      <label for="cron-input">表达式：</label>
-      <input id="cron-input" v-model="expression" type="text" class="aqua-field cron__input" spellcheck="false" autocomplete="off" placeholder="分 时 日 月 周">
-      <label for="cron-preset">常用：</label>
+      <label for="cron-input">{{ $t('tools.cron.expression') }}</label>
+      <input id="cron-input" v-model="expression" type="text" class="aqua-field cron__input" spellcheck="false" autocomplete="off" :placeholder="$t('tools.cron.placeholder')">
+      <label for="cron-preset">{{ $t('tools.cron.presetsLabel') }}</label>
       <div class="tool-inline">
         <select id="cron-preset" class="aqua-popup" :value="presetValue" @change="expression = $event.target.value">
-          <option value="" disabled>选择一个示例…</option>
-          <option v-for="preset in presets" :key="preset.value" :value="preset.value">{{ preset.label }}（{{ preset.value }}）</option>
+          <option value="" disabled>{{ $t('tools.cron.choosePreset') }}</option>
+          <option v-for="preset in presets" :key="preset.value" :value="preset.value">{{ $t('tools.cron.presetOption', preset) }}</option>
         </select>
       </div>
-      <span class="tool-form__label">时区：</span>
+      <span class="tool-form__label">{{ $t('tools.cron.timeZone') }}</span>
       <zone-select v-model="zone" />
     </div>
 
     <template v-if="parsed">
       <div class="tool-section">
-        <h4>含义</h4>
+        <h4>{{ $t('tools.cron.meaning') }}</h4>
         <p class="cron__description">{{ description }}</p>
-        <p v-if="orSemantics" class="tool-hint">“日”和“星期”都有限定时，按 Vixie cron 的规则两者满足其一即执行；只要其中一个以 * 开头，则两者都要满足。</p>
+        <p v-if="orSemantics" class="tool-hint">{{ $t('tools.cron.orHint') }}</p>
       </div>
 
       <div class="tool-section">
-        <h4>各字段</h4>
+        <h4>{{ $t('tools.cron.fieldsTitle') }}</h4>
         <div class="tool-table__wrap">
           <table class="tool-table">
             <thead>
-              <tr><th>字段</th><th>写法</th><th>含义</th><th>取值</th></tr>
+              <tr><th v-for="column in ['field', 'raw', 'meaning', 'values']" :key="column">{{ $t(`tools.cron.columns.${column}`) }}</th></tr>
             </thead>
             <tbody>
               <tr v-for="field in fields" :key="field.key">
@@ -41,26 +41,30 @@
       </div>
 
       <div class="tool-section">
-        <h4>接下来 {{ runs.length }} 次执行（{{ zoneLabel }}）</h4>
+        <h4>{{ $tc('tools.cron.nextRuns', runs.length, { zone: zoneLabel }) }}</h4>
         <ol v-if="runs.length" class="cron__runs">
           <li v-for="run in runs" :key="run.epoch">
             <span class="cron__mono">{{ run.time }}</span>
-            <span>周{{ run.week }}</span>
+            <span class="cron__weekday">{{ run.week }}</span>
             <span class="tool-muted">{{ run.relative }}</span>
           </li>
         </ol>
-        <p v-else class="tool-note">在未来 28 年内找不到匹配的时间（例如 2 月 30 日）。</p>
+        <p v-else class="tool-note">{{ $t('tools.cron.noRuns') }}</p>
       </div>
     </template>
     <p v-else class="tool-error">{{ error }}</p>
 
     <details class="cron__help">
-      <summary>语法说明</summary>
+      <summary>{{ $t('tools.cron.help.title') }}</summary>
       <ul>
-        <li>五个字段依次是：分钟（0–59）、小时（0–23）、日（1–31）、月（1–12 或 JAN–DEC）、星期（0–7 或 SUN–SAT，0 和 7 都是周日）。</li>
-        <li><code>*</code> 任意值；<code>1,15</code> 列表；<code>9-17</code> 范围；<code>*/15</code> 或 <code>0-30/5</code> 步长；<code>5/20</code> 等同 <code>5-59/20</code>。</li>
-        <li>支持简写 <code>@yearly</code> <code>@monthly</code> <code>@weekly</code> <code>@daily</code> <code>@hourly</code>。</li>
-        <li>夏令时开始时被跳过的时刻不会执行。</li>
+        <li>{{ $t('tools.cron.help.fields') }}</li>
+        <i18n path="tools.cron.help.syntax" tag="li">
+          <code v-for="(code, name) in syntax" :key="name" :slot="name">{{ code }}</code>
+        </i18n>
+        <i18n path="tools.cron.help.macros" tag="li">
+          <code v-for="(code, name) in macros" :key="name" :slot="name">{{ code }}</code>
+        </i18n>
+        <li>{{ $t('tools.cron.help.dst') }}</li>
       </ul>
     </details>
   </div>
@@ -68,24 +72,30 @@
 
 <script>
 import ZoneSelect from './ZoneSelect'
-import { relativeTime, weekday, WEEKDAYS } from './lib/dates'
+import { weekday } from './lib/dates'
+import { relativeTime, weekdayName } from './lib/i18n'
 import { describeCron, fieldSummary, nextRuns, parseCron } from './lib/cron'
 import { cityName, formatOffset, formatParts, LOCAL_ZONE, zoneOffset, zoneParts } from './lib/zones'
 import { load, save } from './lib/storage'
 
+// Labels are tools.cron.presets.<id>
 const PRESETS = [
-  { label: '每分钟', value: '* * * * *' },
-  { label: '每 5 分钟', value: '*/5 * * * *' },
-  { label: '每小时整点', value: '0 * * * *' },
-  { label: '每天 9 点', value: '0 9 * * *' },
-  { label: '工作日 9 点', value: '0 9 * * 1-5' },
-  { label: '工作时间每 15 分钟', value: '*/15 9-17 * * MON-FRI' },
-  { label: '每周一 10 点', value: '0 10 * * MON' },
-  { label: '每月 1 日凌晨', value: '0 0 1 * *' },
-  { label: '每月 1、15 日或周五', value: '30 8 1,15 * FRI' },
-  { label: '每季度首日', value: '0 0 1 JAN,APR,JUL,OCT *' },
-  { label: '每年', value: '@yearly' }
+  { id: 'everyMinute', value: '* * * * *' },
+  { id: 'every5Minutes', value: '*/5 * * * *' },
+  { id: 'hourly', value: '0 * * * *' },
+  { id: 'daily', value: '0 9 * * *' },
+  { id: 'weekdays', value: '0 9 * * 1-5' },
+  { id: 'workHours', value: '*/15 9-17 * * MON-FRI' },
+  { id: 'weekly', value: '0 10 * * MON' },
+  { id: 'monthly', value: '0 0 1 * *' },
+  { id: 'domOrDow', value: '30 8 1,15 * FRI' },
+  { id: 'quarterly', value: '0 0 1 JAN,APR,JUL,OCT *' },
+  { id: 'yearly', value: '@yearly' }
 ]
+
+// The examples in the syntax notes, by their slot in tools.cron.help.*
+const SYNTAX = { any: '*', list: '1,15', range: '9-17', step: '*/15', stepRange: '0-30/5', short: '5/20', long: '5-59/20' }
+const MACROS = { yearly: '@yearly', monthly: '@monthly', weekly: '@weekly', daily: '@daily', hourly: '@hourly' }
 
 export default {
   name: 'ToolCron',
@@ -97,12 +107,17 @@ export default {
     return {
       expression: load('cron', '0 9 * * 1-5'),
       zone: LOCAL_ZONE,
-      presets: PRESETS,
+      syntax: SYNTAX,
+      macros: MACROS,
       now: Date.now(),
       timer: null
     }
   },
   computed: {
+    presets() {
+      return PRESETS.map(preset => ({ value: preset.value, label: this.$t(`tools.cron.presets.${preset.id}`) }))
+    },
+    // An error is worded in the current language, so this runs again when that changes
     result() {
       try {
         return { parsed: parseCron(this.expression) }
@@ -131,7 +146,7 @@ export default {
       return fieldSummary(this.parsed)
     },
     zoneLabel() {
-      return `${cityName(this.zone)}，${formatOffset(zoneOffset(this.now, this.zone))}`
+      return this.$t('tools.cron.zoneLabel', { city: cityName(this.zone), offset: formatOffset(zoneOffset(this.now, this.zone)) })
     },
     runs() {
       // Recomputed each minute so the list stays in the future
@@ -141,7 +156,7 @@ export default {
         return {
           epoch,
           time: formatParts(parts, false),
-          week: WEEKDAYS[weekday(parts)],
+          week: weekdayName(weekday(parts), 'short'),
           relative: relativeTime(epoch - this.now)
         }
       })
@@ -193,6 +208,12 @@ export default {
   span + span {
     margin-left: 10px;
   }
+}
+
+// Weekday names differ in width in English; keep the column after them aligned
+.cron__weekday {
+  display: inline-block;
+  min-width: 2.2em;
 }
 
 .cron__help {

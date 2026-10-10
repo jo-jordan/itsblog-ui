@@ -7,10 +7,10 @@
         v-model="query"
         type="search"
         class="aqua-search sherlock__input"
-        placeholder="输入关键词，搜索全部文章"
-        aria-label="搜索关键词"
+        :placeholder="$t('sherlock.placeholder')"
+        :aria-label="$t('sherlock.keywords')"
       >
-      <button type="submit" class="sherlock__go" aria-label="搜索">
+      <button type="submit" class="sherlock__go" :aria-label="$t('sherlock.search')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="M14.5 14.5 20 20" /></svg>
       </button>
     </form>
@@ -18,7 +18,7 @@
     <div class="sherlock__results aqua-scroll">
       <table v-if="results.length" class="sherlock__table">
         <thead>
-          <tr><th>标题</th><th>分类</th><th>日期</th><th>相关性</th></tr>
+          <tr><th>{{ $t('sherlock.title') }}</th><th>{{ $t('sherlock.category') }}</th><th>{{ $t('sherlock.date') }}</th><th>{{ $t('sherlock.relevance') }}</th></tr>
         </thead>
         <tbody>
           <tr
@@ -32,23 +32,23 @@
             <td>{{ result.post.category }}</td>
             <td>{{ result.post.date }}</td>
             <td>
-              <span class="sherlock__relevance" :aria-label="`相关性 ${Math.round(result.relevance * 100)}%`">
+              <span class="sherlock__relevance" :aria-label="$t('sherlock.relevanceValue', { percent: Math.round(result.relevance * 100) })">
                 <span :style="{ width: `${Math.max(8, result.relevance * 100)}%` }" />
               </span>
             </td>
           </tr>
         </tbody>
       </table>
-      <p v-else class="sherlock__empty">{{ searched ? '没有找到相关文章' : '在上方输入关键词后按回车' }}</p>
+      <p v-else class="sherlock__empty">{{ searched ? $t('sherlock.none') : $t('sherlock.prompt') }}</p>
     </div>
 
     <div class="sherlock__detail">
       <template v-if="selectedPost">
         <strong>{{ selectedPost.title }}</strong>
-        <p>{{ selectedPost.summary || '双击结果即可阅读全文。' }}</p>
-        <button type="button" class="aqua-button aqua-button--default" @click="open(selectedPost)">阅读</button>
+        <p>{{ selectedPost.summary || $t('sherlock.noSummary') }}</p>
+        <button type="button" class="aqua-button aqua-button--default" @click="open(selectedPost)">{{ $t('sherlock.read') }}</button>
       </template>
-      <span v-else>{{ results.length ? `找到 ${results.length} 篇文章` : 'Sherlock' }}</span>
+      <span v-else>{{ results.length ? $tc('sherlock.found', results.length) : 'Sherlock' }}</span>
     </div>
   </div>
 </template>
@@ -75,6 +75,14 @@ export default {
   computed: {
     selectedPost() {
       return this.selected ? findPost(this.selected) : null
+    }
+  },
+  watch: {
+    // Results hold posts in the language they were found in
+    '$i18n.locale'() {
+      if (this.searched) {
+        this.search()
+      }
     }
   },
   mounted() {

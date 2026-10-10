@@ -1,23 +1,19 @@
 <template>
   <span class="tool-inline lunar-picker">
-    <select :value="value.y" class="aqua-popup" :aria-label="`${label}农历年`" @change="update({ y: +$event.target.value })">
-      <option v-for="y in years" :key="y" :value="y">{{ y }}年</option>
+    <select :value="value.y" class="aqua-popup" :aria-label="aria('pickerYear')" @change="update({ y: +$event.target.value })">
+      <option v-for="y in years" :key="y" :value="y">{{ $t('tools.calendar.yearOption', { y }) }}</option>
     </select>
-    <select :value="month.value" class="aqua-popup" :aria-label="`${label}农历月`" @change="update({ m: +$event.target.value })">
+    <select :value="month.value" class="aqua-popup" :aria-label="aria('pickerMonth')" @change="update({ m: +$event.target.value })">
       <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
     </select>
-    <select :value="Math.min(value.d, month.days)" class="aqua-popup" :aria-label="`${label}农历日`" @change="update({ d: +$event.target.value })">
+    <select :value="Math.min(value.d, month.days)" class="aqua-popup" :aria-label="aria('pickerDay')" @change="update({ d: +$event.target.value })">
       <option v-for="d in month.days" :key="d" :value="d">{{ dayName(d) }}</option>
     </select>
   </span>
 </template>
 
 <script>
-import { lunarMonthsOf, MAX_YEAR, MIN_YEAR } from './lib/calendar'
-
-const DAY_NAMES = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
-  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
-  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十']
+import { lunarDayName, lunarMonthsOf, MAX_YEAR, MIN_YEAR } from './lib/calendar'
 
 // Lunar year / month (leap months negative) / day pickers; v-model is { y, m, d }
 export default {
@@ -41,7 +37,11 @@ export default {
   },
   methods: {
     dayName(d) {
-      return DAY_NAMES[d - 1]
+      return lunarDayName(d)
+    },
+    // `label` says whose date it is (it may be empty)
+    aria(key) {
+      return this.$t(`tools.calendar.${key}`, { label: this.label }).trim()
     },
     // Keep the date valid: a leap month the new year lacks becomes the ordinary month, days are clamped
     update(change) {

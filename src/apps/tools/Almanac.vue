@@ -1,18 +1,18 @@
 <template>
   <div class="tool almanac">
     <div class="tool-bar">
-      <button type="button" class="aqua-button" aria-label="前一天" @click="move(-1)">◀ 前一天</button>
-      <input v-model="dateText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" aria-label="日期">
-      <button type="button" class="aqua-button" aria-label="后一天" @click="move(1)">后一天 ▶</button>
+      <button type="button" class="aqua-button" :aria-label="$t('tools.almanac.previousDay')" @click="move(-1)">◀ {{ $t('tools.almanac.previousDay') }}</button>
+      <input v-model="dateText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" :aria-label="$t('tools.almanac.date')">
+      <button type="button" class="aqua-button" :aria-label="$t('tools.almanac.nextDay')" @click="move(1)">{{ $t('tools.almanac.nextDay') }} ▶</button>
       <span class="tool-bar__spacer" />
-      <button type="button" class="aqua-button" @click="goToday">今天</button>
+      <button type="button" class="aqua-button" @click="goToday">{{ $t('tools.common.today') }}</button>
     </div>
 
     <article v-if="info" class="almanac__page">
       <header class="almanac__masthead">
-        <span>{{ date.y }}年{{ date.m }}月</span>
+        <span>{{ info.yearMonth }}</span>
         <strong>{{ info.yearLabel }}</strong>
-        <span>星期{{ info.week }}</span>
+        <span>{{ info.week }}</span>
       </header>
 
       <div class="almanac__hero">
@@ -24,97 +24,99 @@
           <p class="almanac__festivals">
             <span v-for="name in info.festivals" :key="name" class="almanac__festival">{{ name }}</span>
             <span v-if="info.holiday" class="almanac__badge" :class="info.holiday.work ? 'is-work' : 'is-rest'">
-              {{ info.holiday.work ? '班' : '休' }}
+              {{ info.holidayBadge }}
             </span>
-            <span v-if="info.holiday" class="almanac__holiday">{{ info.holiday.name }}{{ info.holiday.work ? '调休上班' : '放假' }}</span>
+            <span v-if="info.holiday" class="almanac__holiday">{{ info.holidayStatus }}</span>
           </p>
         </div>
         <div class="almanac__side almanac__side--right">
-          <p>{{ info.ganzhi.year }}年</p>
-          <p>{{ info.ganzhi.month }}月</p>
-          <p>{{ info.ganzhi.day }}日</p>
+          <p>{{ $t('tools.almanac.ganzhiYear', { name: info.ganzhi.year }) }}</p>
+          <p>{{ $t('tools.almanac.ganzhiMonth', { name: info.ganzhi.month }) }}</p>
+          <p>{{ $t('tools.almanac.ganzhiDay', { name: info.ganzhi.day }) }}</p>
         </div>
       </div>
 
       <div class="almanac__yiji">
         <div class="almanac__yi">
-          <span class="almanac__stamp">宜</span>
-          <p>{{ info.yi.join(' ') }}</p>
+          <span class="almanac__stamp">{{ $t('tools.almanac.yi') }}</span>
+          <p>{{ info.yi }}</p>
         </div>
         <div class="almanac__ji">
-          <span class="almanac__stamp almanac__stamp--ji">忌</span>
-          <p>{{ info.ji.join(' ') }}</p>
+          <span class="almanac__stamp almanac__stamp--ji">{{ $t('tools.almanac.ji') }}</span>
+          <p>{{ info.ji }}</p>
         </div>
       </div>
 
       <dl class="almanac__grid">
         <div>
-          <dt>生肖 · 星座</dt>
-          <dd>{{ info.shengxiao }} · {{ info.xingzuo }}座</dd>
+          <dt>{{ $t('tools.almanac.zodiacSign') }}</dt>
+          <dd>{{ $t('tools.almanac.zodiacSignValue', { zodiac: info.shengxiao, sign: info.xingzuo }) }}</dd>
         </div>
         <div>
-          <dt>节气</dt>
+          <dt>{{ $t('tools.almanac.term') }}</dt>
           <dd>
-            <template v-if="info.termToday">今日{{ info.termToday }}</template>
-            <template v-else>{{ info.prevTerm.name }}后第 {{ info.prevTerm.days }} 天</template>
-            <small>下一节气 {{ info.nextTerm.name }} {{ info.nextTerm.when }}，{{ termCountdown }}</small>
+            <template v-if="info.termToday">{{ $t('tools.almanac.termToday', { name: info.termToday }) }}</template>
+            <template v-else>{{ $t('tools.almanac.termDay', { name: info.prevTerm.name, days: info.prevTerm.days }) }}</template>
+            <small>{{ $t('tools.almanac.nextTerm', { name: info.nextTerm.name, when: info.nextTerm.when, countdown: termCountdown }) }}</small>
           </dd>
         </div>
         <div>
-          <dt>冲煞</dt>
-          <dd>冲{{ info.chong }} 煞{{ info.sha }}</dd>
+          <dt>{{ $t('tools.almanac.chongSha') }}</dt>
+          <dd>{{ info.chongSha }}</dd>
         </div>
         <div>
-          <dt>值神</dt>
+          <dt>{{ $t('tools.almanac.tianShen') }}</dt>
           <dd>{{ info.tianShen }} <span :class="info.tianShenGood ? 'tool-good' : 'tool-bad'">{{ info.tianShenType }}</span></dd>
         </div>
         <div>
-          <dt>建除十二值星</dt>
-          <dd>{{ info.zhiXing }}日</dd>
+          <dt>{{ $t('tools.almanac.zhiXing') }}</dt>
+          <dd>{{ $t('tools.almanac.zhiXingValue', { name: info.zhiXing }) }}</dd>
         </div>
         <div>
-          <dt>二十八星宿</dt>
+          <dt>{{ $t('tools.almanac.xiu') }}</dt>
           <dd>
             {{ info.xiu }} <span :class="info.xiuGood ? 'tool-good' : 'tool-bad'">{{ info.xiuLuck }}</span>
             <small>{{ info.gong }}</small>
           </dd>
         </div>
         <div>
-          <dt>纳音五行</dt>
+          <dt>{{ $t('tools.almanac.nayin') }}</dt>
           <dd>{{ info.nayin }}</dd>
         </div>
         <div>
-          <dt>胎神占方</dt>
+          <dt>{{ $t('tools.almanac.tai') }}</dt>
           <dd>{{ info.tai }}</dd>
         </div>
         <div class="almanac__wide">
-          <dt>彭祖百忌</dt>
+          <dt>{{ $t('tools.almanac.pengzu') }}</dt>
           <dd>{{ info.pengzu }}</dd>
         </div>
         <div class="almanac__wide">
-          <dt>吉神方位</dt>
-          <dd>喜神 {{ info.xi }} · 福神 {{ info.fu }} · 财神 {{ info.cai }} · 阳贵 {{ info.yangGui }} · 阴贵 {{ info.yinGui }}</dd>
+          <dt>{{ $t('tools.almanac.positions') }}</dt>
+          <dd>{{ $t('tools.almanac.positionsValue', info.positions) }}</dd>
         </div>
         <div class="almanac__wide">
-          <dt>吉神宜趋</dt>
-          <dd class="tool-good">{{ info.jiShen.join(' ') || '无' }}</dd>
+          <dt>{{ $t('tools.almanac.jiShen') }}</dt>
+          <dd class="tool-good">{{ info.jiShen.join(' ') || $t('tools.calendar.none') }}</dd>
         </div>
         <div class="almanac__wide">
-          <dt>凶煞宜忌</dt>
-          <dd class="tool-bad">{{ info.xiongSha.join(' ') || '无' }}</dd>
+          <dt>{{ $t('tools.almanac.xiongSha') }}</dt>
+          <dd class="tool-bad">{{ info.xiongSha.join(' ') || $t('tools.calendar.none') }}</dd>
         </div>
         <div class="almanac__wide">
-          <dt>物候 · 月相</dt>
-          <dd>{{ info.wuhou }} · {{ info.yuexiang }}月<template v-if="info.extra"> · {{ info.extra }}</template></dd>
+          <dt>{{ $t('tools.almanac.wuhouMoon') }}</dt>
+          <dd>{{ $t('tools.almanac.wuhouMoonValue', { wuhou: info.wuhou, moon: info.yuexiang }) }}<template v-if="info.extra"> · {{ info.extra }}</template></dd>
         </div>
       </dl>
 
       <section class="almanac__hours">
-        <h4>时辰吉凶</h4>
+        <h4>{{ $t('tools.almanac.hours') }}</h4>
         <div class="tool-table__wrap">
           <table class="tool-table">
             <thead>
-              <tr><th>时辰</th><th>时间</th><th>干支</th><th>值神</th><th>吉凶</th><th>冲煞</th><th>宜</th><th>忌</th></tr>
+              <tr>
+                <th v-for="(name, index) in $t('tools.almanac.hourColumns')" :key="index">{{ name }}</th>
+              </tr>
             </thead>
             <tbody>
               <tr v-for="hour in hours" :key="hour.key" :class="{ 'is-selected': hour.current }">
@@ -123,7 +125,7 @@
                 <td>{{ hour.ganzhi }}</td>
                 <td class="almanac__nowrap">{{ hour.tianShen }}</td>
                 <td><span class="almanac__luck" :class="hour.good ? 'is-good' : 'is-bad'">{{ hour.luck }}</span></td>
-                <td class="almanac__nowrap">冲{{ hour.chong }} 煞{{ hour.sha }}</td>
+                <td class="almanac__nowrap">{{ hour.chongSha }}</td>
                 <td>{{ hour.yi }}</td>
                 <td>{{ hour.ji }}</td>
               </tr>
@@ -132,17 +134,34 @@
         </div>
       </section>
     </article>
-    <p v-else class="tool-error">请选择 1900 至 2100 年之间的日期。</p>
+    <p v-else class="tool-error">{{ $t('tools.almanac.outOfRange') }}</p>
   </div>
 </template>
 
 <script>
-import { addDays, dayNumber, formatYmd, parseYmd, sameDay, today, WEEKDAYS, isWeekend, pad } from './lib/dates'
-import { beijingEpoch, holidayOf, lunarOf, lunarMonthName } from './lib/calendar'
+import { addDays, dayNumber, formatYmd, parseYmd, sameDay, today, isWeekend, pad } from './lib/dates'
+import {
+  beijingEpoch, directionName, festivalName, holidayBadge, holidayOf, holidayStatus, isLucky,
+  lunarDayName, lunarOf, lunarMonthName, signName, termName, zodiacName
+} from './lib/calendar'
+import { formatMonthDay, formatYearMonth, t, tc, weekdayName } from './lib/i18n'
 
-// "(丙辰)龙" → "龙（丙辰）"
-function chongText(desc) {
-  return desc.replace(/^\((.+)\)(.+)$/, '$2（$1）')
+// A name the library gives in Chinese, in English where the locale has a table for it
+function translated(map, name) {
+  const names = t(`tools.almanac.${map}`)
+  return (names && typeof names === 'object' && names[name]) || name
+}
+
+// The library's "(丙辰)龙" and 煞 direction → "冲龙（丙辰） 煞北"
+function chongShaText(desc, sha) {
+  const match = /^\((.+)\)(.+)$/.exec(desc)
+  const chong = match ? t('tools.almanac.chong', { animal: zodiacName(match[2]), ganzhi: match[1] }) : desc
+  return t('tools.almanac.chongShaValue', { chong, sha: directionName(sha) })
+}
+
+// 宜 / 忌 items stay in Chinese, apart from the library's two ways of saying "none"
+function itemsText(items) {
+  return items.map(item => translated('items', item)).join(' ')
 }
 
 function solarDate(solar) {
@@ -189,67 +208,75 @@ export default {
         ...lunar.getOtherFestivals(),
         ...solar.getOtherFestivals()
       ]
+      const holiday = holidayOf(this.date)
+      const tianShenGood = isLucky(lunar.getDayTianShenLuck())
+      const xiuGood = isLucky(lunar.getXiuLuck())
       return {
-        yearLabel: `农历${lunar.getYearInGanZhi()}年（${lunar.getYearShengXiao()}年）`,
-        week: WEEKDAYS[solar.getWeek()],
+        yearMonth: formatYearMonth(this.date),
+        yearLabel: t('tools.almanac.yearLabel', { ganzhi: lunar.getYearInGanZhi(), zodiac: zodiacName(lunar.getYearShengXiao()) }),
+        week: weekdayName(solar.getWeek(), 'long'),
         weekend: isWeekend(this.date),
         lunarMonth: lunarMonthName(lunar),
-        lunarDay: lunar.getDayInChinese(),
-        festivals: [...new Set(festivals)],
-        holiday: holidayOf(this.date),
+        lunarDay: t('tools.almanac.lunarDay', { name: lunarDayName(lunar.getDay()), d: lunar.getDay() }),
+        festivals: [...new Set(festivals)].map(festivalName),
+        holiday,
+        holidayBadge: holiday ? holidayBadge(holiday) : '',
+        holidayStatus: holiday ? holidayStatus(holiday) : '',
         ganzhi: {
           // The year changes at 立春 and the month at each 节, as the 干支 calendar does
           year: lunar.getYearInGanZhiByLiChun(),
           month: lunar.getMonthInGanZhi(),
           day: lunar.getDayInGanZhi()
         },
-        yi: lunar.getDayYi(),
-        ji: lunar.getDayJi(),
-        shengxiao: lunar.getYearShengXiao(),
-        xingzuo: solar.getXingZuo(),
-        termToday: lunar.getJieQi(),
-        prevTerm: { name: prev.getName(), days: dayNumber(this.date) - dayNumber(solarDate(prev.getSolar())) + 1 },
+        yi: itemsText(lunar.getDayYi()),
+        ji: itemsText(lunar.getDayJi()),
+        shengxiao: zodiacName(lunar.getYearShengXiao()),
+        xingzuo: signName(solar.getXingZuo()),
+        termToday: termName(lunar.getJieQi()),
+        prevTerm: { name: termName(prev.getName()), days: dayNumber(this.date) - dayNumber(solarDate(prev.getSolar())) + 1 },
         nextTerm: {
-          name: next.getName(),
-          when: `${nextSolar.getMonth()}月${nextSolar.getDay()}日 ${pad(nextSolar.getHour())}:${pad(nextSolar.getMinute())}`,
+          name: termName(next.getName()),
+          when: `${formatMonthDay(solarDate(nextSolar))} ${pad(nextSolar.getHour())}:${pad(nextSolar.getMinute())}`,
           epoch: beijingEpoch(nextSolar),
           days: dayNumber(solarDate(nextSolar)) - dayNumber(this.date)
         },
-        chong: chongText(lunar.getDayChongDesc()),
-        sha: lunar.getDaySha(),
+        chongSha: chongShaText(lunar.getDayChongDesc(), lunar.getDaySha()),
         tianShen: lunar.getDayTianShen(),
-        tianShenType: `${lunar.getDayTianShenType()}${lunar.getDayTianShenLuck()}日`,
-        tianShenGood: lunar.getDayTianShenLuck() === '吉',
+        tianShenType: t(tianShenGood ? 'tools.almanac.luckyDay' : 'tools.almanac.unluckyDay', { type: lunar.getDayTianShenType(), luck: lunar.getDayTianShenLuck() }),
+        tianShenGood,
         zhiXing: lunar.getZhiXing(),
         xiu: `${lunar.getXiu()}${lunar.getZheng()}${lunar.getAnimal()}`,
-        xiuLuck: lunar.getXiuLuck(),
-        xiuGood: lunar.getXiuLuck() === '吉',
-        gong: `${lunar.getGong()}方${lunar.getShou()}`,
+        xiuLuck: t(xiuGood ? 'tools.almanac.lucky' : 'tools.almanac.unlucky'),
+        xiuGood,
+        gong: t('tools.almanac.gong', { gong: directionName(lunar.getGong()), shou: translated('beasts', lunar.getShou()) }),
         nayin: `${lunar.getYearNaYin()} ${lunar.getMonthNaYin()} ${lunar.getDayNaYin()}`,
         tai: lunar.getDayPositionTai(),
         pengzu: `${lunar.getPengZuGan()}\u3000${lunar.getPengZuZhi()}`,
-        xi: lunar.getDayPositionXiDesc(),
-        fu: lunar.getDayPositionFuDesc(),
-        cai: lunar.getDayPositionCaiDesc(),
-        yangGui: lunar.getDayPositionYangGuiDesc(),
-        yinGui: lunar.getDayPositionYinGuiDesc(),
+        positions: {
+          xi: directionName(lunar.getDayPositionXiDesc()),
+          fu: directionName(lunar.getDayPositionFuDesc()),
+          cai: directionName(lunar.getDayPositionCaiDesc()),
+          yangGui: directionName(lunar.getDayPositionYangGuiDesc()),
+          yinGui: directionName(lunar.getDayPositionYinGuiDesc())
+        },
         jiShen: lunar.getDayJiShen(),
         xiongSha: lunar.getDayXiongSha(),
         wuhou: lunar.getWuHou(),
-        yuexiang: lunar.getYueXiang(),
+        yuexiang: translated('moons', lunar.getYueXiang()),
         extra: [shuJiu && shuJiu.toFullString(), fu && fu.toFullString()].filter(Boolean).join(' · ')
       }
     },
     termCountdown() {
       const next = this.info.nextTerm
       if (!this.isToday) {
-        return next.days === 0 ? '即在当天' : `距此还有 ${next.days} 天`
+        return next.days === 0 ? t('tools.almanac.sameDay') : tc('tools.almanac.daysFromDate', next.days)
       }
       const left = Math.max(0, next.epoch - this.now)
-      const days = Math.floor(left / 86400000)
-      const hours = Math.floor((left % 86400000) / 3600000)
-      const minutes = Math.floor((left % 3600000) / 60000)
-      return `还有 ${days} 天 ${hours} 小时 ${minutes} 分`
+      return t('tools.almanac.timeLeft', {
+        days: Math.floor(left / 86400000),
+        hours: Math.floor((left % 86400000) / 3600000),
+        minutes: Math.floor((left % 3600000) / 60000)
+      })
     },
     hours() {
       if (!this.lunar) {
@@ -258,23 +285,24 @@ export default {
       const current = new Date(this.now).getHours()
       return this.lunar.getTimes().map((time, index, times) => {
         const zhi = time.getZhi()
-        const late = index === times.length - 1
+        // The day both begins and ends in the 子 hour
+        const key = index === 0 ? 'earlyZi' : index === times.length - 1 ? 'lateZi' : 'hourName'
         const start = time.getMinHm()
         const end = time.getMaxHm()
         const startHour = +start.slice(0, 2)
         const endHour = +end.slice(0, 2)
+        const good = isLucky(time.getTianShenLuck())
         return {
           key: index,
-          name: zhi === '子' ? (late ? '夜子时' : '早子时') : `${zhi}时`,
+          name: t(`tools.almanac.${key}`, { zhi }),
           range: `${start}–${end}`,
           ganzhi: time.getGanZhi(),
-          tianShen: `${time.getTianShen()}（${time.getTianShenType()}）`,
-          luck: time.getTianShenLuck(),
-          good: time.getTianShenLuck() === '吉',
-          chong: chongText(time.getChongDesc()),
-          sha: time.getSha(),
-          yi: time.getYi().join(' '),
-          ji: time.getJi().join(' '),
+          tianShen: t('tools.almanac.hourTianShen', { name: time.getTianShen(), type: time.getTianShenType() }),
+          luck: t(good ? 'tools.almanac.luckyShort' : 'tools.almanac.unluckyShort'),
+          good,
+          chongSha: chongShaText(time.getChongDesc(), time.getSha()),
+          yi: itemsText(time.getYi()),
+          ji: itemsText(time.getJi()),
           current: this.isToday && current >= startHour && current <= endHour
         }
       })
@@ -412,6 +440,12 @@ export default {
   text-align: center;
   color: #fff;
 
+  // "Off" and "Work" need more room than 休 and 班
+  &:lang(en) {
+    width: auto;
+    padding: 0 4px;
+  }
+
   &.is-rest {
     background: #d8261b;
   }
@@ -466,6 +500,12 @@ export default {
   background: radial-gradient(circle at 40% 35%, #6d6d6d, #222 70%);
 }
 
+// "Do" and "Avoid" are words, not single seal characters
+.almanac__stamp:lang(en) {
+  font-family: inherit;
+  font-size: 10px;
+}
+
 .almanac__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -483,6 +523,10 @@ export default {
     flex: none;
     width: 86px;
     color: #9a5a2a;
+
+    &:lang(en) {
+      width: 104px;
+    }
   }
 
   dd {

@@ -1,4 +1,5 @@
 import { wallpapers } from '../../config/wallpapers'
+import { setLocale } from '../../i18n'
 
 const PREFS_KEY = 'itsblog.prefs'
 const BOOTED_KEY = 'itsblog.booted'
@@ -7,7 +8,9 @@ const defaultPrefs = {
   wallpaper: wallpapers[0].id,
   appearance: 'blue',
   magnification: true,
-  minimizeEffect: 'genie'
+  minimizeEffect: 'genie',
+  // 'auto' follows the browser; otherwise a locale id from src/i18n
+  language: 'auto'
 }
 
 function loadPrefs() {
@@ -44,6 +47,9 @@ const mutations = {
 const actions = {
   setPref({ commit, state }, payload) {
     commit('SET_PREF', payload)
+    if (payload.key === 'language') {
+      setLocale(payload.value)
+    }
     try {
       localStorage.setItem(PREFS_KEY, JSON.stringify(state.prefs))
     } catch (e) {

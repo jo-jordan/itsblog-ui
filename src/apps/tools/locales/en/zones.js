@@ -1,0 +1,38 @@
+// Time zone picker and city names: tools.zones.*
+export default {
+  label: 'Time zone',
+  popular: 'Cities',
+  all: 'All Time Zones',
+  cityOption: '{name} ({zone})',
+  localOption: '{zone} (Local)',
+  cities: {
+    'Asia/Shanghai': 'Beijing',
+    'Asia/Hong_Kong': 'Hong Kong',
+    'Asia/Taipei': 'Taipei',
+    'Asia/Tokyo': 'Tokyo',
+    'Asia/Seoul': 'Seoul',
+    'Asia/Singapore': 'Singapore',
+    'Asia/Bangkok': 'Bangkok',
+    'Asia/Kolkata': 'New Delhi',
+    'Asia/Dubai': 'Dubai',
+    'Europe/Moscow': 'Moscow',
+    'Europe/Istanbul': 'Istanbul',
+    'Africa/Cairo': 'Cairo',
+    'Europe/Berlin': 'Berlin',
+    'Europe/Paris': 'Paris',
+    'Europe/London': 'London',
+    'Atlantic/Reykjavik': 'Reykjavik',
+    'America/Sao_Paulo': 'São Paulo',
+    'America/New_York': 'New York',
+    'America/Toronto': 'Toronto',
+    'America/Chicago': 'Chicago',
+    'America/Denver': 'Denver',
+    'America/Los_Angeles': 'San Francisco',
+    'America/Vancouver': 'Vancouver',
+    'Pacific/Honolulu': 'Honolulu',
+    'Pacific/Auckland': 'Auckland',
+    'Australia/Sydney': 'Sydney',
+    'Australia/Perth': 'Perth',
+    UTC: 'UTC'
+  }
+}

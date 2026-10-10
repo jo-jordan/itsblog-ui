@@ -3,20 +3,20 @@
     <div class="mail__toolbar">
       <button type="submit" class="mail__tool" :disabled="!body.trim()">
         <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 15 29 4 22 28 15 19z" /><path d="M15 19 29 4" /></svg>
-        <span>发送</span>
+        <span>{{ $t('mail.send') }}</span>
       </button>
     </div>
     <div class="mail__headers">
       <label class="mail__field">
-        <span>收件人：</span>
+        <span>{{ $t('mail.to') }}</span>
         <input class="aqua-field" :value="`${owner} <${email}>`" readonly>
       </label>
       <label class="mail__field">
-        <span>主题：</span>
-        <input v-model="subject" class="aqua-field" placeholder="你好！">
+        <span>{{ $t('mail.subject') }}</span>
+        <input v-model="subject" class="aqua-field" :placeholder="$t('mail.subjectPlaceholder')">
       </label>
     </div>
-    <textarea v-model="body" class="mail__body aqua-scroll selectable" placeholder="想说点什么？写好后点“发送”，会在你的邮件程序里打开。" aria-label="邮件正文" />
+    <textarea v-model="body" class="mail__body aqua-scroll selectable" :placeholder="$t('mail.bodyPlaceholder')" :aria-label="$t('mail.body')" />
   </form>
 </template>
 
@@ -36,12 +36,22 @@ export default {
       body: ''
     }
   },
-  created() {
-    this.$emit('title', '新邮件')
+  computed: {
+    title() {
+      return this.$t('mail.title')
+    }
+  },
+  watch: {
+    title: {
+      immediate: true,
+      handler(title) {
+        this.$emit('title', title)
+      }
+    }
   },
   methods: {
     send() {
-      const params = new URLSearchParams({ subject: this.subject || `来自 ${site.domain} 的问候`, body: this.body })
+      const params = new URLSearchParams({ subject: this.subject || this.$t('mail.defaultSubject', { domain: site.domain }), body: this.body })
       // URLSearchParams encodes spaces as "+", which mail clients show literally
       window.location.href = `mailto:${this.email}?${params.toString().replace(/\+/g, '%20')}`
     }

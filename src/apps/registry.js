@@ -8,8 +8,10 @@ import preferencesIcon from '../assets/icons/preferences.svg'
 import footprintsIcon from '../assets/icons/footprints.svg'
 import loginIcon from '../assets/logo.png'
 import toolboxIcon from '../assets/icons/toolbox.svg'
+import { t } from '../i18n'
 
-// Every window on the desktop belongs to one of these applications.
+// Every window on the desktop belongs to one of these applications. Translated
+// names are getters so they follow the language wherever they are rendered.
 export const apps = {
   finder: {
     name: 'Finder',
@@ -19,7 +21,7 @@ export const apps = {
     instanceKey: props => (props.location === 'trash' ? 'finder:trash' : props.newWindow ? `finder:${props.newWindow}` : 'finder')
   },
   reader: {
-    name: '文本编辑',
+    get name() { return t('apps.reader') },
     icon: documentIcon,
     component: () => import(/* webpackChunkName: "reader" */ './Reader.vue'),
     size: { width: 760, height: 620 },
@@ -38,19 +40,19 @@ export const apps = {
     size: { width: 640, height: 480 }
   },
   addressBook: {
-    name: '地址簿',
+    get name() { return t('apps.addressBook') },
     icon: addressBookIcon,
     component: () => import(/* webpackChunkName: "address-book" */ './AddressBook.vue'),
     size: { width: 640, height: 400 }
   },
   footprints: {
-    name: '足迹',
+    get name() { return t('apps.footprints') },
     icon: footprintsIcon,
     component: () => import(/* webpackChunkName: "footprints" */ './Footprints.vue'),
     size: { width: 1020, height: 640 }
   },
   login: {
-    name: '登录',
+    get name() { return t('apps.login') },
     icon: loginIcon,
     component: () => import(/* webpackChunkName: "login" */ './Login.vue'),
     size: { width: 380, height: 330 },
@@ -59,20 +61,20 @@ export const apps = {
   },
   // Calendar and time utilities; lunar-javascript only loads with this chunk
   toolbox: {
-    name: '实用工具',
+    get name() { return t('apps.toolbox') },
     icon: toolboxIcon,
     component: () => import(/* webpackChunkName: "toolbox" */ './Toolbox.vue'),
     size: { width: 860, height: 560 }
   },
   preferences: {
-    name: '系统偏好设置',
+    get name() { return t('apps.preferences') },
     icon: preferencesIcon,
     component: () => import(/* webpackChunkName: "preferences" */ './Preferences.vue'),
     size: { width: 620, height: 440 },
     resizable: false
   },
   about: {
-    name: '关于本机',
+    get name() { return t('apps.about') },
     icon: appleIcon,
     component: () => import(/* webpackChunkName: "about" */ './AboutThisMac.vue'),
     size: { width: 320, height: 380 },

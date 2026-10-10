@@ -3,8 +3,6 @@
 
 const DAY = 86400000
 
-export const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
-
 export const pad = (n, width = 2) => String(n).padStart(width, '0')
 
 export function isLeapYear(y) {
@@ -34,10 +32,6 @@ export function formatYmd(date) {
   return `${pad(date.y, 4)}-${pad(date.m)}-${pad(date.d)}`
 }
 
-export function formatChinese(date) {
-  return `${date.y}年${date.m}月${date.d}日`
-}
-
 export function fromJsDate(js) {
   return { y: js.getFullYear(), m: js.getMonth() + 1, d: js.getDate() }
 }
@@ -62,7 +56,7 @@ export function addDays(date, n) {
   return fromDayNumber(dayNumber(date) + n)
 }
 
-// Calendar months, clamped to the end of shorter months (1月31日 + 1 个月 = 2月28/29日)
+// Calendar months, clamped to the end of shorter months (31 January + 1 month = 28/29 February)
 export function addMonths(date, n) {
   const index = date.y * 12 + (date.m - 1) + n
   const y = Math.floor(index / 12)
@@ -147,8 +141,8 @@ export function countWeekdays(a, b) {
   return count
 }
 
-// Next occurrence (on or after `from`) of a yearly month/day; 2 月 29 日 falls on
-// 2 月 28 日 in common years
+// Next occurrence (on or after `from`) of a yearly month/day; 29 February falls on
+// 28 February in common years
 export function nextAnniversary(m, d, from) {
   for (let y = from.y; y <= from.y + 1; y++) {
     const date = { y, m, d: Math.min(d, daysInMonth(y, m)) }
@@ -157,23 +151,4 @@ export function nextAnniversary(m, d, from) {
     }
   }
   return null
-}
-
-// Short Chinese "3 天前 / 2 小时后" for a difference in milliseconds
-export function relativeTime(ms) {
-  const future = ms > 0
-  const abs = Math.abs(ms)
-  const units = [
-    [365.2425 * DAY, '年'],
-    [30.436875 * DAY, '个月'],
-    [DAY, '天'],
-    [3600000, '小时'],
-    [60000, '分钟'],
-    [1000, '秒']
-  ]
-  if (abs < 1000) {
-    return '现在'
-  }
-  const [size, name] = units.find(([unitSize]) => abs >= unitSize)
-  return `${Math.floor(abs / size)} ${name}${future ? '后' : '前'}`
 }

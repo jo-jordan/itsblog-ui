@@ -2,6 +2,11 @@
 // It is big, so only the toolbox chunk imports this file.
 import { Solar, Lunar, LunarYear, HolidayUtil } from 'lunar-javascript'
 import { countWeekdays, dayNumber, formatYmd, fromDayNumber, isWeekend, today } from './dates'
+import { t, tc } from './i18n'
+
+// The library is always left in Chinese: its own I18n.setLanguage() is global,
+// only partly translated, and changes the very strings this file and the tools
+// compare against. English names come from tools.calendar.* lookup maps instead.
 
 export { Solar, Lunar }
 
@@ -21,14 +26,73 @@ export function dateOfSolar(solar) {
   return { y: solar.getYear(), m: solar.getMonth(), d: solar.getDay() }
 }
 
-// '闰六月' / '正月'
-export function lunarMonthName(lunar) {
-  return `${lunar.getMonthInChinese()}月`
+// ---- Names in the current language ------------------------------------------------
+
+// A name the library gives in Chinese, looked up in a tools.calendar.<map> table;
+// anything the table lacks (and everything in Chinese) stays as it is
+function translated(map, name) {
+  const names = t(`tools.calendar.${map}`)
+  return (names && typeof names === 'object' && names[name]) || name
 }
 
+// 立春 / Start of Spring
+export const termName = name => translated('terms', name)
+// 马 / Horse
+export const zodiacName = name => translated('zodiacs', name)
+// 天秤 / Libra
+export const signName = name => translated('signs', name)
+// 国庆节 / National Day (official public holidays)
+export const holidayName = name => translated('holidays', name)
+// 中秋节 / Mid-Autumn Festival; festivals without a usual English name stay Chinese
+export const festivalName = name => translated('festivals', name)
+// 东南 / Southeast, 正北 / North
+export const directionName = name => translated('directions', name)
+
+// 国庆节放假 / National Day holiday, 国庆节调休上班 / National Day make-up workday
+export function holidayStatus(holiday) {
+  return t(holiday.work ? 'tools.calendar.holidayWork' : 'tools.calendar.holidayRest', { name: holidayName(holiday.name) })
+}
+
+// 休 / Off, 班 / Work
+export function holidayBadge(holiday) {
+  return t(holiday.work ? 'tools.calendar.badgeWork' : 'tools.calendar.badgeRest')
+}
+
+// '3 天后' / 'in 3 days', '3 天前' / '3 days ago'; zero is left to the caller
+export function daysAway(days) {
+  return days > 0 ? tc('tools.calendar.daysLater', days) : tc('tools.calendar.daysAgo', -days)
+}
+
+// Lunar month by number, negative for a leap month: '六月' / '闰六月', '6th month' / 'Leap 6th month'
+export function lunarMonthLabel(month) {
+  const name = t('tools.calendar.monthNames')[Math.abs(month) - 1]
+  return month < 0 ? t('tools.calendar.leapMonth', { month: name }) : name
+}
+
+// Lunar day by number: '十五' / 'Day 15'
+export function lunarDayName(day) {
+  return t('tools.calendar.dayNames')[day - 1]
+}
+
+// Lunar month and day by number: '八月十五' / '8th month, day 15'
+export function lunarMonthDayText(month, day) {
+  return t('tools.calendar.monthDay', { month: lunarMonthLabel(month), day: lunarDayName(day), d: day })
+}
+
+// '闰六月' / '正月', 'Leap 6th month' / '1st month'
+export function lunarMonthName(lunar) {
+  return lunarMonthLabel(lunar.getMonth())
+}
+
+// '八月十五' / '8th month, day 15'; with the year '丙午年 八月十五' / '丙午 year, 8th month, day 15'
 export function lunarText(lunar, withYear = false) {
-  const text = `${lunarMonthName(lunar)}${lunar.getDayInChinese()}`
-  return withYear ? `${lunar.getYearInGanZhi()}年 ${text}` : text
+  const text = lunarMonthDayText(lunar.getMonth(), lunar.getDay())
+  return withYear ? t('tools.calendar.withYear', { year: lunar.getYearInGanZhi(), text }) : text
+}
+
+// lunarText() that says it is lunar: '农历八月十五' / 'Lunar 8th month, day 15'
+export function lunarDateText(lunar, withYear = false) {
+  return t('tools.calendar.prefixed', { text: lunarText(lunar, withYear) })
 }
 
 // The six solar terms getJieQiTable() keys in pinyin (the ones belonging to the neighbouring years)
@@ -42,8 +106,17 @@ const TERM_NAMES = {
   JING_ZHE: '惊蛰'
 }
 
+// The twelve 节 (the terms that begin a 干支 month); the other twelve are 中气
+const JIE = ['小寒', '立春', '惊蛰', '清明', '立夏', '芒种', '小暑', '立秋', '白露', '寒露', '立冬', '大雪']
+
+// 吉, as the library spells a lucky 值神 / 星宿
+const LUCKY = '吉'
+
+export const isLucky = luck => luck === LUCKY
+
 // The 24 solar terms falling in a Gregorian year, in order, with their exact
-// moment (Beijing time, as computed by the library)
+// moment (Beijing time, as computed by the library). `name` stays Chinese (it
+// is what the library compares); show it through termName().
 export function solarTermsOf(year) {
   const found = {}
   ;[1, 7, 12].forEach(month => {
@@ -51,7 +124,8 @@ export function solarTermsOf(year) {
     Object.keys(table).forEach(key => {
       const solar = table[key]
       if (solar.getYear() === year) {
-        found[solar.toYmdHms()] = { name: TERM_NAMES[key] || key, solar }
+        const name = TERM_NAMES[key] || key
+        found[solar.toYmdHms()] = { name, solar, jie: JIE.includes(name) }
       }
     })
   })
@@ -66,11 +140,11 @@ export function beijingEpoch(solar) {
 // ---- Lunar ↔ Gregorian ----------------------------------------------------------
 
 // Months of a lunar year: [{ value: 6, label: '六月', days: 30 }, { value: -6, label: '闰六月', days: 29 }, …]
+// (labels in the current language)
 export function lunarMonthsOf(year) {
   return LunarYear.fromYear(year).getMonthsInYear().map(month => {
     const value = month.getMonth()
-    const lunar = Lunar.fromYmd(year, value, 1)
-    return { value, label: lunarMonthName(lunar), days: month.getDayCount(), leap: value < 0 }
+    return { value, label: lunarMonthLabel(value), days: month.getDayCount(), leap: value < 0 }
   })
 }
 
@@ -115,7 +189,8 @@ export function nextLunarAnniversary(month, day, from = today()) {
 
 const holidayCache = {}
 
-// { 'YYYY-MM-DD': { name, work, target } } for every arranged day in that year
+// { 'YYYY-MM-DD': { name, work, target } } for every arranged day in that year;
+// `name` is the library's Chinese name, shown through holidayName()
 export function holidayMap(year) {
   if (!holidayCache[year]) {
     const map = {}
@@ -225,7 +300,8 @@ export function festivalsOf(date) {
   }
 }
 
-// Text under the day number in a month grid: festival › solar term › lunar day
+// Text under the day number in a month grid: festival › solar term › lunar day,
+// in the current language
 export function cellInfo(date) {
   const solar = solarOf(date)
   const lunar = solar.getLunar()
@@ -234,13 +310,13 @@ export function cellInfo(date) {
   let label
   let kind = 'lunar'
   if (festival) {
-    label = festival
+    label = festivalName(festival)
     kind = 'festival'
   } else if (term) {
-    label = term
+    label = termName(term)
     kind = 'term'
   } else {
-    label = lunar.getDay() === 1 ? lunarMonthName(lunar) : lunar.getDayInChinese()
+    label = lunar.getDay() === 1 ? lunarMonthName(lunar) : t('tools.calendar.cellDays')[lunar.getDay() - 1]
     kind = lunar.getDay() === 1 ? 'month' : 'lunar'
   }
   return { label, kind, lunar, holiday: holidayOf(date) }

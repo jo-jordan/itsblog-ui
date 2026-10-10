@@ -1,44 +1,44 @@
 <template>
   <div class="tool converter">
     <fieldset class="aqua-group">
-      <legend>公历 → 农历</legend>
+      <legend>{{ $t('tools.lunarConverter.toLunar') }}</legend>
       <div class="tool-form">
-        <label for="conv-solar">公历日期：</label>
+        <label for="conv-solar">{{ $t('tools.lunarConverter.solarDate') }}</label>
         <div class="tool-inline">
           <input id="conv-solar" v-model="solarText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31">
-          <button type="button" class="aqua-button" @click="solarText = todayText">今天</button>
+          <button type="button" class="aqua-button" @click="solarText = todayText">{{ $t('tools.common.today') }}</button>
         </div>
       </div>
       <dl v-if="solarResult" class="tool-results">
-        <dt>农历</dt>
+        <dt>{{ $t('tools.common.lunar') }}</dt>
         <dd><span class="tool-big">{{ solarResult.text }}</span></dd>
-        <dt>干支</dt>
+        <dt>{{ $t('tools.calendar.ganzhi') }}</dt>
         <dd>{{ solarResult.ganzhi }}</dd>
-        <dt>生肖</dt>
+        <dt>{{ $t('tools.calendar.zodiac') }}</dt>
         <dd>{{ solarResult.shengxiao }}</dd>
-        <dt>本月</dt>
+        <dt>{{ $t('tools.lunarConverter.thisMonth') }}</dt>
         <dd>{{ solarResult.monthInfo }}</dd>
-        <dt>本年</dt>
+        <dt>{{ $t('tools.lunarConverter.thisYear') }}</dt>
         <dd>{{ solarResult.yearInfo }}</dd>
       </dl>
-      <p v-else class="tool-error">请输入 1900 至 2100 年之间的公历日期。</p>
+      <p v-else class="tool-error">{{ $t('tools.lunarConverter.outOfRange') }}</p>
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>农历 → 公历</legend>
+      <legend>{{ $t('tools.lunarConverter.toSolar') }}</legend>
       <div class="tool-form">
-        <span class="tool-form__label">农历日期：</span>
+        <span class="tool-form__label">{{ $t('tools.lunarConverter.lunarDate') }}</span>
         <lunar-date-picker v-model="lunar" />
       </div>
       <p class="tool-hint">{{ leapHint }}</p>
       <dl v-if="lunarResult" class="tool-results">
-        <dt>公历</dt>
+        <dt>{{ $t('tools.lunarConverter.solar') }}</dt>
         <dd><span class="tool-big">{{ lunarResult.text }}</span></dd>
-        <dt>星期</dt>
-        <dd>星期{{ lunarResult.week }}</dd>
-        <dt>干支</dt>
+        <dt>{{ $t('tools.calendar.weekday') }}</dt>
+        <dd>{{ lunarResult.week }}</dd>
+        <dt>{{ $t('tools.calendar.ganzhi') }}</dt>
         <dd>{{ lunarResult.ganzhi }}</dd>
-        <dt>距今</dt>
+        <dt>{{ $t('tools.calendar.fromToday') }}</dt>
         <dd>{{ lunarResult.distance }}</dd>
       </dl>
     </fieldset>
@@ -47,24 +47,24 @@
 
 <script>
 import LunarDatePicker from './LunarDatePicker'
-import { dayNumber, formatYmd, parseYmd, today, weekday, WEEKDAYS } from './lib/dates'
-import { lunarMonthsOf, lunarOf, lunarToSolar, MAX_YEAR, MIN_YEAR } from './lib/calendar'
+import { dayNumber, formatYmd, parseYmd, today, weekday } from './lib/dates'
+import { daysAway, lunarMonthsOf, lunarOf, lunarText, lunarToSolar, zodiacName, MAX_YEAR, MIN_YEAR } from './lib/calendar'
+import { formatLongDate, t, weekdayName } from './lib/i18n'
 
 function ganzhiOf(lunar) {
-  return `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日`
+  return t('tools.lunarConverter.ganzhi', { year: lunar.getYearInGanZhi(), month: lunar.getMonthInGanZhi(), day: lunar.getDayInGanZhi() })
 }
 
 function distanceText(date) {
   const days = dayNumber(date) - dayNumber(today())
-  if (days === 0) {
-    return '就是今天'
-  }
-  return days > 0 ? `${days} 天后` : `${-days} 天前`
+  return days === 0 ? t('tools.lunarConverter.isToday') : daysAway(days)
 }
 
 function leapText(year) {
   const leap = lunarMonthsOf(year).find(item => item.leap)
-  return leap ? `农历${year}年有${leap.label}（${leap.days} 天），全年 13 个月。` : `农历${year}年没有闰月。`
+  return leap
+    ? t('tools.lunarConverter.leapYear', { year, month: leap.label, days: leap.days })
+    : t('tools.lunarConverter.noLeap', { year })
 }
 
 export default {
@@ -93,10 +93,10 @@ export default {
       const lunar = lunarOf(this.solarDate)
       const month = lunarMonthsOf(lunar.getYear()).find(item => item.value === lunar.getMonth())
       return {
-        text: `${lunar.getYear()}年${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`,
+        text: t('tools.lunarConverter.lunarFull', { year: lunar.getYear(), text: lunarText(lunar) }),
         ganzhi: ganzhiOf(lunar),
-        shengxiao: `${lunar.getYearShengXiao()}年`,
-        monthInfo: `${month.label}${month.days === 30 ? '大' : '小'}，共 ${month.days} 天`,
+        shengxiao: t('tools.lunarConverter.zodiacYear', { zodiac: zodiacName(lunar.getYearShengXiao()) }),
+        monthInfo: t(month.days === 30 ? 'tools.lunarConverter.longMonth' : 'tools.lunarConverter.shortMonth', { month: month.label, days: month.days }),
         yearInfo: leapText(lunar.getYear())
       }
     },
@@ -109,8 +109,8 @@ export default {
         return null
       }
       return {
-        text: `${date.y}年${date.m}月${date.d}日`,
-        week: WEEKDAYS[weekday(date)],
+        text: formatLongDate(date),
+        week: weekdayName(weekday(date), 'long'),
         ganzhi: ganzhiOf(lunarOf(date)),
         distance: distanceText(date)
       }

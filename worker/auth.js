@@ -1,5 +1,6 @@
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
+import { apiError } from './messages'
 
 // The only admin credential is the ADMIN_PASSWORD secret. Sessions are
 // HMAC-signed with a key derived from it, so changing the password signs
@@ -66,7 +67,7 @@ function clientIp(c) {
 
 export async function login(c, password) {
   if (!isConfigured(c)) {
-    throw new HTTPException(503, { message: '尚未设置管理员密码' })
+    throw apiError(503, 'notConfigured')
   }
   const db = c.env.DB
   const ip = clientIp(c)
@@ -74,14 +75,14 @@ export async function login(c, password) {
   const { failures } = await db.prepare('SELECT COUNT(*) AS failures FROM login_attempts WHERE ip = ? AND at > ?')
     .bind(ip, now - FAILURE_WINDOW).first()
   if (failures >= MAX_FAILURES) {
-    throw new HTTPException(429, { message: '尝试次数过多，请 15 分钟后再试' })
+    throw apiError(429, 'tooManyAttempts')
   }
   if (!(await passwordMatches(String(password || ''), c.env.ADMIN_PASSWORD))) {
     await db.batch([
       db.prepare('INSERT INTO login_attempts (ip, at) VALUES (?, ?)').bind(ip, now),
       db.prepare('DELETE FROM login_attempts WHERE at < ?').bind(now - 86400)
     ])
-    throw new HTTPException(401, { message: '密码不正确' })
+    throw apiError(401, 'wrongPassword')
   }
   await db.prepare('DELETE FROM login_attempts WHERE ip = ?').bind(ip).run()
   setCookie(c, COOKIE, await sign(c.env.ADMIN_PASSWORD, now + MAX_AGE), {
@@ -104,7 +105,7 @@ export async function requireAdmin(c, next) {
     throw new HTTPException(403, { message: 'Forbidden' })
   }
   if (!(await isAdmin(c))) {
-    throw new HTTPException(401, { message: '请先登录' })
+    throw apiError(401, 'loginRequired')
   }
   await next()
 }

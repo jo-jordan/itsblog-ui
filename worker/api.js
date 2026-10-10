@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { isAdmin, isConfigured, login, logout, requireAdmin } from './auth'
 import { id, photoInput, placeInput, visitInput } from './validate'
+import { apiError } from './messages'
 
 const IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif' }
 const MAX_PHOTO_BYTES = 15 * 1024 * 1024
@@ -61,7 +62,7 @@ const PLACE_SUMMARY = `
 async function loadPlace(db, placeId, admin) {
   const row = await db.prepare(`${PLACE_SUMMARY} WHERE p.id = ?1 AND (p.published = 1 OR ?2)`).bind(placeId, admin ? 1 : 0).first()
   if (!row) {
-    throw new HTTPException(404, { message: '找不到这个地方' })
+    throw apiError(404, 'placeNotFound')
   }
   const [visits, photos] = await db.batch([
     db.prepare('SELECT id, start_date, end_date, note FROM visits WHERE place_id = ? ORDER BY start_date DESC, id DESC').bind(placeId),
@@ -72,7 +73,7 @@ async function loadPlace(db, placeId, admin) {
 
 async function placeExists(db, placeId) {
   if (!(await db.prepare('SELECT 1 FROM places WHERE id = ?').bind(placeId).first())) {
-    throw new HTTPException(404, { message: '找不到这个地方' })
+    throw apiError(404, 'placeNotFound')
   }
 }
 
@@ -80,7 +81,7 @@ async function readJson(c) {
   try {
     return await c.req.json()
   } catch (e) {
-    throw new HTTPException(400, { message: '请求格式不正确' })
+    throw apiError(400, 'badRequest')
   }
 }
 
@@ -101,7 +102,7 @@ async function nominatim(path, params) {
   const url = `${NOMINATIM}/${path}?${new URLSearchParams({ format: 'jsonv2', addressdetails: '1', 'accept-language': 'zh-CN,zh,en', ...params })}`
   const response = await fetch(url, { headers: { 'User-Agent': 'itsblog/1.0 (+https://edgeless.me)' } })
   if (!response.ok) {
-    throw new HTTPException(502, { message: '地名搜索暂时不可用' })
+    throw apiError(502, 'geocoderUnavailable')
   }
   return response.json()
 }
@@ -159,7 +160,7 @@ admin.put('/places/:id', async c => {
     category = ?, rating = ?, story = ?, published = ?, cover_photo_id = ?, updated_at = datetime('now') WHERE id = ?`)
     .bind(p.name, p.lat, p.lng, p.country, p.region, p.city, p.category, p.rating, p.story, p.published, cover, placeId).run()
   if (!meta.changes) {
-    throw new HTTPException(404, { message: '找不到这个地方' })
+    throw apiError(404, 'placeNotFound')
   }
   return c.json(await loadPlace(c.env.DB, placeId, true))
 })
@@ -196,7 +197,7 @@ admin.put('/visits/:id', async c => {
   const row = await c.env.DB.prepare('UPDATE visits SET start_date = ?, end_date = ?, note = ? WHERE id = ? RETURNING place_id')
     .bind(v.start_date, v.end_date, v.note, visitId).first()
   if (!row) {
-    throw new HTTPException(404, { message: '找不到这次到访' })
+    throw apiError(404, 'visitNotFound')
   }
   return c.json(await loadPlace(c.env.DB, row.place_id, true))
 })
@@ -204,7 +205,7 @@ admin.put('/visits/:id', async c => {
 admin.delete('/visits/:id', async c => {
   const row = await c.env.DB.prepare('DELETE FROM visits WHERE id = ? RETURNING place_id').bind(id(c.req.param('id'))).first()
   if (!row) {
-    throw new HTTPException(404, { message: '找不到这次到访' })
+    throw apiError(404, 'visitNotFound')
   }
   return c.json(await loadPlace(c.env.DB, row.place_id, true))
 })
@@ -218,10 +219,10 @@ admin.post('/places/:id/photos', async c => {
   const thumb = form.get('thumb')
   for (const [file, max] of [[photo, MAX_PHOTO_BYTES], [thumb, MAX_THUMB_BYTES]]) {
     if (!file || typeof file === 'string' || !IMAGE_TYPES[file.type]) {
-      throw new HTTPException(400, { message: '只能上传 JPEG、PNG、WebP、GIF 或 AVIF 图片' })
+      throw apiError(400, 'imageType')
     }
     if (file.size > max) {
-      throw new HTTPException(413, { message: '图片太大了' })
+      throw apiError(413, 'imageTooLarge')
     }
   }
   const meta = photoInput({ caption: form.get('caption'), taken_at: form.get('taken_at') || null })
@@ -247,7 +248,7 @@ admin.put('/photos/:id', async c => {
   const row = await c.env.DB.prepare('UPDATE photos SET caption = ?, taken_at = ?, sort = ? WHERE id = ? RETURNING place_id')
     .bind(meta.caption, meta.taken_at, meta.sort, photoId).first()
   if (!row) {
-    throw new HTTPException(404, { message: '找不到这张照片' })
+    throw apiError(404, 'photoNotFound')
   }
   return c.json(await loadPlace(c.env.DB, row.place_id, true))
 })
@@ -257,7 +258,7 @@ admin.delete('/photos/:id', async c => {
   const db = c.env.DB
   const row = await db.prepare('SELECT place_id, key, thumb_key FROM photos WHERE id = ?').bind(photoId).first()
   if (!row) {
-    throw new HTTPException(404, { message: '找不到这张照片' })
+    throw apiError(404, 'photoNotFound')
   }
   await c.env.MEDIA.delete([row.key, row.thumb_key])
   await db.batch([
@@ -281,7 +282,7 @@ admin.get('/reverse', async c => {
   const lat = Number(c.req.query('lat'))
   const lng = Number(c.req.query('lng'))
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    throw new HTTPException(400, { message: '坐标不正确' })
+    throw apiError(400, 'badCoordinates')
   }
   const result = await nominatim('reverse', { lat: String(lat), lon: String(lng), zoom: '14' })
   return c.json(result && !result.error ? geocodeJson(result) : null)

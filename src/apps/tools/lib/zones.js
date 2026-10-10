@@ -1,5 +1,6 @@
 // IANA time zones through Intl: wall-clock parts, UTC offsets and DST.
 import { pad } from './dates'
+import { t } from './i18n'
 
 export const LOCAL_ZONE = (() => {
   try {
@@ -38,44 +39,24 @@ export function allZones() {
   return zoneList
 }
 
-// Cities offered by the world clock, with Chinese names
+// Cities offered by the world clock; their names are in the locale files (tools.zones.cities)
 export const CITIES = [
-  { name: '北京', zone: 'Asia/Shanghai' },
-  { name: '香港', zone: 'Asia/Hong_Kong' },
-  { name: '台北', zone: 'Asia/Taipei' },
-  { name: '东京', zone: 'Asia/Tokyo' },
-  { name: '首尔', zone: 'Asia/Seoul' },
-  { name: '新加坡', zone: 'Asia/Singapore' },
-  { name: '曼谷', zone: 'Asia/Bangkok' },
-  { name: '新德里', zone: 'Asia/Kolkata' },
-  { name: '迪拜', zone: 'Asia/Dubai' },
-  { name: '莫斯科', zone: 'Europe/Moscow' },
-  { name: '伊斯坦布尔', zone: 'Europe/Istanbul' },
-  { name: '开罗', zone: 'Africa/Cairo' },
-  { name: '柏林', zone: 'Europe/Berlin' },
-  { name: '巴黎', zone: 'Europe/Paris' },
-  { name: '伦敦', zone: 'Europe/London' },
-  { name: '雷克雅未克', zone: 'Atlantic/Reykjavik' },
-  { name: '圣保罗', zone: 'America/Sao_Paulo' },
-  { name: '纽约', zone: 'America/New_York' },
-  { name: '多伦多', zone: 'America/Toronto' },
-  { name: '芝加哥', zone: 'America/Chicago' },
-  { name: '丹佛', zone: 'America/Denver' },
-  { name: '旧金山', zone: 'America/Los_Angeles' },
-  { name: '温哥华', zone: 'America/Vancouver' },
-  { name: '檀香山', zone: 'Pacific/Honolulu' },
-  { name: '奥克兰', zone: 'Pacific/Auckland' },
-  { name: '悉尼', zone: 'Australia/Sydney' },
-  { name: '珀斯', zone: 'Australia/Perth' },
-  { name: '协调世界时', zone: 'UTC' }
+  'Asia/Shanghai', 'Asia/Hong_Kong', 'Asia/Taipei', 'Asia/Tokyo', 'Asia/Seoul', 'Asia/Singapore', 'Asia/Bangkok',
+  'Asia/Kolkata', 'Asia/Dubai', 'Europe/Moscow', 'Europe/Istanbul', 'Africa/Cairo', 'Europe/Berlin', 'Europe/Paris',
+  'Europe/London', 'Atlantic/Reykjavik', 'America/Sao_Paulo', 'America/New_York', 'America/Toronto', 'America/Chicago',
+  'America/Denver', 'America/Los_Angeles', 'America/Vancouver', 'Pacific/Honolulu', 'Pacific/Auckland', 'Australia/Sydney',
+  'Australia/Perth', 'UTC'
 ]
 
+// The city a zone is known by in the current language, or the last part of its id
 export function cityName(zone) {
-  const city = CITIES.find(item => item.zone === zone)
-  if (city) {
-    return city.name
-  }
-  return zone.split('/').pop().replace(/_/g, ' ')
+  const names = t('tools.zones.cities')
+  return (CITIES.includes(zone) && names[zone]) || zone.split('/').pop().replace(/_/g, ' ')
+}
+
+// [{ name, zone }] in the current language
+export function cities() {
+  return CITIES.map(zone => ({ name: cityName(zone), zone }))
 }
 
 export function isValidZone(zone) {

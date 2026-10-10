@@ -1,80 +1,80 @@
 <template>
   <div class="tool age">
     <div class="tool-form">
-      <span class="tool-form__label">出生日期：</span>
+      <span class="tool-form__label">{{ $t('tools.ageCalculator.birthDate') }}</span>
       <div class="tool-inline">
-        <div class="aqua-segmented" role="group" aria-label="历法">
-          <button type="button" :class="{ 'is-selected': calendar === 'solar' }" :aria-pressed="calendar === 'solar' ? 'true' : 'false'" @click="setCalendar('solar')">公历</button>
-          <button type="button" :class="{ 'is-selected': calendar === 'lunar' }" :aria-pressed="calendar === 'lunar' ? 'true' : 'false'" @click="setCalendar('lunar')">农历</button>
+        <div class="aqua-segmented" role="group" :aria-label="$t('tools.ageCalculator.calendarLabel')">
+          <button type="button" :class="{ 'is-selected': calendar === 'solar' }" :aria-pressed="calendar === 'solar' ? 'true' : 'false'" @click="setCalendar('solar')">{{ $t('tools.ageCalculator.solar') }}</button>
+          <button type="button" :class="{ 'is-selected': calendar === 'lunar' }" :aria-pressed="calendar === 'lunar' ? 'true' : 'false'" @click="setCalendar('lunar')">{{ $t('tools.common.lunar') }}</button>
         </div>
-        <input v-if="calendar === 'solar'" v-model="solarText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" aria-label="公历出生日期">
-        <lunar-date-picker v-else v-model="lunarBirth" label="出生" />
+        <input v-if="calendar === 'solar'" v-model="solarText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" :aria-label="$t('tools.ageCalculator.solarBirthDate')">
+        <lunar-date-picker v-else v-model="lunarBirth" :label="$t('tools.ageCalculator.pickerLabel')" />
       </div>
-      <label for="age-time">出生时间：</label>
+      <label for="age-time">{{ $t('tools.ageCalculator.birthTime') }}</label>
       <div class="tool-inline">
         <input id="age-time" v-model="timeText" type="time" class="aqua-field" :disabled="!timeKnown">
         <label class="tool-inline">
           <input v-model="timeKnown" type="checkbox">
-          <span>已知出生时间（用于时柱）</span>
+          <span>{{ $t('tools.ageCalculator.timeKnown') }}</span>
         </label>
       </div>
-      <label for="age-ref">计算到：</label>
+      <label for="age-ref">{{ $t('tools.ageCalculator.asOf') }}</label>
       <div class="tool-inline">
         <input id="age-ref" v-model="refText" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31">
-        <button type="button" class="aqua-button" @click="refText = todayText">今天</button>
+        <button type="button" class="aqua-button" @click="refText = todayText">{{ $t('tools.common.today') }}</button>
       </div>
     </div>
 
     <template v-if="result">
       <div class="tool-section">
-        <h4>年龄</h4>
+        <h4>{{ $t('tools.ageCalculator.age') }}</h4>
         <div class="age__cards">
           <div class="age__card">
-            <span>周岁</span>
+            <span>{{ $t('tools.ageCalculator.fullAge') }}</span>
             <strong>{{ result.age }}</strong>
             <small>{{ result.ageDetail }}</small>
           </div>
           <div class="age__card">
-            <span>虚岁</span>
+            <span>{{ $t('tools.ageCalculator.nominalAge') }}</span>
             <strong>{{ result.nominal }}</strong>
-            <small>按农历新年增岁</small>
+            <small>{{ $t('tools.ageCalculator.nominalHint') }}</small>
           </div>
           <div class="age__card">
-            <span>已出生</span>
-            <strong>{{ result.days.toLocaleString('zh-CN') }}</strong>
-            <small>天 · 约 {{ Math.floor(result.days / 7).toLocaleString('zh-CN') }} 周</small>
+            <span>{{ $t('tools.ageCalculator.lived') }}</span>
+            <strong>{{ result.daysText }}</strong>
+            <small>{{ result.weeksText }}</small>
           </div>
         </div>
         <dl class="tool-results">
-          <dt>出生</dt>
+          <dt>{{ $t('tools.ageCalculator.born') }}</dt>
           <dd>{{ result.birthText }}</dd>
-          <dt>生肖</dt>
+          <dt>{{ $t('tools.ageCalculator.animal') }}</dt>
           <dd>{{ result.shengxiao }}</dd>
-          <dt>星座</dt>
-          <dd>{{ result.xingzuo }}座</dd>
-          <dt>下次公历生日</dt>
+          <dt>{{ $t('tools.ageCalculator.sign') }}</dt>
+          <dd>{{ result.xingzuo }}</dd>
+          <dt>{{ $t('tools.ageCalculator.nextSolar') }}</dt>
           <dd>{{ result.nextSolar }}</dd>
-          <dt>下次农历生日</dt>
+          <dt>{{ $t('tools.ageCalculator.nextLunar') }}</dt>
           <dd>{{ result.nextLunar }}</dd>
         </dl>
       </div>
 
       <div class="tool-section">
-        <h4>生辰八字（四柱）</h4>
+        <h4>{{ $t('tools.ageCalculator.bazi') }}</h4>
         <div class="tool-table__wrap">
           <table class="tool-table age__bazi">
             <thead>
-              <tr><th /><th>年柱</th><th>月柱</th><th>日柱</th><th>时柱</th></tr>
+              <tr><th /><th v-for="pillar in $t('tools.ageCalculator.pillars')" :key="pillar">{{ pillar }}</th></tr>
             </thead>
             <tbody>
-              <tr v-for="row in result.bazi" :key="row.label" :class="{ 'age__bazi-main': row.main }">
+              <tr v-for="row in result.bazi" :key="row.id" :class="{ 'age__bazi-main': row.main }">
                 <th scope="row">{{ row.label }}</th>
                 <td v-for="(cell, index) in row.cells" :key="index">{{ cell }}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p class="tool-hint">四柱以立春和各节交接时刻为界；未填写出生时间时不排时柱。{{ result.timeNote }}</p>
+        <p class="tool-hint">{{ $t(result.timed ? 'tools.ageCalculator.baziHint' : 'tools.ageCalculator.baziHintNoTime') }}</p>
       </div>
     </template>
     <p v-else class="tool-error">{{ error }}</p>
@@ -83,12 +83,17 @@
 
 <script>
 import LunarDatePicker from './LunarDatePicker'
-import { compare, dayNumber, formatChinese, formatYmd, nextAnniversary, parseYmd, span, today, weekday, WEEKDAYS } from './lib/dates'
-import { lunarOf, lunarText, lunarToSolar, nextLunarAnniversary, Solar, MIN_YEAR, MAX_YEAR } from './lib/calendar'
+import { compare, dayNumber, formatYmd, nextAnniversary, parseYmd, span, today, weekday } from './lib/dates'
+import { lunarDateText, lunarOf, lunarToSolar, nextLunarAnniversary, signName, zodiacName, Solar, MIN_YEAR, MAX_YEAR } from './lib/calendar'
+import { formatLongDate, formatNumber, t, tc, weekdayName } from './lib/i18n'
 
 function countdown(date, ref) {
   const days = dayNumber(date) - dayNumber(ref)
-  return days === 0 ? '就是今天，生日快乐！' : `还有 ${days} 天`
+  return days === 0 ? t('tools.ageCalculator.birthdayToday') : tc('tools.ageCalculator.birthdayIn', days)
+}
+
+function dateLine(date) {
+  return t('tools.ageCalculator.dateWeekday', { date: formatLongDate(date), weekday: weekdayName(weekday(date)) })
 }
 
 export default {
@@ -126,9 +131,9 @@ export default {
     },
     error() {
       if (!this.birth || !this.ref) {
-        return '请输入 1900 至 2100 年之间的有效日期。'
+        return t('tools.ageCalculator.invalidDates')
       }
-      return '出生日期不能晚于计算日期。'
+      return t('tools.ageCalculator.bornAfter')
     },
     result() {
       const { birth, ref, time } = this
@@ -140,13 +145,15 @@ export default {
       const refLunar = lunarOf(ref)
       const nextSolar = nextAnniversary(birth.m, birth.d, ref)
       const nextLunar = nextLunarAnniversary(birthLunar.getMonth(), birthLunar.getDay(), ref)
-      // 八字: the hour matters for the 时柱 and, near midnight or a 节, even for the others
+      // Four Pillars (八字): the hour matters for the hour pillar (时柱) and, near
+      // midnight or a solar term (节), even for the others
       const moment = Solar.fromYmdHms(birth.y, birth.m, birth.d, time ? time.h : 12, time ? time.mi : 0, 0)
       const momentLunar = moment.getLunar()
       const ec = momentLunar.getEightChar()
       const columns = ['Year', 'Month', 'Day', 'Time']
-      const row = (label, method, main) => ({
-        label,
+      const row = (id, method, main) => ({
+        id,
+        label: t(`tools.ageCalculator.rows.${id}`),
         main,
         cells: columns.map(part => {
           if (part === 'Time' && !time) {
@@ -158,26 +165,36 @@ export default {
       })
       const zodiac = birthLunar.getYearShengXiao()
       const zodiacByLiChun = momentLunar.getYearShengXiaoByLiChun()
+      const lunarBirthText = lunarDateText(birthLunar, true)
       return {
         age: parts.years,
-        ageDetail: `${parts.years} 岁 ${parts.yearMonths} 个月 ${parts.monthsRest} 天`,
+        ageDetail: t('tools.ageCalculator.ageDetail', {
+          years: tc('tools.ageCalculator.ageYears', parts.years),
+          months: tc('tools.common.months', parts.yearMonths),
+          days: tc('tools.common.days', parts.monthsRest)
+        }),
         nominal: refLunar.getYear() - birthLunar.getYear() + 1,
-        days: parts.days,
-        birthText: `${formatChinese(birth)}（周${WEEKDAYS[weekday(birth)]}）· 农历${lunarText(birthLunar, true)}${time ? ` · ${momentLunar.getTimeZhi()}时` : ''}`,
-        shengxiao: zodiac === zodiacByLiChun ? `${zodiac}` : `${zodiac}（按农历年）；按立春划分为${zodiacByLiChun}`,
-        xingzuo: moment.getXingZuo(),
-        nextSolar: `${formatChinese(nextSolar)}（周${WEEKDAYS[weekday(nextSolar)]}），${countdown(nextSolar, ref)}，满 ${nextSolar.y - birth.y} 周岁`,
+        daysText: formatNumber(parts.days),
+        weeksText: tc('tools.ageCalculator.livedDetail', Math.floor(parts.days / 7), { n: formatNumber(Math.floor(parts.days / 7)) }),
+        birthText: time
+          ? t('tools.ageCalculator.bornAt', { date: dateLine(birth), lunar: lunarBirthText, zhi: momentLunar.getTimeZhi() })
+          : t('tools.ageCalculator.bornOn', { date: dateLine(birth), lunar: lunarBirthText }),
+        shengxiao: zodiac === zodiacByLiChun
+          ? zodiacName(zodiac)
+          : t('tools.ageCalculator.animalByLiChun', { animal: zodiacName(zodiac), other: zodiacName(zodiacByLiChun) }),
+        xingzuo: t('tools.ageCalculator.signName', { name: signName(moment.getXingZuo()) }),
+        nextSolar: t('tools.ageCalculator.nextSolarValue', { date: dateLine(nextSolar), countdown: countdown(nextSolar, ref), age: nextSolar.y - birth.y }),
         nextLunar: nextLunar
-          ? `${formatChinese(nextLunar)}（农历${lunarText(lunarOf(nextLunar))}），${countdown(nextLunar, ref)}`
-          : '超出可计算范围',
+          ? t('tools.ageCalculator.nextLunarValue', { date: formatLongDate(nextLunar), lunar: lunarDateText(lunarOf(nextLunar)), countdown: countdown(nextLunar, ref) })
+          : t('tools.ageCalculator.beyondRange'),
         bazi: [
-          row('干支', '', true),
-          row('五行', 'WuXing'),
-          row('纳音', 'NaYin'),
-          row('十神', 'ShiShenGan'),
-          row('藏干', 'HideGan')
+          row('ganZhi', '', true),
+          row('wuXing', 'WuXing'),
+          row('naYin', 'NaYin'),
+          row('shiShen', 'ShiShenGan'),
+          row('hideGan', 'HideGan')
         ],
-        timeNote: time ? '' : '未知时辰时，年、月、日柱按当天正午排出。'
+        timed: Boolean(time)
       }
     }
   },
@@ -241,6 +258,7 @@ export default {
 
   tbody th {
     width: 56px;
+    white-space: nowrap;
     border-bottom: 0;
     background: #f3f3f3;
     font-weight: normal;

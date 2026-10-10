@@ -1,7 +1,7 @@
 <template>
   <div class="tool timers">
     <div class="tool-bar">
-      <div class="aqua-segmented" role="tablist" aria-label="模式">
+      <div class="aqua-segmented" role="tablist" :aria-label="$t('tools.timers.mode')">
         <button
           v-for="item in modes"
           :key="item.id"
@@ -11,31 +11,31 @@
           :aria-selected="mode === item.id ? 'true' : 'false'"
           @click="mode = item.id"
         >
-          {{ item.label }}<span v-if="item.running" class="timers__dot" aria-label="（运行中）" />
+          {{ item.label }}<span v-if="item.running" class="timers__dot" :aria-label="$t('tools.timers.running')" />
         </button>
       </div>
     </div>
 
     <!-- Stopwatch -->
-    <section v-show="mode === 'stopwatch'" role="tabpanel" aria-label="秒表">
+    <section v-show="mode === 'stopwatch'" role="tabpanel" :aria-label="$t('tools.timers.stopwatch')">
       <div class="timers__lcd" role="timer" aria-live="off">{{ stopwatchText }}</div>
       <div class="timers__buttons">
         <button type="button" class="aqua-button" :class="{ 'aqua-button--default': !stopwatch.running }" @click="toggleStopwatch">
-          {{ stopwatch.running ? '停止' : stopwatchElapsed ? '继续' : '开始' }}
+          {{ $t(stopwatch.running ? 'tools.timers.stop' : stopwatchElapsed ? 'tools.timers.resume' : 'tools.timers.start') }}
         </button>
         <button type="button" class="aqua-button" :disabled="!stopwatch.running && !stopwatchElapsed" @click="stopwatch.running ? lap() : resetStopwatch()">
-          {{ stopwatch.running ? '计次' : '复位' }}
+          {{ $t(stopwatch.running ? 'tools.timers.lap' : 'tools.timers.reset') }}
         </button>
       </div>
       <div v-if="laps.length" class="tool-table__wrap">
         <table class="tool-table timers__laps">
           <thead>
-            <tr><th>计次</th><th>单次用时</th><th>累计</th></tr>
+            <tr><th>{{ $t('tools.timers.lap') }}</th><th>{{ $t('tools.timers.split') }}</th><th>{{ $t('tools.timers.total') }}</th></tr>
           </thead>
           <tbody>
             <tr v-for="item in laps" :key="item.index">
-              <td>第 {{ item.index }} 次</td>
-              <td :class="{ 'tool-good': item.fastest, 'tool-bad': item.slowest }">{{ item.split }}{{ item.fastest ? '（最快）' : item.slowest ? '（最慢）' : '' }}</td>
+              <td>{{ $t('tools.timers.lapNumber', { n: item.index }) }}</td>
+              <td :class="{ 'tool-good': item.fastest, 'tool-bad': item.slowest }">{{ item.fastest ? $t('tools.timers.fastest', { time: item.split }) : item.slowest ? $t('tools.timers.slowest', { time: item.split }) : item.split }}</td>
               <td>{{ item.total }}</td>
             </tr>
           </tbody>
@@ -44,46 +44,46 @@
     </section>
 
     <!-- Countdown -->
-    <section v-show="mode === 'countdown'" role="tabpanel" aria-label="倒计时">
-      <div class="timers__lcd" :class="{ 'is-done': countdown.done }" role="timer">{{ countdown.done ? '时间到！' : countdownText }}</div>
+    <section v-show="mode === 'countdown'" role="tabpanel" :aria-label="$t('tools.timers.countdown')">
+      <div class="timers__lcd" :class="{ 'is-done': countdown.done }" role="timer">{{ countdown.done ? $t('tools.timers.timeUp') : countdownText }}</div>
       <div class="aqua-progress timers__progress"><div class="aqua-progress__bar" :style="{ width: `${countdownProgress}%` }" /></div>
-      <div class="timers__presets" role="group" aria-label="预设时长">
+      <div class="timers__presets" role="group" :aria-label="$t('tools.timers.presets')">
         <button v-for="minutes in presets" :key="minutes" type="button" class="aqua-button" :disabled="countdown.running" @click="setCountdown(minutes * 60)">
-          {{ 60 > minutes ? `${minutes} 分钟` : `${minutes / 60} 小时` }}
+          {{ 60 > minutes ? $t('tools.timers.presetMinutes', { n: minutes }) : $t('tools.timers.presetHours', { n: minutes / 60 }) }}
         </button>
       </div>
       <div class="tool-inline timers__custom">
-        <span>自定义：</span>
-        <label class="tool-inline"><input v-model.number="custom.h" type="number" min="0" max="99" class="aqua-field timers__field" :disabled="countdown.running" aria-label="小时"> 时</label>
-        <label class="tool-inline"><input v-model.number="custom.m" type="number" min="0" max="59" class="aqua-field timers__field" :disabled="countdown.running" aria-label="分"> 分</label>
-        <label class="tool-inline"><input v-model.number="custom.s" type="number" min="0" max="59" class="aqua-field timers__field" :disabled="countdown.running" aria-label="秒"> 秒</label>
-        <button type="button" class="aqua-button" :disabled="countdown.running || !customSeconds" @click="setCountdown(customSeconds)">设定</button>
+        <span>{{ $t('tools.timers.custom') }}</span>
+        <label class="tool-inline"><input v-model.number="custom.h" type="number" min="0" max="99" class="aqua-field timers__field" :disabled="countdown.running" :aria-label="$t('tools.timers.hours')"> {{ $t('tools.timers.hoursUnit') }}</label>
+        <label class="tool-inline"><input v-model.number="custom.m" type="number" min="0" max="59" class="aqua-field timers__field" :disabled="countdown.running" :aria-label="$t('tools.timers.minutes')"> {{ $t('tools.timers.minutesUnit') }}</label>
+        <label class="tool-inline"><input v-model.number="custom.s" type="number" min="0" max="59" class="aqua-field timers__field" :disabled="countdown.running" :aria-label="$t('tools.timers.seconds')"> {{ $t('tools.timers.secondsUnit') }}</label>
+        <button type="button" class="aqua-button" :disabled="countdown.running || !customSeconds" @click="setCountdown(customSeconds)">{{ $t('tools.timers.set') }}</button>
       </div>
       <div class="timers__buttons">
         <button type="button" class="aqua-button" :class="{ 'aqua-button--default': !countdown.running }" :disabled="!countdown.duration" @click="toggleCountdown">
-          {{ countdown.running ? '暂停' : countdown.duration > countdown.remaining && !countdown.done ? '继续' : '开始' }}
+          {{ $t(countdown.running ? 'tools.timers.pause' : countdown.duration > countdown.remaining && !countdown.done ? 'tools.timers.resume' : 'tools.timers.start') }}
         </button>
-        <button type="button" class="aqua-button" @click="resetCountdown">复位</button>
+        <button type="button" class="aqua-button" @click="resetCountdown">{{ $t('tools.timers.reset') }}</button>
       </div>
     </section>
 
     <!-- Pomodoro -->
-    <section v-show="mode === 'pomodoro'" role="tabpanel" aria-label="番茄钟">
-      <p class="timers__phase" :class="`is-${pomodoro.phase}`">{{ pomodoro.phase === 'work' ? '专注' : '休息' }}</p>
+    <section v-show="mode === 'pomodoro'" role="tabpanel" :aria-label="$t('tools.timers.pomodoro')">
+      <p class="timers__phase" :class="`is-${pomodoro.phase}`">{{ $t(pomodoro.phase === 'work' ? 'tools.timers.focus' : 'tools.timers.break') }}</p>
       <div class="timers__lcd" role="timer">{{ pomodoroText }}</div>
       <div class="aqua-progress timers__progress"><div class="aqua-progress__bar" :style="{ width: `${pomodoroProgress}%` }" /></div>
       <div class="timers__buttons">
         <button type="button" class="aqua-button" :class="{ 'aqua-button--default': !pomodoro.running }" @click="togglePomodoro">
-          {{ pomodoro.running ? '暂停' : phaseLength(pomodoro.phase) > pomodoro.remaining ? '继续' : '开始' }}
+          {{ $t(pomodoro.running ? 'tools.timers.pause' : phaseLength(pomodoro.phase) > pomodoro.remaining ? 'tools.timers.resume' : 'tools.timers.start') }}
         </button>
-        <button type="button" class="aqua-button" @click="nextPhase(false)">跳过</button>
-        <button type="button" class="aqua-button" @click="resetPomodoro">复位</button>
+        <button type="button" class="aqua-button" @click="nextPhase(false)">{{ $t('tools.timers.skip') }}</button>
+        <button type="button" class="aqua-button" @click="resetPomodoro">{{ $t('tools.timers.reset') }}</button>
       </div>
       <p class="timers__tomatoes">
-        已完成 <strong>{{ pomodoro.completed }}</strong> 个番茄
+        <i18n path="tools.timers.completed" :tag="false"><strong slot="count">{{ pomodoro.completed }}</strong></i18n>
         <span v-for="n in Math.min(pomodoro.completed, 12)" :key="n" class="timers__tomato" aria-hidden="true" />
       </p>
-      <p class="tool-hint">专注 25 分钟，休息 5 分钟，交替进行；每段结束时会响铃提醒。</p>
+      <p class="tool-hint">{{ $t('tools.timers.pomodoroHint') }}</p>
     </section>
 
     <p class="tool-hint">{{ notifyHint }}</p>
@@ -128,10 +128,10 @@ export default {
   computed: {
     modes() {
       return [
-        { id: 'stopwatch', label: '秒表', running: this.stopwatch.running },
-        { id: 'countdown', label: '倒计时', running: this.countdown.running },
-        { id: 'pomodoro', label: '番茄钟', running: this.pomodoro.running }
-      ]
+        { id: 'stopwatch', running: this.stopwatch.running },
+        { id: 'countdown', running: this.countdown.running },
+        { id: 'pomodoro', running: this.pomodoro.running }
+      ].map(item => ({ ...item, label: this.$t(`tools.timers.${item.id}`) }))
     },
     anyRunning() {
       return this.stopwatch.running || this.countdown.running || this.pomodoro.running
@@ -183,12 +183,12 @@ export default {
     },
     notifyHint() {
       if (this.permission === 'granted') {
-        return '倒计时和番茄钟结束时会响铃并显示系统通知，切换到其他工具时也会继续计时。'
+        return this.$t('tools.timers.notifyGranted')
       }
       if (this.permission === 'denied') {
-        return '浏览器已禁止通知，结束时只会响铃。'
+        return this.$t('tools.timers.notifyDenied')
       }
-      return '开始倒计时或番茄钟时会请求通知权限；允许后结束时会弹出系统通知。'
+      return this.$t('tools.timers.notifyDefault')
     }
   },
   watch: {
@@ -211,7 +211,7 @@ export default {
         this.countdown.running = false
         this.countdown.remaining = 0
         this.countdown.done = true
-        this.alarm('倒计时结束', `${clock(this.countdown.duration, false)} 的倒计时到了。`)
+        this.alarm(this.$t('tools.timers.countdownDone'), this.$t('tools.timers.countdownDoneBody', { time: clock(this.countdown.duration, false) }))
       }
       if (this.pomodoro.running && this.now >= this.pomodoro.endsAt) {
         this.nextPhase(true)
@@ -282,7 +282,8 @@ export default {
         if (wasWork) {
           p.completed++
         }
-        this.alarm(wasWork ? '专注结束' : '休息结束', wasWork ? '休息 5 分钟吧。' : '开始下一个 25 分钟的专注。')
+        const done = wasWork ? 'focusDone' : 'breakDone'
+        this.alarm(this.$t(`tools.timers.${done}`), this.$t(`tools.timers.${done}Body`))
       }
       p.phase = wasWork ? 'break' : 'work'
       p.remaining = this.phaseLength(p.phase)

@@ -3,78 +3,80 @@
     <ul v-if="entries.length" class="countdowns__list">
       <li v-for="entry in entries" :key="entry.id" class="countdowns__item" :class="{ 'is-past': entry.past, 'is-today': entry.days === 0 }">
         <div class="countdowns__badge">
-          <small>{{ entry.days === 0 ? '' : entry.past ? '已经' : '还有' }}</small>
-          <strong>{{ entry.days === 0 ? '今天' : Math.abs(entry.days) }}</strong>
-          <small>{{ entry.days === 0 ? '' : '天' }}</small>
+          <small>{{ entry.days === 0 ? '' : $t(entry.past ? 'tools.countdowns.badgePast' : 'tools.countdowns.badgeAhead') }}</small>
+          <strong>{{ entry.days === 0 ? $t('tools.common.today') : Math.abs(entry.days) }}</strong>
+          <small>{{ entry.days === 0 ? '' : $tc(entry.past ? 'tools.countdowns.badgeDaysPast' : 'tools.countdowns.badgeDays', Math.abs(entry.days)) }}</small>
         </div>
         <div class="countdowns__text">
           <strong>{{ entry.name }}</strong>
           <span>{{ entry.rule }}</span>
           <span class="tool-muted">{{ entry.detail }}</span>
         </div>
-        <button type="button" class="aqua-button countdowns__delete" :aria-label="`删除 ${entry.name}`" @click="remove(entry.id)">删除</button>
+        <button type="button" class="aqua-button countdowns__delete" :aria-label="$t('tools.countdowns.deleteNamed', { name: entry.name })" @click="remove(entry.id)">{{ $t('tools.common.delete') }}</button>
       </li>
     </ul>
-    <p v-else class="countdowns__empty">还没有倒数日，在下面添加一个吧。</p>
+    <p v-else class="countdowns__empty">{{ $t('tools.countdowns.empty') }}</p>
 
     <form class="aqua-group countdowns__form" @submit.prevent="add">
       <div class="tool-form">
-        <label for="countdown-name">名称：</label>
-        <input id="countdown-name" v-model.trim="draft.name" type="text" class="aqua-field" maxlength="40" placeholder="例如：妈妈生日">
-        <span class="tool-form__label">历法：</span>
-        <div class="aqua-segmented" role="group" aria-label="历法">
-          <button type="button" :class="{ 'is-selected': draft.calendar === 'solar' }" :aria-pressed="draft.calendar === 'solar' ? 'true' : 'false'" @click="draft.calendar = 'solar'">公历</button>
-          <button type="button" :class="{ 'is-selected': draft.calendar === 'lunar' }" :aria-pressed="draft.calendar === 'lunar' ? 'true' : 'false'" @click="draft.calendar = 'lunar'">农历</button>
+        <label for="countdown-name">{{ $t('tools.countdowns.name') }}</label>
+        <input id="countdown-name" v-model.trim="draft.name" type="text" class="aqua-field" maxlength="40" :placeholder="$t('tools.countdowns.namePlaceholder')">
+        <span class="tool-form__label">{{ $t('tools.countdowns.calendar') }}</span>
+        <div class="aqua-segmented" role="group" :aria-label="$t('tools.countdowns.calendarLabel')">
+          <button type="button" :class="{ 'is-selected': draft.calendar === 'solar' }" :aria-pressed="draft.calendar === 'solar' ? 'true' : 'false'" @click="draft.calendar = 'solar'">{{ $t('tools.countdowns.solar') }}</button>
+          <button type="button" :class="{ 'is-selected': draft.calendar === 'lunar' }" :aria-pressed="draft.calendar === 'lunar' ? 'true' : 'false'" @click="draft.calendar = 'lunar'">{{ $t('tools.common.lunar') }}</button>
         </div>
-        <span class="tool-form__label">日期：</span>
+        <span class="tool-form__label">{{ $t('tools.countdowns.date') }}</span>
         <div>
-          <input v-if="draft.calendar === 'solar'" v-model="draft.date" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" aria-label="公历日期">
+          <input v-if="draft.calendar === 'solar'" v-model="draft.date" type="date" class="aqua-field" min="1900-01-01" max="2100-12-31" :aria-label="$t('tools.countdowns.solarDate')">
           <lunar-date-picker v-else v-model="draft.lunar" />
         </div>
         <span />
         <label class="tool-inline">
           <input v-model="draft.repeat" type="checkbox">
-          <span>每年重复{{ draft.calendar === 'lunar' ? '（按农历月日）' : '' }}</span>
+          <span>{{ $t(draft.calendar === 'lunar' ? 'tools.countdowns.repeatLunar' : 'tools.countdowns.repeat') }}</span>
         </label>
         <span />
         <div class="tool-inline">
-          <button type="submit" class="aqua-button aqua-button--default" :disabled="!canAdd">添加</button>
+          <button type="submit" class="aqua-button aqua-button--default" :disabled="!canAdd">{{ $t('tools.common.add') }}</button>
           <span v-if="draftError" class="tool-bad">{{ draftError }}</span>
         </div>
       </div>
     </form>
-    <p class="tool-hint">列表只保存在这台电脑的浏览器里。农历闰月的纪念日在没有该闰月的年份按普通月份计算；三十日在小月按廿九计算。</p>
+    <p class="tool-hint">{{ $t('tools.countdowns.hint') }}</p>
   </div>
 </template>
 
 <script>
 import LunarDatePicker from './LunarDatePicker'
-import { dayNumber, formatChinese, formatYmd, nextAnniversary, parseYmd, today, weekday, WEEKDAYS } from './lib/dates'
-import { lunarOf, lunarToSolar, nextLunarAnniversary, Lunar } from './lib/calendar'
+import { dayNumber, formatYmd, nextAnniversary, parseYmd, today, weekday } from './lib/dates'
+import { lunarDateText, lunarOf, lunarText, lunarToSolar, nextLunarAnniversary, Lunar } from './lib/calendar'
+import { formatLongDate, formatMonthDay, t, tc, weekdayName } from './lib/i18n'
 import { load, save } from './lib/storage'
 
 const STORAGE_KEY = 'countdowns'
 
-// A few festivals to start with, each anchored on its next occurrence
+// A few festivals to start with, each anchored on its next occurrence and named
+// in the current language
 function defaults() {
   const now = today()
   const lunarYear = (m, d) => lunarOf(nextLunarAnniversary(m, d, now)).getYear()
   const solarDate = (m, d) => formatYmd(nextAnniversary(m, d, now))
   return [
-    { id: 1, name: '春节', calendar: 'lunar', lunar: { y: lunarYear(1, 1), m: 1, d: 1 }, repeat: true },
-    { id: 2, name: '中秋节', calendar: 'lunar', lunar: { y: lunarYear(8, 15), m: 8, d: 15 }, repeat: true },
-    { id: 3, name: '元旦', calendar: 'solar', date: solarDate(1, 1), repeat: true },
-    { id: 4, name: '圣诞节', calendar: 'solar', date: solarDate(12, 25), repeat: true }
+    { id: 1, name: t('tools.countdowns.defaults.springFestival'), calendar: 'lunar', lunar: { y: lunarYear(1, 1), m: 1, d: 1 }, repeat: true },
+    { id: 2, name: t('tools.countdowns.defaults.midAutumn'), calendar: 'lunar', lunar: { y: lunarYear(8, 15), m: 8, d: 15 }, repeat: true },
+    { id: 3, name: t('tools.countdowns.defaults.newYear'), calendar: 'solar', date: solarDate(1, 1), repeat: true },
+    { id: 4, name: t('tools.countdowns.defaults.christmas'), calendar: 'solar', date: solarDate(12, 25), repeat: true }
   ]
 }
 
 function lunarName(lunar, withYear) {
-  const text = Lunar.fromYmd(lunar.y, lunar.m, lunar.d)
-  return `农历${withYear ? `${lunar.y}年` : ''}${text.getMonthInChinese()}月${text.getDayInChinese()}`
+  const date = Lunar.fromYmd(lunar.y, lunar.m, lunar.d)
+  return withYear ? t('tools.countdowns.lunarDateYear', { y: lunar.y, text: lunarText(date) }) : lunarDateText(date)
 }
 
 function dateLine(date) {
-  return `${formatChinese(date)}（周${WEEKDAYS[weekday(date)]}）`
+  return t('tools.countdowns.dateWeekday', { date: formatLongDate(date), weekday: weekdayName(weekday(date)) })
 }
 
 export default {
@@ -87,7 +89,8 @@ export default {
     const stored = load(STORAGE_KEY, null)
     const now = lunarOf(today())
     return {
-      items: Array.isArray(stored) ? stored : defaults(),
+      // null until the list is first changed: the starting festivals are not stored
+      stored: Array.isArray(stored) ? stored : null,
       draft: {
         name: '',
         calendar: 'solar',
@@ -98,6 +101,9 @@ export default {
     }
   },
   computed: {
+    items() {
+      return this.stored || defaults()
+    },
     entries() {
       const now = today()
       const todayNumber = dayNumber(now)
@@ -114,7 +120,7 @@ export default {
     },
     draftError() {
       if (this.draft.calendar === 'solar' && !parseYmd(this.draft.date)) {
-        return '请选择日期'
+        return t('tools.countdowns.chooseDate')
       }
       return ''
     },
@@ -136,8 +142,8 @@ export default {
           name: item.name,
           days: dayNumber(origin) - todayNumber,
           past: since > 0,
-          rule: lunar ? `${lunarName(item.lunar, true)} · ${formatChinese(origin)}` : dateLine(origin),
-          detail: since > 0 ? `已过去 ${since} 天` : ''
+          rule: lunar ? `${lunarName(item.lunar, true)} · ${formatLongDate(origin)}` : dateLine(origin),
+          detail: since > 0 ? tc('tools.countdowns.elapsed', since) : ''
         }
       }
       const next = lunar ? nextLunarAnniversary(item.lunar.m, item.lunar.d, now) : nextAnniversary(origin.m, origin.d, now)
@@ -150,12 +156,13 @@ export default {
         name: item.name,
         days: dayNumber(next) - todayNumber,
         past: false,
-        rule: `每年${lunar ? lunarName(item.lunar, false) : `${origin.m}月${origin.d}日`} · 下一次 ${dateLine(next)}`,
-        detail: since > 0 && years > 0 ? `始于 ${formatChinese(origin)}，下次是第 ${years} 周年，至今已 ${since} 天` : ''
+        rule: t('tools.countdowns.yearly', { date: lunar ? lunarName(item.lunar, false) : formatMonthDay(origin), next: dateLine(next) }),
+        detail: since > 0 && years > 0 ? t('tools.countdowns.since', { date: formatLongDate(origin), years, days: tc('tools.common.days', since) }) : ''
       }
     },
-    persist() {
-      save(STORAGE_KEY, this.items)
+    persist(items) {
+      this.stored = items
+      save(STORAGE_KEY, items)
     },
     add() {
       if (!this.canAdd) {
@@ -163,13 +170,12 @@ export default {
       }
       const { name, calendar, date, lunar, repeat } = this.draft
       const id = this.items.reduce((max, item) => Math.max(max, item.id), 0) + 1
-      this.items.push(calendar === 'solar' ? { id, name, calendar, date, repeat } : { id, name, calendar, lunar: { ...lunar }, repeat })
+      const item = calendar === 'solar' ? { id, name, calendar, date, repeat } : { id, name, calendar, lunar: { ...lunar }, repeat }
       this.draft.name = ''
-      this.persist()
+      this.persist([...this.items, item])
     },
     remove(id) {
-      this.items = this.items.filter(item => item.id !== id)
-      this.persist()
+      this.persist(this.items.filter(item => item.id !== id))
     }
   }
 }
@@ -206,8 +212,10 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 64px;
+  box-sizing: border-box;
+  min-width: 64px;
   height: 52px;
+  padding: 0 4px;
   border: 1px solid var(--aqua-gel-border);
   border-radius: 8px;
   color: #0b2c5c;
@@ -221,6 +229,7 @@ export default {
 
   small {
     font-size: 10px;
+    white-space: nowrap;
   }
 
   .is-past & {

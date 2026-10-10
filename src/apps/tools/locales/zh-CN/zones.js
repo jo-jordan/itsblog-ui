@@ -1,0 +1,38 @@
+// Time zone picker and city names: tools.zones.*
+export default {
+  label: '时区',
+  popular: '常用城市',
+  all: '全部时区',
+  cityOption: '{name}（{zone}）',
+  localOption: '{zone}（本机）',
+  cities: {
+    'Asia/Shanghai': '北京',
+    'Asia/Hong_Kong': '香港',
+    'Asia/Taipei': '台北',
+    'Asia/Tokyo': '东京',
+    'Asia/Seoul': '首尔',
+    'Asia/Singapore': '新加坡',
+    'Asia/Bangkok': '曼谷',
+    'Asia/Kolkata': '新德里',
+    'Asia/Dubai': '迪拜',
+    'Europe/Moscow': '莫斯科',
+    'Europe/Istanbul': '伊斯坦布尔',
+    'Africa/Cairo': '开罗',
+    'Europe/Berlin': '柏林',
+    'Europe/Paris': '巴黎',
+    'Europe/London': '伦敦',
+    'Atlantic/Reykjavik': '雷克雅未克',
+    'America/Sao_Paulo': '圣保罗',
+    'America/New_York': '纽约',
+    'America/Toronto': '多伦多',
+    'America/Chicago': '芝加哥',
+    'America/Denver': '丹佛',
+    'America/Los_Angeles': '旧金山',
+    'America/Vancouver': '温哥华',
+    'Pacific/Honolulu': '檀香山',
+    'Pacific/Auckland': '奥克兰',
+    'Australia/Sydney': '悉尼',
+    'Australia/Perth': '珀斯',
+    UTC: '协调世界时'
+  }
+}

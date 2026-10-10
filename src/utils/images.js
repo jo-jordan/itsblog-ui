@@ -1,3 +1,5 @@
+import { t } from '../i18n'
+
 // Shrinks a photo in the browser before upload, so originals never leave the
 // device and the site needs no paid image service.
 export async function resizeImage(file, maxSize, quality) {
@@ -12,7 +14,7 @@ export async function resizeImage(file, maxSize, quality) {
   bitmap.close()
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality))
   if (!blob) {
-    throw new Error('无法处理这张图片')
+    throw new Error(t('footprints.detail.imageFailed'))
   }
   return { blob, width, height }
 }

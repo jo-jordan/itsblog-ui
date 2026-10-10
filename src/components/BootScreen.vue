@@ -2,7 +2,7 @@
   <div class="boot" :class="`boot--${stage}`" @click="skip">
     <div v-if="stage === 'chime'" class="boot__gray">
       <img :src="appleLogo" alt="" class="boot__apple">
-      <img :src="spinner" alt="正在启动" class="boot__spinner">
+      <img :src="spinner" :alt="$t('desktop.boot.starting')" class="boot__spinner">
     </div>
 
     <div v-else class="boot__panel pinstripe" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
@@ -33,11 +33,11 @@ export default {
   },
   computed: {
     loadingText() {
-      if (this.progress >= 100) return '加载完成'
-      if (this.progress > 60) return '正在加载系统资源...'
-      if (this.progress > 30) return '正在配置网络...'
-      if (this.progress > 1) return '正在挖鼻屎...'
-      return '正在加载...'
+      if (this.progress >= 100) return this.$t('desktop.boot.done')
+      if (this.progress > 60) return this.$t('desktop.boot.resources')
+      if (this.progress > 30) return this.$t('desktop.boot.network')
+      if (this.progress > 1) return this.$t('desktop.boot.nose')
+      return this.$t('desktop.boot.loading')
     }
   },
   mounted() {

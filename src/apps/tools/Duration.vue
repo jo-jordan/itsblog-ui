@@ -1,70 +1,67 @@
 <template>
   <div class="tool duration">
     <fieldset class="aqua-group">
-      <legend>秒数 → 天 / 时 / 分 / 秒</legend>
+      <legend>{{ $t('tools.duration.fromSeconds') }}</legend>
       <div class="tool-form">
-        <label for="duration-seconds">秒数：</label>
+        <label for="duration-seconds">{{ $t('tools.duration.secondsLabel') }}</label>
         <input id="duration-seconds" v-model.trim="secondsText" type="text" inputmode="decimal" class="aqua-field duration__wide" spellcheck="false">
       </div>
       <dl v-if="fromSeconds" class="tool-results">
-        <dt>时长</dt>
+        <dt>{{ $t('tools.duration.duration') }}</dt>
         <dd>{{ fromSeconds.text }}</dd>
-        <dt>时:分:秒</dt>
+        <dt>{{ $t('tools.duration.clock') }}</dt>
         <dd class="duration__mono">{{ fromSeconds.clock }}</dd>
-        <dt>合计</dt>
-        <dd>{{ fromSeconds.totals.minutes }} 分钟 · {{ fromSeconds.totals.hours }} 小时 · {{ fromSeconds.totals.days }} 天</dd>
+        <dt>{{ $t('tools.duration.totals') }}</dt>
+        <dd>{{ $t('tools.duration.totalsText', fromSeconds.totals) }}</dd>
       </dl>
-      <p v-else class="tool-error">请输入秒数（可以有小数）。</p>
+      <p v-else class="tool-error">{{ $t('tools.duration.enterSeconds') }}</p>
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>天 / 时 / 分 / 秒 → 秒数</legend>
+      <legend>{{ $t('tools.duration.toSeconds') }}</legend>
       <div class="tool-inline">
-        <label class="tool-inline"><input v-model.number="parts.d" type="number" min="0" class="aqua-field duration__part" aria-label="天"> 天</label>
-        <label class="tool-inline"><input v-model.number="parts.h" type="number" min="0" class="aqua-field duration__part" aria-label="小时"> 小时</label>
-        <label class="tool-inline"><input v-model.number="parts.m" type="number" min="0" class="aqua-field duration__part" aria-label="分"> 分</label>
-        <label class="tool-inline"><input v-model.number="parts.s" type="number" min="0" class="aqua-field duration__part" aria-label="秒"> 秒</label>
+        <label v-for="unit in units" :key="unit.key" class="tool-inline"><input v-model.number="parts[unit.key]" type="number" min="0" class="aqua-field duration__part" :aria-label="unit.label"> {{ unit.label }}</label>
       </div>
       <dl class="tool-results">
-        <dt>共</dt>
+        <dt>{{ $t('tools.duration.total') }}</dt>
         <dd>
-          <span v-if="partsSeconds !== null">{{ partsSeconds.toLocaleString('zh-CN') }} 秒 <small>（{{ partsFormatted.clock }}）</small></span>
-          <span v-else class="tool-bad">请填写数字</span>
+          <span v-if="partsSeconds !== null">{{ secondsAmount(partsSeconds) }} <small>{{ $t('tools.duration.paren', { text: partsFormatted.clock }) }}</small></span>
+          <span v-else class="tool-bad">{{ $t('tools.duration.enterNumbers') }}</span>
         </dd>
       </dl>
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>时长加减</legend>
+      <legend>{{ $t('tools.duration.sum') }}</legend>
       <div class="tool-form">
-        <label for="duration-expr">算式：</label>
-        <input id="duration-expr" v-model="expression" type="text" class="aqua-field duration__wide" spellcheck="false" placeholder="例如 1:45:30 + 2:20 - 15m">
+        <label for="duration-expr">{{ $t('tools.duration.expression') }}</label>
+        <input id="duration-expr" v-model="expression" type="text" class="aqua-field duration__wide" spellcheck="false" :placeholder="$t('tools.duration.expressionExample')">
       </div>
-      <p class="tool-hint">支持 1:45:30（时:分:秒）、2:20（时:分）、1天2小时30分、1h 30m 45s 等写法，纯数字按秒计。</p>
+      <p class="tool-hint">{{ $t('tools.duration.formats') }}</p>
       <dl v-if="sum.seconds !== undefined" class="tool-results">
-        <dt>结果</dt>
+        <dt>{{ $t('tools.duration.result') }}</dt>
         <dd><span class="tool-big">{{ sumFormatted.clock }}</span></dd>
-        <dt>即</dt>
-        <dd>{{ sumFormatted.text }} <small>（{{ sumFormatted.totals.seconds }} 秒）</small></dd>
+        <dt>{{ $t('tools.duration.equals') }}</dt>
+        <dd>{{ sumFormatted.text }} <small>{{ $t('tools.duration.paren', { text: secondsAmount(sum.seconds, sumFormatted.totals.seconds) }) }}</small></dd>
       </dl>
       <p v-else class="tool-error">{{ sum.error }}</p>
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>时刻 ± 时长</legend>
+      <legend>{{ $t('tools.duration.clockMath') }}</legend>
       <div class="tool-inline">
-        <input v-model="clockText" type="time" step="1" class="aqua-field" aria-label="时刻">
-        <div class="aqua-segmented" role="group" aria-label="加或减">
+        <input v-model="clockText" type="time" step="1" class="aqua-field" :aria-label="$t('tools.duration.time')">
+        <div class="aqua-segmented" role="group" :aria-label="$t('tools.duration.sign')">
           <button type="button" :class="{ 'is-selected': clockSign === 1 }" :aria-pressed="clockSign === 1 ? 'true' : 'false'" @click="clockSign = 1">+</button>
           <button type="button" :class="{ 'is-selected': clockSign === -1 }" :aria-pressed="clockSign === -1 ? 'true' : 'false'" @click="clockSign = -1">−</button>
         </div>
-        <input v-model="clockDuration" type="text" class="aqua-field" spellcheck="false" aria-label="时长" placeholder="例如 2:45">
+        <input v-model="clockDuration" type="text" class="aqua-field" spellcheck="false" :aria-label="$t('tools.duration.duration')" :placeholder="$t('tools.duration.durationExample')">
       </div>
       <dl v-if="clockResult" class="tool-results">
-        <dt>结果</dt>
+        <dt>{{ $t('tools.duration.result') }}</dt>
         <dd><span class="tool-big">{{ clockResult.time }}</span> {{ clockResult.days }}</dd>
       </dl>
-      <p v-else class="tool-error">请输入时刻和时长。</p>
+      <p v-else class="tool-error">{{ $t('tools.duration.enterBoth') }}</p>
     </fieldset>
   </div>
 </template>
@@ -72,6 +69,7 @@
 <script>
 import { pad } from './lib/dates'
 import { evaluateDurations, formatDuration, parseDuration } from './lib/duration'
+import { formatNumber } from './lib/i18n'
 
 export default {
   name: 'ToolDuration',
@@ -89,6 +87,9 @@ export default {
     }
   },
   computed: {
+    units() {
+      return [['d', 'days'], ['h', 'hours'], ['m', 'minutes'], ['s', 'seconds']].map(([key, unit]) => ({ key, label: this.$t(`tools.duration.units.${unit}`) }))
+    },
     fromSeconds() {
       return /^-?\d+(\.\d+)?$/.test(this.secondsText) ? formatDuration(Number(this.secondsText)) : null
     },
@@ -121,8 +122,14 @@ export default {
       const rest = total - days * 86400
       return {
         time: `${pad(Math.floor(rest / 3600))}:${pad(Math.floor((rest % 3600) / 60))}:${pad(rest % 60)}`,
-        days: days === 0 ? '（当天）' : days === 1 ? '（次日）' : days === -1 ? '（前一天）' : days > 0 ? `（${days} 天后）` : `（${-days} 天前）`
+        days: days === 0 ? this.$t('tools.duration.sameDay') : days === 1 ? this.$t('tools.duration.nextDay') : days === -1 ? this.$t('tools.duration.previousDay') : this.$t(days > 0 ? 'tools.duration.daysLater' : 'tools.duration.daysEarlier', { n: Math.abs(days) })
       }
+    }
+  },
+  methods: {
+    // "93,600 seconds"; `text` is the number when it has already been formatted
+    secondsAmount(seconds, text = formatNumber(seconds)) {
+      return this.$tc('tools.duration.seconds', Math.abs(seconds) === 1 ? 1 : 2, { n: text })
     }
   }
 }

@@ -14,7 +14,7 @@
           role="menuitem"
           aria-haspopup="true"
           :aria-expanded="openKey === menu.key ? 'true' : 'false'"
-          :aria-label="menu.key === 'apple' ? 'Apple 菜单' : null"
+          :aria-label="menu.key === 'apple' ? $t('menu.appleMenu') : null"
           @click="toggle(menu.key)"
           @mouseenter="hover(menu.key)"
         >
@@ -48,9 +48,9 @@ import { mapGetters, mapState } from 'vuex'
 import { apps } from '../apps/registry'
 import { findPost } from '../utils/posts'
 import site from '../config/site'
+import { formatLongDate, formatMonthDay, weekdayName } from '../i18n/format'
 import appleLogo from '../assets/macos-x-logo.png'
 
-const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 const pad = n => String(n).padStart(2, '0')
 const SEPARATOR = { separator: true }
 
@@ -70,12 +70,22 @@ export default {
     activeApp() {
       return apps[this.activeAppId]
     },
+    today() {
+      return { y: this.now.getFullYear(), m: this.now.getMonth() + 1, d: this.now.getDate() }
+    },
     clock() {
       const d = this.now
-      return `${d.getMonth() + 1}月${pad(d.getDate())}日 ${WEEKDAYS[d.getDay()]} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+      return this.$t('date.clock', {
+        m: d.getMonth() + 1,
+        dd: pad(d.getDate()),
+        monthDay: formatMonthDay(this.today),
+        weekday: weekdayName(d.getDay()),
+        time: `${pad(d.getHours())}:${pad(d.getMinutes())}`
+      })
     },
     fullDate() {
-      return `${this.now.getFullYear()}年${this.now.getMonth() + 1}月${this.now.getDate()}日 ${WEEKDAYS[this.now.getDay()]}`
+      const day = this.now.getDay()
+      return this.$t('date.fullDate', { date: formatLongDate(this.today), weekday: weekdayName(day), weekdayLong: weekdayName(day, 'long') })
     },
     menus() {
       const name = this.activeApp.name
@@ -85,36 +95,36 @@ export default {
         {
           key: 'apple',
           items: [
-            { label: '关于本机', action: () => this.open('about') },
+            { label: this.$t('menu.aboutThisMac'), action: () => this.open('about') },
             SEPARATOR,
-            { label: '获取 itsblog 源代码…', href: site.sourceUrl },
-            { label: '系统偏好设置…', action: () => this.open('preferences') },
-            { label: magnification ? '关闭 Dock 放大' : '打开 Dock 放大', action: () => this.setPref('magnification', !magnification) },
+            { label: this.$t('menu.getSource'), href: site.sourceUrl },
+            { label: this.$t('menu.preferences'), action: () => this.open('preferences') },
+            { label: this.$t(magnification ? 'menu.magnificationOff' : 'menu.magnificationOn'), action: () => this.setPref('magnification', !magnification) },
             SEPARATOR,
-            { label: '强制退出…', disabled: !this.windows.length, action: () => this.dispatch('windows/closeAll') },
+            { label: this.$t('menu.forceQuit'), disabled: !this.windows.length, action: () => this.dispatch('windows/closeAll') },
             SEPARATOR,
-            { label: '睡眠', action: () => this.dispatch('system/sleep') },
-            { label: '重新启动…', action: () => this.dispatch('system/restart') },
-            { label: '关机…', action: () => this.dispatch('system/shutDown') },
+            { label: this.$t('menu.sleep'), action: () => this.dispatch('system/sleep') },
+            { label: this.$t('menu.restart'), action: () => this.dispatch('system/restart') },
+            { label: this.$t('menu.shutDown'), action: () => this.dispatch('system/shutDown') },
             SEPARATOR,
             this.$store.state.session.loggedIn
-              ? { label: `注销 ${site.owner.name}…`, action: () => this.dispatch('session/logout') }
-              : { label: '登录…', action: () => this.open('login') }
+              ? { label: this.$t('menu.logOut', { name: site.owner.name }), action: () => this.dispatch('session/logout') }
+              : { label: this.$t('menu.logIn'), action: () => this.open('login') }
           ]
         },
         {
           key: 'app',
           label: name,
           items: [
-            { label: `关于 ${name}`, action: () => this.open('about') },
+            { label: this.$t('menu.about', { name }), action: () => this.open('about') },
             SEPARATOR,
             {
-              label: `隐藏 ${name}`,
+              label: this.$t('menu.hide', { name }),
               disabled: !appWindows.some(w => !w.minimized),
               action: () => appWindows.forEach(w => this.dispatch('windows/minimize', w.id))
             },
             {
-              label: `退出 ${name}`,
+              label: this.$t('menu.quit', { name }),
               disabled: this.activeAppId === 'finder' || !appWindows.length,
               action: () => this.dispatch('windows/closeApp', this.activeAppId)
             }
@@ -122,20 +132,20 @@ export default {
         },
         {
           key: 'file',
-          label: '文件',
+          label: this.$t('menu.file'),
           items: [
-            { label: '新建 Finder 窗口', action: () => this.open('finder', { newWindow: Date.now() }) },
-            { label: '查找…', action: () => this.open('sherlock') },
+            { label: this.$t('menu.newFinderWindow'), action: () => this.open('finder', { newWindow: Date.now() }) },
+            { label: this.$t('menu.find'), action: () => this.open('sherlock') },
             SEPARATOR,
-            { label: '关闭窗口', disabled: !this.focused, action: () => this.dispatch('windows/close', this.focused.id) }
+            { label: this.$t('menu.closeWindow'), disabled: !this.focused, action: () => this.dispatch('windows/close', this.focused.id) }
           ]
         },
         {
           key: 'window',
-          label: '窗口',
+          label: this.$t('menu.window'),
           items: [
-            { label: '最小化', disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/minimize', this.focused.id) },
-            { label: '缩放', disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/toggleZoom', this.focused.id) },
+            { label: this.$t('menu.minimize'), disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/minimize', this.focused.id) },
+            { label: this.$t('menu.zoom'), disabled: !this.focused || this.isDialog(this.focused), action: () => this.dispatch('windows/toggleZoom', this.focused.id) },
             ...(this.windows.length ? [SEPARATOR] : []),
             ...this.windows.map(win => ({
               label: this.windowLabel(win),
@@ -146,10 +156,10 @@ export default {
         },
         {
           key: 'help',
-          label: '帮助',
+          label: this.$t('menu.help'),
           items: [
-            { label: 'itsblog 帮助', action: this.openHelp },
-            { label: '在 GitHub 上查看源代码', href: site.sourceUrl }
+            { label: this.$t('menu.itsblogHelp'), action: this.openHelp },
+            { label: this.$t('menu.viewSource'), href: site.sourceUrl }
           ]
         }
       ]
@@ -218,7 +228,7 @@ export default {
         const post = findPost(win.props.slug)
         return post ? post.title : apps.reader.name
       }
-      return win.props.location === 'trash' ? '废纸篓' : apps[win.appId].name
+      return win.props.location === 'trash' ? this.$t('desktop.trash') : apps[win.appId].name
     }
   }
 }

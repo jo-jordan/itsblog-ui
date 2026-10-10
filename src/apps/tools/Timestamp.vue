@@ -1,43 +1,43 @@
 <template>
   <div class="tool timestamp">
     <fieldset class="aqua-group">
-      <legend>当前时间戳</legend>
+      <legend>{{ $t('tools.timestamp.current') }}</legend>
       <div class="timestamp__now">
         <div>
-          <span>秒</span>
+          <span>{{ $t('tools.timestamp.seconds') }}</span>
           <strong>{{ Math.floor(now / 1000) }}</strong>
-          <button type="button" class="aqua-button" @click="copy(String(Math.floor(now / 1000)))">复制</button>
+          <button type="button" class="aqua-button" @click="copy(String(Math.floor(now / 1000)))">{{ $t('tools.timestamp.copy') }}</button>
         </div>
         <div>
-          <span>毫秒</span>
+          <span>{{ $t('tools.timestamp.milliseconds') }}</span>
           <strong>{{ now }}</strong>
-          <button type="button" class="aqua-button" @click="copy(String(now))">复制</button>
+          <button type="button" class="aqua-button" @click="copy(String(now))">{{ $t('tools.timestamp.copy') }}</button>
         </div>
-        <button type="button" class="aqua-button" @click="paused = !paused">{{ paused ? '继续' : '暂停' }}</button>
+        <button type="button" class="aqua-button" @click="paused = !paused">{{ paused ? $t('tools.timestamp.resume') : $t('tools.timestamp.pause') }}</button>
       </div>
-      <p class="tool-hint">本机时区：{{ localZone }}（{{ localOffset }}）{{ copied ? ` · 已复制 ${copied}` : '' }}</p>
+      <p class="tool-hint">{{ $t('tools.timestamp.localZone', { zone: localZone, offset: localOffset }) }}{{ copied ? ` · ${$t('tools.timestamp.copied', { text: copied })}` : '' }}</p>
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>时间戳 → 日期时间</legend>
+      <legend>{{ $t('tools.timestamp.decode') }}</legend>
       <div class="tool-form">
-        <label for="ts-input">时间戳：</label>
+        <label for="ts-input">{{ $t('tools.timestamp.timestamp') }}</label>
         <div class="tool-inline">
           <input id="ts-input" v-model.trim="tsText" type="text" inputmode="numeric" class="aqua-field timestamp__input" spellcheck="false">
-          <select v-model="unit" class="aqua-popup" aria-label="单位">
-            <option value="auto">自动识别</option>
-            <option value="s">秒</option>
-            <option value="ms">毫秒</option>
+          <select v-model="unit" class="aqua-popup" :aria-label="$t('tools.timestamp.unit')">
+            <option value="auto">{{ $t('tools.timestamp.auto') }}</option>
+            <option value="s">{{ $t('tools.timestamp.seconds') }}</option>
+            <option value="ms">{{ $t('tools.timestamp.milliseconds') }}</option>
           </select>
-          <button type="button" class="aqua-button" @click="tsText = String(Math.floor(Date.now() / 1000))">现在</button>
+          <button type="button" class="aqua-button" @click="tsText = String(Math.floor(Date.now() / 1000))">{{ $t('tools.common.now') }}</button>
         </div>
-        <span class="tool-form__label">时区：</span>
+        <span class="tool-form__label">{{ $t('tools.timestamp.timeZone') }}</span>
         <zone-select v-model="zone" />
       </div>
       <dl v-if="decoded" class="tool-results">
-        <dt>识别为</dt>
+        <dt>{{ $t('tools.timestamp.readAs') }}</dt>
         <dd>{{ decoded.unitLabel }}</dd>
-        <dt>本机时间</dt>
+        <dt>{{ $t('tools.timestamp.localTime') }}</dt>
         <dd>{{ decoded.local }}</dd>
         <dt>{{ zoneName }}</dt>
         <dd>{{ decoded.zoned }}</dd>
@@ -47,7 +47,7 @@
         <dd class="timestamp__mono">{{ decoded.iso }}<br>{{ decoded.isoZoned }}</dd>
         <dt>RFC 2822</dt>
         <dd class="timestamp__mono">{{ decoded.rfc }}</dd>
-        <dt>相对时间</dt>
+        <dt>{{ $t('tools.timestamp.relative') }}</dt>
         <dd>{{ relative }}</dd>
       </dl>
       <p v-else class="tool-error">{{ decodeError }}</p>
@@ -55,27 +55,27 @@
     </fieldset>
 
     <fieldset class="aqua-group">
-      <legend>日期时间 → 时间戳</legend>
+      <legend>{{ $t('tools.timestamp.encode') }}</legend>
       <div class="tool-form">
-        <label for="ts-date">日期时间：</label>
+        <label for="ts-date">{{ $t('tools.timestamp.dateTime') }}</label>
         <div class="tool-inline">
           <input id="ts-date" v-model="dateTimeText" type="datetime-local" step="1" class="aqua-field">
-          <button type="button" class="aqua-button" @click="setNow">现在</button>
+          <button type="button" class="aqua-button" @click="setNow">{{ $t('tools.common.now') }}</button>
         </div>
-        <span class="tool-form__label">所在时区：</span>
-        <zone-select v-model="sourceZone" label="所在时区" />
+        <span class="tool-form__label">{{ $t('tools.timestamp.sourceZone') }}</span>
+        <zone-select v-model="sourceZone" :label="$t('tools.timestamp.sourceZoneLabel')" />
       </div>
       <dl v-if="encoded" class="tool-results">
-        <dt>秒</dt>
+        <dt>{{ $t('tools.timestamp.seconds') }}</dt>
         <dd class="timestamp__mono">{{ encoded.seconds }}</dd>
-        <dt>毫秒</dt>
+        <dt>{{ $t('tools.timestamp.milliseconds') }}</dt>
         <dd class="timestamp__mono">{{ encoded.ms }}</dd>
         <dt>ISO 8601</dt>
         <dd class="timestamp__mono">{{ encoded.iso }}</dd>
-        <dt>UTC 偏移</dt>
+        <dt>{{ $t('tools.timestamp.utcOffset') }}</dt>
         <dd>{{ encoded.offset }}</dd>
       </dl>
-      <p v-else class="tool-error">请输入有效的日期时间。</p>
+      <p v-else class="tool-error">{{ $t('tools.timestamp.invalidDate') }}</p>
       <p v-if="encoded && encoded.warning" class="tool-note">{{ encoded.warning }}</p>
     </fieldset>
   </div>
@@ -83,7 +83,8 @@
 
 <script>
 import ZoneSelect from './ZoneSelect'
-import { pad, relativeTime, weekday, WEEKDAYS } from './lib/dates'
+import { pad, weekday } from './lib/dates'
+import { relativeTime, t, weekdayName } from './lib/i18n'
 import { cityName, formatOffset, formatParts, isDst, LOCAL_ZONE, zonedToEpoch, zoneOffset, zoneParts } from './lib/zones'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -93,7 +94,11 @@ const MAX_MS = 8.64e15
 function describe(epoch, zone) {
   const parts = zoneParts(epoch, zone)
   const offset = zoneOffset(epoch, zone)
-  return `${formatParts(parts)} 星期${WEEKDAYS[weekday(parts)]}（${formatOffset(offset)}${isDst(epoch, zone) ? '，夏令时' : ''}）`
+  return t(isDst(epoch, zone) ? 'tools.timestamp.momentDst' : 'tools.timestamp.moment', {
+    time: formatParts(parts),
+    weekday: weekdayName(weekday(parts), 'long'),
+    offset: formatOffset(offset)
+  })
 }
 
 function isoWithOffset(epoch, zone) {
@@ -147,7 +152,7 @@ export default {
       return cityName(this.zone)
     },
     decodeError() {
-      return /^-?\d+(\.\d+)?$/.test(this.tsText) ? '时间戳超出可表示的范围。' : '请输入整数形式的时间戳。'
+      return this.$t(/^-?\d+(\.\d+)?$/.test(this.tsText) ? 'tools.timestamp.outOfRange' : 'tools.timestamp.notNumber')
     },
     decoded() {
       if (!/^-?\d+(\.\d+)?$/.test(this.tsText)) {
@@ -162,10 +167,10 @@ export default {
       }
       let warning = ''
       if (this.unit === 'auto' && Math.abs(value) >= 1e14) {
-        warning = '这个数字有 15 位以上，可能是微秒或纳秒时间戳；请先除以 1000 或 1000000。'
+        warning = this.$t('tools.timestamp.tooLong')
       }
       return {
-        unitLabel: unit === 'ms' ? '毫秒（13 位左右）' : '秒（10 位左右）',
+        unitLabel: this.$t(unit === 'ms' ? 'tools.timestamp.asMilliseconds' : 'tools.timestamp.asSeconds'),
         local: describe(epoch, LOCAL_ZONE),
         zoned: describe(epoch, this.zone),
         utc: describe(epoch, 'UTC'),
@@ -192,7 +197,7 @@ export default {
         ms: epoch,
         iso: new Date(epoch).toISOString(),
         offset: formatOffset(zoneOffset(epoch, this.sourceZone)),
-        warning: valid ? '' : '该时区在这一刻因夏令时调整而跳过了这段时间，结果按调整后的时间计算。'
+        warning: valid ? '' : this.$t('tools.timestamp.skipped')
       }
     }
   },

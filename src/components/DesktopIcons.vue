@@ -1,5 +1,5 @@
 <template>
-  <ul class="desktop-icons" aria-label="桌面">
+  <ul class="desktop-icons" :aria-label="$t('desktop.label')">
     <li v-for="icon in icons" :key="icon.id">
       <button
         type="button"
@@ -34,7 +34,7 @@ export default {
     icons() {
       const icons = [{ id: 'hd', label: 'Macintosh HD', image: hardDisk }]
       if (findPost('welcome')) {
-        icons.push({ id: 'readme', label: '请先阅读', image: documentIcon })
+        icons.push({ id: 'readme', label: this.$t('desktop.readMe'), image: documentIcon })
       }
       return icons
     }
