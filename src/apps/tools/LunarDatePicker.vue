@@ -46,7 +46,7 @@ export default {
     },
     // Keep the date valid: a leap month the new year lacks becomes the ordinary month, days are clamped
     update(change) {
-      const next = { ...this.value, ...change }
+      const next = { ...this.modelValue, ...change }
       const months = lunarMonthsOf(next.y)
       const month = months.find(item => item.value === next.m) || months.find(item => item.value === Math.abs(next.m))
       next.m = month.value
