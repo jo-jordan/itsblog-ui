@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sign" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a7c"/>
+      <stop offset="0.5" stop-color="#e2382b"/>
+      <stop offset="1" stop-color="#a8160c"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dfe6ee"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fcbf8"/>
+      <stop offset="0.5" stop-color="#3f8de0"/>
+      <stop offset="1" stop-color="#1d4f9c"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="114" rx="54" ry="7" fill="url(#shadow)"/>
+  <!-- Licence card -->
+  <g transform="rotate(-8 64 74)">
+    <rect x="12" y="44" width="104" height="66" rx="7" fill="url(#card)" stroke="#5d7894" stroke-width="2"/>
+    <path d="M12 51a7 7 0 0 1 7-7h90a7 7 0 0 1 7 7v9H12z" fill="url(#band)"/>
+    <rect x="20" y="68" width="26" height="32" rx="3" fill="#c9d4df" stroke="#7d8792" stroke-width="1.5"/>
+    <circle cx="33" cy="79" r="6" fill="#7d8792"/>
+    <path d="M23 98c2-8 7-11 10-11s8 3 10 11z" fill="#7d8792"/>
+    <path d="M54 72h48M54 81h40M54 90h44M54 99h28" stroke="#9aa6b2" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- 止まれ style triangle sign -->
+  <path d="M84 8l34 54H50z" fill="url(#sign)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M84 8l34 54H50z" fill="none" stroke="#7c0c06" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M84 4l-30 50h12l18-30z" fill="url(#gloss)" opacity=".5"/>
+  <text x="84" y="53" font-family="Hiragino Sans, 'Lucida Grande', sans-serif" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">止まれ</text>
+</svg>

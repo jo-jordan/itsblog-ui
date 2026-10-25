@@ -9,6 +9,7 @@ import preferencesIcon from '../assets/icons/preferences.svg'
 import footprintsIcon from '../assets/icons/footprints.svg'
 import loginIcon from '../assets/logo.png'
 import toolboxIcon from '../assets/icons/toolbox.svg'
+import labsIcon from '../assets/icons/labs.svg'
 import { t } from '../i18n'
 
 // Every window on the desktop belongs to one of these applications. Translated
@@ -67,6 +68,13 @@ export const apps = {
     component: defineAsyncComponent(() => import('./Toolbox.vue')),
     size: { width: 860, height: 560 }
   },
+  // Launcher for the side projects that live on their own subdomains
+  labs: {
+    get name() { return t('apps.labs') },
+    icon: labsIcon,
+    component: defineAsyncComponent(() => import('./Labs.vue')),
+    size: { width: 620, height: 420 }
+  },
   preferences: {
     get name() { return t('apps.preferences') },
     icon: preferencesIcon,
@@ -85,4 +93,4 @@ export const apps = {
 }
 
 // Order of the application icons in the Dock
-export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'toolbox', 'footprints', 'preferences']
+export const dockApps = ['finder', 'mail', 'sherlock', 'addressBook', 'toolbox', 'labs', 'footprints', 'preferences']

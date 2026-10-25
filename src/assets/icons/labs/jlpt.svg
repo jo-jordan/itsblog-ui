@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="cover" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1d4f9c"/>
+      <stop offset="0.12" stop-color="#5ea7f2"/>
+      <stop offset="0.5" stop-color="#3f8de0"/>
+      <stop offset="1" stop-color="#2a5fa8"/>
+    </linearGradient>
+    <linearGradient id="pages" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d9dee4"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.4" cy="0.35" r="0.65">
+      <stop offset="0" stop-color="#ff9a8c"/>
+      <stop offset="0.5" stop-color="#e2382b"/>
+      <stop offset="1" stop-color="#a8160c"/>
+    </radialGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="116" rx="46" ry="7" fill="url(#shadow)"/>
+  <!-- Page block, then the cover -->
+  <path d="M30 18h70v92H30z" fill="url(#pages)" stroke="#7d8792" stroke-width="1.5"/>
+  <path d="M100 22v84M97 20v88" stroke="#b5bcc4" stroke-width="1"/>
+  <rect x="22" y="12" width="74" height="96" rx="5" fill="url(#cover)" stroke="#173f7c" stroke-width="2"/>
+  <rect x="22" y="12" width="10" height="96" rx="4" fill="#173f7c" fill-opacity=".45"/>
+  <rect x="34" y="14" width="58" height="34" rx="4" fill="url(#gloss)"/>
+  <!-- Label -->
+  <rect x="40" y="28" width="46" height="62" rx="4" fill="#fbfbf6" stroke="#173f7c" stroke-width="1.5"/>
+  <circle cx="63" cy="50" r="12" fill="url(#sun)"/>
+  <text x="63" y="81" font-family="'Lucida Grande', Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#173f7c" text-anchor="middle">N2</text>
+</svg>

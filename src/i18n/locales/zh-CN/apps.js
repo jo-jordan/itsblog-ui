@@ -4,6 +4,7 @@ export default {
   footprints: '足迹',
   login: '登录',
   toolbox: '实用工具',
+  labs: '实验室',
   preferences: '系统偏好设置',
   about: '关于本机'
 }

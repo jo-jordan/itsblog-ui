@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7a8591"/>
+      <stop offset="0.35" stop-color="#3b434c"/>
+      <stop offset="1" stop-color="#15191d"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#c9cfd6"/>
+      <stop offset="0.55" stop-color="#8d96a1"/>
+      <stop offset="1" stop-color="#dfe3e8"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb36b"/>
+      <stop offset="0.5" stop-color="#f07a12"/>
+      <stop offset="1" stop-color="#b04e00"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="108" rx="56" ry="8" fill="url(#shadow)"/>
+  <g transform="rotate(-20 64 64)">
+    <rect x="6" y="58" width="116" height="12" rx="4" fill="url(#bar)" stroke="#4c535c" stroke-width="1.5"/>
+    <rect x="46" y="56" width="36" height="16" rx="5" fill="url(#grip)" stroke="#7a3600" stroke-width="1.5"/>
+    <path d="M52 58v12M58 58v12M64 58v12M70 58v12M76 58v12" stroke="#7a3600" stroke-opacity=".45" stroke-width="1.4"/>
+    <rect x="14" y="30" width="16" height="68" rx="5" fill="url(#plate)" stroke="#0b0d10" stroke-width="2"/>
+    <rect x="30" y="38" width="10" height="52" rx="4" fill="url(#plate)" stroke="#0b0d10" stroke-width="2"/>
+    <rect x="98" y="30" width="16" height="68" rx="5" fill="url(#plate)" stroke="#0b0d10" stroke-width="2"/>
+    <rect x="88" y="38" width="10" height="52" rx="4" fill="url(#plate)" stroke="#0b0d10" stroke-width="2"/>
+    <rect x="16" y="32" width="12" height="26" rx="4" fill="url(#gloss)"/>
+    <rect x="100" y="32" width="12" height="26" rx="4" fill="url(#gloss)"/>
+  </g>
+</svg>

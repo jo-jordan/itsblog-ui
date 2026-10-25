@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c9dcef" stop-opacity=".9"/>
+      <stop offset="0.25" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset="0.7" stop-color="#e3eef9" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#9fb8d2" stop-opacity=".95"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fe07a"/>
+      <stop offset="0.5" stop-color="#2fb83a"/>
+      <stop offset="1" stop-color="#11781d"/>
+    </linearGradient>
+    <linearGradient id="cork" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9a6a3a"/>
+      <stop offset="0.4" stop-color="#e2b07a"/>
+      <stop offset="1" stop-color="#8a5a2c"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="64" cy="115" rx="46" ry="7" fill="url(#shadow)"/>
+
+  <!-- Flask: glass, then the liquid filling its lower half -->
+  <path d="M52 14h24v34l30 50c4 7-1 15-9 15H31c-8 0-13-8-9-15l30-50z" fill="url(#glass)" stroke="#5d7894" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M38 72h52l15 26c3.5 6-1 12-7.5 12h-67c-6.5 0-11-6-7.5-12z" fill="url(#liquid)"/>
+  <path d="M38 72h52" stroke="#c6f5c0" stroke-width="2"/>
+  <!-- Bubbles -->
+  <circle cx="54" cy="92" r="5" fill="#fff" fill-opacity=".55"/>
+  <circle cx="72" cy="84" r="3.5" fill="#fff" fill-opacity=".55"/>
+  <circle cx="66" cy="100" r="2.5" fill="#fff" fill-opacity=".5"/>
+  <circle cx="62" cy="60" r="3" fill="#bdf0b8" fill-opacity=".8" stroke="#2fb83a" stroke-width="1"/>
+  <circle cx="68" cy="46" r="2" fill="#bdf0b8" fill-opacity=".8" stroke="#2fb83a" stroke-width="1"/>
+  <!-- Glass highlight -->
+  <path d="M56 18h4v32L34 94c-2 3-5 2-4-1l26-44z" fill="url(#gloss)" opacity=".8"/>
+  <!-- Rim and cork -->
+  <rect x="48" y="10" width="32" height="8" rx="4" fill="url(#glass)" stroke="#5d7894" stroke-width="2"/>
+  <path d="M53 2h22l-2 10H55z" fill="url(#cork)" stroke="#5c3a18" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
