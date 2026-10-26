@@ -21,5 +21,10 @@ export default {
     name: 'JLPT N2 Grammar',
     kind: 'Japanese study',
     description: '175 N2 grammar points and 15 quizzes; sign in to keep your results for review.'
+  },
+  boner: {
+    name: 'Boner',
+    kind: 'Skeletal animation',
+    description: 'A Spine-like 2D skeletal animation editor in the browser that exports JSON + Atlas for the Spine runtimes.'
   }
 }

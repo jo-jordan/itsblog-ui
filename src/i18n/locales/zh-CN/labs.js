@@ -21,5 +21,10 @@ export default {
     name: 'JLPT N2 文法',
     kind: '日语学习',
     description: '175 条 N2 语法和 15 套小测，登录后保存成绩以便复习。'
+  },
+  boner: {
+    name: 'Boner',
+    kind: '骨骼动画',
+    description: '在浏览器里制作 2D 骨骼动画，类似 Spine，可直接导出 Spine 运行时可读取的 JSON + Atlas。'
   }
 }
