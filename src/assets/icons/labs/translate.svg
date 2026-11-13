@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cc4fb"/>
+      <stop offset="0.5" stop-color="#3f8de0"/>
+      <stop offset="1" stop-color="#1d4f9c"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d9dee4"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="116" rx="50" ry="7" fill="url(#shadow)"/>
+  <!-- Back bubble: the other person's language -->
+  <path d="M58 46h50a10 10 0 0 1 10 10v32a10 10 0 0 1-10 10h-4l4 14-18-14H58a10 10 0 0 1-10-10V56a10 10 0 0 1 10-10z" fill="url(#paper)" stroke="#6b7480" stroke-width="2" stroke-linejoin="round"/>
+  <text x="86" y="85" font-family="'Lucida Grande', Helvetica, sans-serif" font-size="32" font-weight="bold" fill="#173f7c" text-anchor="middle">A</text>
+  <!-- Front bubble: yours -->
+  <path d="M20 10h50a10 10 0 0 1 10 10v34a10 10 0 0 1-10 10H40L22 78l4-14h-6a10 10 0 0 1-10-10V20a10 10 0 0 1 10-10z" fill="url(#blue)" stroke="#173f7c" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M20 12h50a8 8 0 0 1 8 8v12H12V20a8 8 0 0 1 8-8z" fill="url(#gloss)"/>
+  <text x="45" y="49" font-family="'Hiragino Sans GB', 'PingFang SC', 'Lucida Grande', sans-serif" font-size="32" font-weight="bold" fill="#fff" text-anchor="middle">文</text>
+</svg>

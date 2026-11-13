@@ -26,5 +26,20 @@ export default {
     name: 'Boner',
     kind: '骨骼动画',
     description: '在浏览器里制作 2D 骨骼动画，类似 Spine，可直接导出 Spine 运行时可读取的 JSON + Atlas。'
+  },
+  english: {
+    name: 'English Workbook',
+    kind: '英语学习',
+    description: '雅思、托业、日常和商务英语练习：每句话都有录音，写作和口语有批改反馈，生词按间隔重复复习。'
+  },
+  translate: {
+    name: 'Translate Anything',
+    kind: '对话翻译',
+    description: '面对面的双语对话：对方扫码即可加入，无需安装，各说各的语言，屏幕上实时显示译文。目前是原型。'
+  },
+  levels: {
+    name: '关卡编辑器',
+    kind: '游戏工具',
+    description: '《四脚章鱼爸爸》的网页关卡编辑器：摆放模块和机关，在页面里的游戏视图中直接试玩。保存需要口令。'
   }
 }

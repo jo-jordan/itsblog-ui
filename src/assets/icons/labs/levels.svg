@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef2f6"/>
+      <stop offset="1" stop-color="#b9c2cc"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd58a"/>
+      <stop offset="1" stop-color="#f5a623"/>
+    </linearGradient>
+    <linearGradient id="left" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e08a12"/>
+      <stop offset="1" stop-color="#a85f00"/>
+    </linearGradient>
+    <linearGradient id="right" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c47208"/>
+      <stop offset="1" stop-color="#7a4400"/>
+    </linearGradient>
+    <linearGradient id="belt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b7480"/>
+      <stop offset="1" stop-color="#2e343b"/>
+    </linearGradient>
+    <radialGradient id="octo" cx="0.4" cy="0.3" r="0.7">
+      <stop offset="0" stop-color="#ffb3a6"/>
+      <stop offset="0.5" stop-color="#ee5a46"/>
+      <stop offset="1" stop-color="#a8261a"/>
+    </radialGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="116" rx="54" ry="7" fill="url(#shadow)"/>
+  <!-- Isometric floor with its grid -->
+  <path d="M64 46l54 28-54 28L10 74z" fill="url(#floor)" stroke="#5a6470" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M28 64.7l54 28M46 55.3l54 28M82 55.3l-54 28M100 64.7l-54 28" stroke="#5a6470" stroke-opacity=".45" stroke-width="1"/>
+  <path d="M10 74v8l54 28 54-28v-8l-54 28z" fill="#8a94a0" stroke="#5a6470" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Conveyor on the left tile -->
+  <path d="M28 64.7l18 9.3-18 9.3-18-9.3z" fill="url(#belt)" stroke="#1c2025" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M22 71l6 3.1-6 3.1M30 71l6 3.1-6 3.1" fill="none" stroke="#ffd24a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Block being placed -->
+  <path d="M82 36l18 9.3-18 9.3-18-9.3z" fill="url(#top)" stroke="#7a4e00" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M64 45.3l18 9.3v28l-18-9.3z" fill="url(#left)" stroke="#7a4e00" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M100 45.3l-18 9.3v28l18-9.3z" fill="url(#right)" stroke="#7a4e00" stroke-width="2" stroke-linejoin="round"/>
+  <!-- The octopus -->
+  <path d="M30 50c-5 4-9 3-11-1M39 53c-2 6-6 8-10 7M50 53c2 6 6 8 10 7M58 49c5 4 9 3 11-1" fill="none" stroke="#a8261a" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="44" cy="32" rx="20" ry="22" fill="url(#octo)" stroke="#7d1a10" stroke-width="2"/>
+  <ellipse cx="38" cy="20" rx="9" ry="5" fill="#fff" fill-opacity=".45"/>
+  <circle cx="37" cy="36" r="5" fill="#fff" stroke="#7d1a10" stroke-width="1"/>
+  <circle cx="51" cy="36" r="5" fill="#fff" stroke="#7d1a10" stroke-width="1"/>
+  <circle cx="38.5" cy="37" r="2.2" fill="#1c2025"/>
+  <circle cx="52.5" cy="37" r="2.2" fill="#1c2025"/>
+</svg>

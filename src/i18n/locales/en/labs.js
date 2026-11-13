@@ -26,5 +26,20 @@ export default {
     name: 'Boner',
     kind: 'Skeletal animation',
     description: 'A Spine-like 2D skeletal animation editor in the browser that exports JSON + Atlas for the Spine runtimes.'
+  },
+  english: {
+    name: 'English Workbook',
+    kind: 'English study',
+    description: 'Practice for IELTS, TOEIC, everyday and business English: recorded audio for every line, feedback on writing and speaking, and spaced review of vocabulary.'
+  },
+  translate: {
+    name: 'Translate Anything',
+    kind: 'Live translation',
+    description: 'Face-to-face conversation in two languages: the other person scans a code, with nothing to install, and each of you reads the other translated live. A prototype for now.'
+  },
+  levels: {
+    name: 'Level Editor',
+    kind: 'Game tool',
+    description: 'The web level editor for a game about a four-legged octopus dad (in Chinese): place modules and contraptions, then play the level right in the page. Saving needs a passcode.'
   }
 }
